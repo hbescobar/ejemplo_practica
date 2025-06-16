@@ -4,7 +4,7 @@
             <h4 class="fw-bold text-primary text-center mb-4">
                 <i class='bx bx-map'></i> Listado de Áreas
             </h4>
-
+            <!-- ejemplo -->
             <!-- Filtro y búsqueda -->
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                 <div class="input-group" style="max-width: 220px;">
