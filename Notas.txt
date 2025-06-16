@@ -1,0 +1,16 @@
+===================================
+Tareas pendientes para modulo de prestamos
+===================================
+
+1.Terminar el postInsert de prestamos.
+2.Crear vista y todo lo relacionado con consultar prestamos
+3.Crear las funciones de los eventos en la tabla de consultar
+
+
+===================================
+Tareas para el modulo de elementos
+===================================
+
+1.Anadir y integrar compatibilidad a la vista del formulario de insertar, ElementosController, ElementosModel, insert, consult, update
+2.Crear las rutas especificas
+3.Añadir la logica
