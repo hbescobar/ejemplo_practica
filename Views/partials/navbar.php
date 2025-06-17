@@ -60,6 +60,10 @@
             <li><a class="dropdown-item" href="<?= getUrl('marca', 'marca', 'consult'); ?>">Consultar Marca</a></li>
             <li><hr class="dropdown-divider"></li>
 
+            <li><a class="dropdown-item" href="<?= getUrl('area_destino', 'area_destino', 'getInsert'); ?>"><i class='bx bx-edit me-2 text-warning'></i>Área de Destino - Registrar</a></li>
+            <li><a class="dropdown-item" href="<?= getUrl('area_destino', 'area_destino', 'consult'); ?>">Consultar Área de Destino</a></li>
+            <li><hr class="dropdown-divider"></li>
+
             <li><a class="dropdown-item" href="<?= getUrl('categoria', 'categoria', 'getInsert'); ?>"><i class='bx bx-purchase-tag-alt me-2 text-info'></i>Categoría - Registrar</a></li>
             <li><a class="dropdown-item" href="<?= getUrl('categoria', 'categoria', 'consult'); ?>">Consultar Categoría</a></li>
             <li><hr class="dropdown-divider"></li>
