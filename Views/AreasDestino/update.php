@@ -10,7 +10,7 @@
 
         <!-- Título del formulario -->
         <h4 class="text-center text-warning fw-bold mb-3">
-            <i class="bi bi-pencil-square me-2"></i> Editar Área
+            <i class="bi bi-pencil-square me-2"></i> Editar área destino
         </h4>
 
         <!-- Nota de campos obligatorios -->

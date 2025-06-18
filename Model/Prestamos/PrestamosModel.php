@@ -62,7 +62,7 @@ class PrestamosModel extends MasterModel
     // ====================================
     public function obtenerElementosDisponibles()
     {
-        $sql = "SELECT elem_id, elem_nombre, elem_placa, elem_serie, elem_codigo 
+        $sql = "SELECT elem_id, elem_nombre, elem_placa, elem_serie, elem_codigo, elem_telem_id, elem_cantidad
                 FROM elementos_inventario 
                 WHERE elem_estado_id = 1 
                 ORDER BY elem_nombre ASC";
@@ -77,14 +77,21 @@ class PrestamosModel extends MasterModel
     // ====================================
     // OBTENER ELEMENTOS DISPONIBLES POR CATEGORÍA
     // ====================================
-    public function obtenerElementosPorCategoria($cate_id)
-    {
-        $sql = "SELECT elem_id, elem_nombre, elem_placa, elem_serie 
+    public function obtenerElementosPorCategorias($cate_ids)
+{
+    $ids = array_map('intval', $cate_ids);
+    $ids_str = implode(',', $ids);
+    $sql = "SELECT elem_id, elem_nombre, elem_placa, elem_serie, elem_telem_id, elem_cantidad
             FROM elementos_inventario 
-            WHERE elem_estado_id = 1 AND elem_cate_id = $cate_id 
+            WHERE elem_estado_id = 1 AND elem_cate_id IN ($ids_str)
             ORDER BY elem_nombre ASC";
-        return $this->consult($sql);
+    $result = $this->consult($sql);
+    $elementos = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $elementos[] = $row;
     }
+    return $elementos;
+}
 
     // ====================================
     // OBTENER ÁREAS DESTINO PARA SELECT

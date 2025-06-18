@@ -8,13 +8,15 @@
         <!-- Paso 1 -->
         <div class="carousel-item active">
             <div class="container mt-4 px-3" style="max-width: 720px;">
-                <h3 class="mb-3 fw-semibold">Registrar Préstamo - Paso 1</h3>
+                <h3 class="mb-3 fw-semibold">Registrar préstamo - Paso 1</h3>
                 <form id="formPaso1" class="needs-validation" novalidate>
                     <!-- Select Usuario -->
                     <div class="mb-3">
                         <label for="usu_id" class="form-label">Usuario</label>
                         <select class="form-select" id="usu_id" name="usu_id" required>
                             <option value="" selected disabled>Seleccione un usuario</option>
+                            
+                            
                             <?php foreach ($usuarios as $usuario): ?>
                                 <option value="<?= $usuario['usu_id'] ?>"
                                     data-doc="<?= $usuario['usu_numero_docu'] ?? '' ?>"
@@ -29,8 +31,8 @@
                     <!-- Select Categoría -->
                     <div class="mb-3">
                         <label for="cate_id" class="form-label">Categoría</label>
-                        <select class="form-select" id="cate_id" name="cate_id" required>
-                            <option value="" selected disabled>Seleccione una categoría</option>
+                        <select class="form-select" id="cate_id" name="cate_id[]" multiple required>
+                            <option value="" disabled>Seleccione una o más categorías</option>
                             <?php foreach ($categorias as $categoria): ?>
                                 <option value="<?= $categoria['cate_id'] ?>">
                                     <?= htmlspecialchars($categoria['cate_nombre']) ?>
@@ -104,6 +106,63 @@
 
     </div>
 </div>
+<style>
+    body {
+        background: linear-gradient(120deg, #f8fafc 0%,rgb(255, 255, 255) 100%);
+        min-height: 18vh;
+    }
+    #prestamoCarousel {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(60, 72, 88, 0.15);
+        padding-bottom: 60px;
+        margin-top: 20px;
+    }
+    .carousel-item {
+        border-radius: 18px;
+    }
+    h3 {
+        color:rgb(76, 114, 188);
+    }
+    .form-label {
+        color: #6366f1;
+        font-weight: 600;
+    }
+    .form-select, .form-control, textarea {
+        border-radius: 8px;
+        border-color: #a5b4fc;
+    }
+    .btn-primary {
+        background: #6366f1;
+        border: none;
+    }
+    .btn-primary:hover {
+        background: #4f46e5;
+    }
+    .btn-success {
+        background: #22c55e;
+        border: none;
+    }
+    .btn-success:hover {
+        background: #16a34a;
+    }
+    .btn-secondary {
+        background: #64748b;
+        border: none;
+    }
+    .btn-secondary:hover {
+        background: #334155;
+    }
+    fieldset {
+        border-left: 4px solid #6366f1;
+        padding-left: 12px;
+        background: #f1f5f9;
+        border-radius: 8px;
+    }
+    legend {
+        color: #6366f1;
+    }
+</style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -122,22 +181,48 @@
             })
     })();
 
-    $('#cate_id').change(function() {
-        var cate_id = $(this).val();
-        $.ajax({
-            url: 'index.php?modulo=prestamos&controlador=prestamos&funcion=getElementosPorCategoria',
-            type: 'POST',
-            data: {
-                cate_id: cate_id
-            },
-            success: function(data) {
-                $('#elementos-container').html(data);
-            },
-            error: function() {
-                $('#elementos-container').html('<p class="text-danger small">Error al cargar los elementos.</p>');
-            }
-        });
+    function getSeleccionActual() {
+    let seleccion = {};
+    $('input[name="elementos[]"]:checked').each(function() {
+        let id = $(this).val();
+        let cantidad = $('input[name="cantidades[' + id + ']"]').val() || '';
+        seleccion[id] = cantidad;
     });
+    return seleccion;
+}
+
+// Restaura los elementos seleccionados y cantidades después de recargar
+function restaurarSeleccion(seleccion) {
+    for (let id in seleccion) {
+        let checkbox = $('input[name="elementos[]"][value="' + id + '"]');
+        if (checkbox.length) {
+            checkbox.prop('checked', true);
+            let input = $('input[name="cantidades[' + id + ']"]');
+            if (input.length) {
+                input.prop('disabled', false).val(seleccion[id]);
+            }
+        }
+    }
+}
+
+$('#cate_id').change(function() {
+    let cate_ids = $(this).val();
+    let seleccion = getSeleccionActual(); // Guarda selección actual
+
+    $.ajax({
+        url: 'index.php?modulo=prestamos&controlador=prestamos&funcion=getElementosPorCategoria',
+        type: 'POST',
+        data: { cate_id: cate_ids },
+        traditional: true,
+        success: function(data) {
+            $('#elementos-container').html(data);
+            restaurarSeleccion(seleccion); // Restaura selección después de recargar
+        },
+        error: function() {
+            $('#elementos-container').html('<p class="text-danger small">Error al cargar los elementos.</p>');
+        }
+    });
+});
 
     $('#formPaso1').submit(function(e) {
         e.preventDefault();
@@ -180,21 +265,26 @@
 
     // *** Aquí el nuevo código para enviar los elementos al formPaso2 ***
     $('#formPaso2').submit(function(e) {
-        // Limpiar inputs hidden previos para evitar duplicados
-        $(this).find('input[name="elementos[]"]').remove();
+    // Limpiar inputs hidden previos para evitar duplicados
+    $(this).find('input[name="elementos[]"]').remove();
+    $(this).find('input[name="usu_id"]').remove();
 
-        // Agregar inputs hidden con elementos seleccionados
-        $('input[name="elementos[]"]:checked').each(function() {
-            var val = $(this).val();
-            $('#formPaso2').append('<input type="hidden" name="elementos[]" value="' + val + '">');
-        });
+    // Agregar inputs hidden con elementos seleccionados
+    $('input[name="elementos[]"]:checked').each(function() {
+        var val = $(this).val();
+        $('#formPaso2').append('<input type="hidden" name="elementos[]" value="' + val + '">');
+    });
 
-        // Validar el form (Bootstrap)
-        if (!this.checkValidity()) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).addClass('was-validated');
-            return;
-        }
+    // Agregar input hidden con el usuario seleccionado
+    var usu_id = $('#usu_id').val();
+    $('#formPaso2').append('<input type="hidden" name="usu_id" value="' + usu_id + '">');
+
+    // Validar el form (Bootstrap)
+    if (!this.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('was-validated');
+        return;
+    }
     });
 </script>
