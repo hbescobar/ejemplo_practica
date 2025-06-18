@@ -27,23 +27,27 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
 <script>
-    // Mostrar el nombre del archivo seleccionado y validar extensión
+    
+    
+    
+    // Mostrar el nombre del archivo seleccionado
     $('#archivoUsuarios').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
         var extension = fileName.split('.').pop().toLowerCase();
-
         if (extension !== 'csv') {
-            alert('El archivo seleccionado no es compatible. Solo se permiten archivos .csv');
-            $(this).val('');
-            return;
+        $('#nombreArchivo').text('Elegir archivo');
+        $(this).val('');
+        alert('El archivo seleccionado no es compatible. Solo se permiten archivos .csv');
+        return;
         }
 
-        // No necesitamos cambiar label porque el input file ya muestra el nombre
-        // Si quieres mostrarlo en otro lado, lo puedes hacer aquí
+        $('#nombreArchivo').text(fileName);
     });
 
-    // Descargar plantilla CSV
+
+
     $('#btnExaminar').on('click', function() {
+        // Define los campos que quieres en la plantilla
         const encabezados = [
             'nombre',
             'apellido',
@@ -52,12 +56,12 @@
             'identificacion',
             'email',
             'rol_id',
-            'tipo_documento',
+            'tipo_documento', 
             'estado',
             'direccion'
-        ];
 
-        // Ejemplo para la plantilla (opcional)
+        ];
+        // Puedes agregar una fila de ejemplo si lo deseas
         const ejemplo = [
             'Juan',
             'Pérez',
@@ -70,13 +74,10 @@
             '1',
             'Calle 14C34 58 ejemplo'
         ];
+        let csvContent = encabezados.join(',') ;
 
-        // Crear CSV con encabezados + ejemplo
-        let csvContent = encabezados.join(',') + '\n' + ejemplo.join(',');
-
-        const blob = new Blob([csvContent], {
-            type: 'text/csv;charset=utf-8;'
-        });
+        // Crear un blob y descargarlo
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement('a');
@@ -88,45 +89,49 @@
         URL.revokeObjectURL(url);
     });
 
-    // Manejar el envío del formulario con Ajax
+
     $('#formCargaUsuarios').on('submit', function(e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        var archivo = $('#archivoUsuarios')[0].files[0];
-        if (!archivo) {
-            alert('Por favor selecciona un archivo .csv');
-            return;
-        }
+    var archivo = $('#archivoUsuarios')[0].files[0];
+    if (!archivo) {
+        alert('Por favor selecciona un archivo .csv');
+        return;
+    }
 
-        var formData = new FormData();
-        formData.append('archivoUsuarios', archivo);
+    var formData = new FormData();
+    formData.append('archivoUsuarios', archivo);
 
-        $.ajax({
-            url: '<?= getUrl("Carga", "Carga", "procesarUsuarios") ?>', // Ajusta esta URL a la correcta
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(respuesta) {
-                if (respuesta.indexOf('correctamente') !== -1) {
-                    alert("Carga exitosa");
-                    $('#formCargaUsuarios')[0].reset();
-                } else {
-                    alert(
-                        "Error en la carga. Por favor revisa que:\n" +
-                        "- Todos los campos requeridos estén diligenciados\n" +
-                        "- No existan datos duplicados (como identificaciones o correos)\n" +
-                        "- Los valores de claves foráneas (como rol, tipo de documento, estado del usuario) sean correctos"
-                    );
-                    $('#formCargaUsuarios')[0].reset();
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Estado:", status);
-                console.error("Error:", error);
-                console.error("Respuesta del servidor:", xhr.responseText);
-                alert("Respuesta inesperada del servidor:\n" + status);
+    $.ajax({
+        url: '<?= getUrl("Carga", "Carga", "procesarUsuarios") ?>',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(respuesta)  {
+            if (respuesta.indexOf('correctamente') !== -1) {
+                alert("Carga exitosa");
+                $('#formCargaUsuarios')[0].reset();
+                $('#nombreArchivo').text('Elegir archivo');
+            } else {
+                alert(
+                    "Error en la carga. Por favor revisa que:\n" +
+                    "- Todos los campos requeridos estén diligenciados\n" +
+                    "- No existan datos duplicados (como identificaciones o correos)\n" +
+                    "- Los valores de claves foráneas (como rol,tipo de documento, estado del usuario) sean correctos"
+                );
+                $('#formCargaUsuarios')[0].reset();
+                $('#nombreArchivo').text('Elegir archivo');
             }
-        });
+        },
+        error: function(xhr, status, error) {
+            console.log("Estado:", status);
+            console.log("Error:", error);
+            console.log("Respuesta del servidor:", xhr.responseText);
+            alert("Respuesta inesperada del servidor:\n" + status);
+        }
     });
-</script>
+});
+
+
+    </script>

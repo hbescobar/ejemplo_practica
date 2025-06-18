@@ -42,28 +42,27 @@ class CargaController
         $errorCarga = false;
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
-
         $nombreArchivo = $_FILES['archivoUsuarios']['name'];
-        $numero_documento = $_SESSION['ingresoDocumento'];
-
-        // Buscar ID del usuario que hace la carga para registro en carga_masiva
+        $numero_documento = $_SESSION['usuario']['usu_numero_docu'];
         $sqlUsuario = "SELECT usu_id FROM usuario WHERE usu_numero_docu = '$numero_documento'";
         $resultUsuario = $this->model->consult($sqlUsuario);
         $usu_id = null;
-
+        
+        
         if ($resultUsuario && $row = mysqli_fetch_assoc($resultUsuario)) {
             $usu_id = $row['usu_id'];
         } else {
+            // Manejo si no se encuentra el usuario
             echo "No se encontró el usuario con documento $numero_documento";
             exit;
         }
 
-        // Preparar datos para registro de carga
         $fecha = date('Y-m-d');
         $descripcion_error = 'Se carga el archivo ' . $nombreArchivo;
-        $estado = 1; // Estado inicial exitoso
+        $estado = 1; 
 
-        // Verificar archivo CSV
+        
+
         $archivo = $_FILES['archivoUsuarios']['tmp_name'];
         if (!$archivo) {
             echo "Error al acceder al archivo.";
@@ -75,28 +74,32 @@ class CargaController
             echo "No se pudo abrir el archivo CSV.";
             exit;
         }
+        $carga_id = $this->model->autoincrement('carga_id','carga_masiva');
+        $sql = "INSERT INTO carga_masiva (carga_id,carga_fecha_inicio,carga_descripcion,  carga_nombre_archivo,estado_id, usu_id, carga_errores) 
+        VALUES ('$carga_id', '$fecha', '$descripcion_error', '$nombreArchivo', $estado, $usu_id, NULL)";
+        
 
-        // Registrar inicio de carga masiva
-        $carga_id = $this->model->autoincrement('carga_id', 'carga_masiva');
-        $sql = "INSERT INTO carga_masiva (carga_id, carga_fecha_inicio, carga_descripcion, carga_nombre_archivo, estado_id, usu_id, carga_errores) 
-                VALUES ('$carga_id', '$fecha', '$descripcion_error', '$nombreArchivo', $estado, $usu_id, NULL)";
-        $this->model->insert($sql);
+        $resultCarga = $this->model->insert($sql);
+        echo "<script>console.log(`$sql`);</script>";
+
+        if(!$resultCarga) {
+            echo "Error al registrar la carga masiva: " . mysqli_error($this->model->getConnect());
+            exit;
+        }
+
+
 
         $errores = [];
         $exitos = 0;
         $primera = true;
-
-        // Leer archivo CSV línea por línea
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            if ($primera) { // Omitir encabezado
-                $primera = false;
-                continue;
+            if ($primera) { 
+                $primera = false; 
+                continue; 
             }
-
             $numero_docu = $data[4];
-
-            // Validar identificaciones duplicadas
             $sqlCheck = "SELECT 1 FROM usuario WHERE usu_numero_docu = '$numero_docu'";
+
             $resultCheck = $this->model->consult($sqlCheck);
 
             if ($resultCheck && mysqli_fetch_assoc($resultCheck)) {
@@ -105,13 +108,13 @@ class CargaController
                 continue;
             }
 
-            // Insertar usuario
-            $sqlInsert = "INSERT INTO usuario (usu_nombre, usu_apellido, usu_telefono, usu_clave, usu_numero_docu, usu_email, rol_id, tipo_docu_id, estado_id, usu_direccion)
-                          VALUES ('$data[0]', '$data[1]', '$data[2]', '$data[3]', '$data[4]', '$data[5]', '$data[6]', '$data[7]', '$data[8]', '$data[9]')";
-            $resultado = $this->model->insert($sqlInsert);
-
-            if (!$resultado) {
-                $errores[] = "Error al insertar usuario con identificación: $numero_docu. Revisar llaves foráneas y datos incompletos.";
+            $resultado = $this->model->insertTest('usuario', [
+                'usu_nombre', 'usu_apellido', 'usu_telefono', 'usu_clave', 'usu_numero_docu', 
+                'usu_email', 'rol_id', 'tipo_docu_id', 'estado_id', 'usu_direccion'
+            ], $data);
+            
+            if(!$resultado){
+                $errores[] = "Error al insertar usuario con identificación: $numero_docu"." revisar llaves foráneas, y datos no completados por favor.";
                 $errorCarga = true;
             } else {
                 $exitos++;
@@ -120,19 +123,18 @@ class CargaController
 
         fclose($handle);
 
-        // Actualizar estado de carga si hubo errores
         if ($errorCarga) {
-            $estado = 2; // Estado con errores
+            $estado = 2; 
             $descripcion_error = implode(" | ", $errores);
             $sqlError = "UPDATE carga_masiva 
-                         SET estado_id = $estado, 
-                             carga_descripcion = 'Errores en la carga', 
-                             carga_errores = '$descripcion_error'
-                         WHERE carga_id = '$carga_id'";
+                SET estado_id = $estado, 
+                    carga_descripcion = 'Errores en la carga', 
+                    carga_errores = '$descripcion_error'
+                WHERE carga_id = '$carga_id'";
             $this->model->update($sqlError);
             echo "Se encontraron errores en la carga: " . implode(", ", $errores);
         } else {
-            echo "Usuarios cargados correctamente.";
+            echo "Usuarios cargados correctamente";
         }
         exit;
     }
