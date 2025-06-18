@@ -32,10 +32,6 @@
                 <i class='bx bx-id-card'></i>
             </div>
 
-            <div class="forgot-link">
-                <a href="#">¿Olvidaste la contraseña?</a>
-            </div>
-
             <button type="submit" class="btn">Ingresar</button>
 
             <p style="font-size: 13px; color: #888; margin-top: 20px;">
