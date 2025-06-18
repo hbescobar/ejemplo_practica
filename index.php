@@ -16,7 +16,7 @@ if (!$isAjax) {
     include_once __DIR__ . '/Views/partials/head.php';
 }
 
-echo "<div class='container'>";
+echo "<div class='contenedor'>";
 
 if (!isset($_SESSION['usuario'])) {
     $_GET['modulo'] = $_GET['modulo'] ?? 'login';
