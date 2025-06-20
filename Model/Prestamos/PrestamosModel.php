@@ -78,20 +78,20 @@ class PrestamosModel extends MasterModel
     // OBTENER ELEMENTOS DISPONIBLES POR CATEGORÍA
     // ====================================
     public function obtenerElementosPorCategorias($cate_ids)
-{
-    $ids = array_map('intval', $cate_ids);
-    $ids_str = implode(',', $ids);
-    $sql = "SELECT elem_id, elem_nombre, elem_placa, elem_serie, elem_telem_id, elem_cantidad
+    {
+        $ids = array_map('intval', $cate_ids);
+        $ids_str = implode(',', $ids);
+        $sql = "SELECT elem_id, elem_nombre, elem_placa, elem_serie, elem_telem_id, elem_cantidad
             FROM elementos_inventario 
             WHERE elem_estado_id = 1 AND elem_cate_id IN ($ids_str)
             ORDER BY elem_nombre ASC";
-    $result = $this->consult($sql);
-    $elementos = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $elementos[] = $row;
+        $result = $this->consult($sql);
+        $elementos = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $elementos[] = $row;
+        }
+        return $elementos;
     }
-    return $elementos;
-}
 
     // ====================================
     // OBTENER ÁREAS DESTINO PARA SELECT
@@ -109,5 +109,22 @@ class PrestamosModel extends MasterModel
         return $areas;
     }
 
-    
+    public function obtenerCategoriasPorTipoElemento($tipo_id)
+    {
+        $tipo_id = intval($tipo_id);
+
+        $sql = "SELECT cate_id, cate_nombre 
+            FROM categoria 
+            WHERE telem_id = $tipo_id 
+            ORDER BY cate_nombre ASC";
+
+        $result = $this->consult($sql);
+        $categorias = [];
+
+        while ($row = mysqli_fetch_assoc($result)) {
+            $categorias[] = $row;
+        }
+
+        return $categorias;
+    }
 }

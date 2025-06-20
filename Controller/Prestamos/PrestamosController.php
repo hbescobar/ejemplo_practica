@@ -26,7 +26,7 @@ class PrestamosController
         $usuarios = $this->model->obtenerUsuariosActivos();
         $categorias = $this->model->obtenerCategorias();
         $elementos = $this->model->obtenerElementosDisponibles();
-        $destinos = $this->model->obtenerAreasDestino(); 
+        $destinos = $this->model->obtenerAreasDestino();
 
         require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\insert.php';
     }
@@ -85,117 +85,100 @@ class PrestamosController
     // ==============================
     // INSERTAR UN NUEVO PRÉSTAMO
     // ==============================
-
-
     public function postInsert()
     {
-    // Validar que se reciban los datos necesarios
-    if (!isset($_POST['fecha_prestamo']) || !isset($_POST['observaciones']) || !isset($_POST['area_destino']) || !isset($_POST['usu_id'])) {
-        echo "Datos incompletos para el préstamo.";
-        return;
-    }
-
-
-    // Validar que se reciban los elementos y cantidades
-    
-
-    
-
-    $cantidadElemento = 1; 
-    $fechaDevolucion = $_POST['fecha_prestamo'];
-    $observaciones = $_POST['observaciones'];
-    $destino = $_POST['area_destino'];
-    $estadoPrestamoID = 1; 
-    $fechaSolicitud = date('Y-m-d');
-    $usu_id = $_POST['usu_id'];
-    
-    //validar que el elemento seleccionado sea un array
-
-    if (!isset($_POST['elementos']) || !is_array($_POST['elementos'])) {
-        echo "No se han seleccionado elementos válidos.";
-        return;
-    }
-    
-    
-    // Recibe los elementos seleccionados (array de IDs)
-    $elementos = isset($_POST['elementos']) ? $_POST['elementos'] : [];
-
-
-    // Recibe las cantidades (array asociativo: [elem_id => cantidad])
-    $cantidades = isset($_POST['cantidades']) ? $_POST['cantidades'] : [];
-
-    if (empty($elementos)) {
-        echo "No se seleccionaron elementos.";
-        return;
-    }
-
-    
-
-    $idPrestamo = $this->model->autoincrement('id_prestamo', 'prestamos_inventario');
-
-    $fields = [
-        'id_prestamo',
-        'cantidad_elemento',
-        'area_id',
-        'estado_prestamo_id',
-        'fecha_solicitud',
-        'fecha_devolucion',
-        'observaciones',
-        'usu_id',
-    ];
-
-    $values = [
-        $idPrestamo,
-        $cantidadElemento,
-        $destino,
-        $estadoPrestamoID,
-        $fechaSolicitud,
-        $fechaDevolucion,
-        $observaciones,
-        $usu_id   
-      ];
-
-   
-    $result = $this->model->insertTest('prestamos_inventario', $fields, $values);
-
-    
-    
-    
-    if ($result) {
-
-        foreach ($elementos as $id) {
-            
-            $this->model->updateTest('elementos_inventario', ['elem_estado_id'], [2], 'elem_id', $id);
-            $idPrestamo_detalle = $this->model->autoincrement('id_detalle_prestamo', 'detalle_prestamo');
-
-            $fields = [
-                'id_detalle_prestamo',
-                'id_prestamo',
-                'elem_id',
-            ];
-            $values = [
-                $idPrestamo_detalle,
-                $idPrestamo, 
-                $id,        
-            ];
-
-            $this->model->insertTest('detalle_prestamo', $fields, $values);
-
+        // Validar que se reciban los datos necesarios
+        if (!isset($_POST['fecha_prestamo']) || !isset($_POST['observaciones']) || !isset($_POST['area_destino']) || !isset($_POST['usu_id'])) {
+            echo "Datos incompletos para el préstamo.";
+            return;
         }
-        $this->showSweetAlert(
-            'success',
-            'Creación exitosa',
-            'El préstamo ha sido creado correctamente.',
-            getUrl("Prestamos", "Prestamos", "getInsert")
-        );
-    } else {
-        echo "Error al registrar el préstamo.";
+
+        // Validar que se reciban los elementos y cantidades
+        $cantidadElemento = 1;
+        $fechaDevolucion = $_POST['fecha_prestamo'];
+        $observaciones = $_POST['observaciones'];
+        $destino = $_POST['area_destino'];
+        $estadoPrestamoID = 1;
+        $fechaSolicitud = date('Y-m-d');
+        $usu_id = $_POST['usu_id'];
+
+        //validar que el elemento seleccionado sea un array
+
+        if (!isset($_POST['elementos']) || !is_array($_POST['elementos'])) {
+            echo "No se han seleccionado elementos válidos.";
+            return;
+        }
+
+        // Recibe los elementos seleccionados (array de IDs)
+        $elementos = isset($_POST['elementos']) ? $_POST['elementos'] : [];
+
+
+        // Recibe las cantidades (array asociativo: [elem_id => cantidad])
+        $cantidades = isset($_POST['cantidades']) ? $_POST['cantidades'] : [];
+
+        if (empty($elementos)) {
+            echo "No se seleccionaron elementos.";
+            return;
+        }
+
+        $idPrestamo = $this->model->autoincrement('id_prestamo', 'prestamos_inventario');
+
+        $fields = [
+            'id_prestamo',
+            'cantidad_elemento',
+            'area_id',
+            'estado_prestamo_id',
+            'fecha_solicitud',
+            'fecha_devolucion',
+            'observaciones',
+            'usu_id',
+        ];
+
+        $values = [
+            $idPrestamo,
+            $cantidadElemento,
+            $destino,
+            $estadoPrestamoID,
+            $fechaSolicitud,
+            $fechaDevolucion,
+            $observaciones,
+            $usu_id
+        ];
+
+        $result = $this->model->insertTest('prestamos_inventario', $fields, $values);
+
+        if ($result) {
+
+            foreach ($elementos as $id) {
+
+                $this->model->updateTest('elementos_inventario', ['elem_estado_id'], [2], 'elem_id', $id);
+                $idPrestamo_detalle = $this->model->autoincrement('id_detalle_prestamo', 'detalle_prestamo');
+
+                $fields = [
+                    'id_detalle_prestamo',
+                    'id_prestamo',
+                    'elem_id',
+                ];
+                $values = [
+                    $idPrestamo_detalle,
+                    $idPrestamo,
+                    $id,
+                ];
+
+                $this->model->insertTest('detalle_prestamo', $fields, $values);
+            }
+            $this->showSweetAlert(
+                'success',
+                'Creación exitosa',
+                'El préstamo ha sido creado correctamente.',
+                getUrl("Prestamos", "Prestamos", "getInsert")
+            );
+        } else {
+            echo "Error al registrar el préstamo.";
+        }
     }
-}
 
-
-
-private function showSweetAlert($icon, $title, $text, $redirectUrl)
+    private function showSweetAlert($icon, $title, $text, $redirectUrl)
     {
         echo "
         <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
@@ -212,5 +195,22 @@ private function showSweetAlert($icon, $title, $text, $redirectUrl)
         ";
     }
 
-    
+    public function getCategoriasPorTipoElemento() {
+    if (isset($_POST['tipo_id'])) {
+        $tipo_id = intval($_POST['tipo_id']);
+        $categorias = $this->model->obtenerCategoriasPorTipoElemento($tipo_id);
+
+        if (!empty($categorias)) {
+            foreach ($categorias as $categoria) {
+                echo '<option value="' . $categoria['cate_id'] . '">' . htmlspecialchars($categoria['cate_nombre']) . '</option>';
+            }
+        } else {
+            echo '<option disabled>No hay categorías disponibles.</option>';
+        }
+    } else {
+        echo '<option disabled>Error: Tipo no recibido.</option>';
+    }
+    exit;
+}
+
 }

@@ -21,8 +21,10 @@ class CategoriaController
     // ====================================
     public function getInsert()
     {
+        $tipos_elemento = $this->model->consultarTiposElemento(); // NUEVO
         require_once 'C:\xampp\htdocs\inventario\Views\Categoria\insert.php';
     }
+
 
     // ====================================
     // GUARDAR UNA NUEVA CATEGORÍA
@@ -32,9 +34,10 @@ class CategoriaController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombre = $_POST['cate_nombre'] ?? '';
             $descripcion = $_POST['cate_descripcion'] ?? '';
+            $telem_id = $_POST['telem_id'] ?? null;
 
-            if ($nombre != '') {
-                $resultado = $this->model->insertarCategorias($nombre, $descripcion);
+            if ($nombre != '' && $telem_id != null) {
+                $resultado = $this->model->insertarCategorias($nombre, $descripcion, $telem_id);
                 if ($resultado) {
                     header('Location: index.php?modulo=categoria&controlador=categoria&funcion=consult');
                     exit();
@@ -42,7 +45,7 @@ class CategoriaController
                     echo "Error al insertar la categoría.";
                 }
             } else {
-                echo "El nombre es obligatorio.";
+                echo "El nombre y el tipo de elemento son obligatorios.";
             }
         }
     }
@@ -92,9 +95,10 @@ class CategoriaController
             $id = $_POST['cate_id'] ?? '';
             $nombre = $_POST['cate_nombre'] ?? '';
             $descripcion = $_POST['cate_descripcion'] ?? '';
+            $telem_id = $_POST['telem_id'] ?? null;
 
-            if ($id !== '' && $nombre !== '') {
-                $resultado = $this->model->actualizarCategoria($id, $nombre, $descripcion);
+            if ($id !== '' && $nombre !== '' && $telem_id != null) {
+                $resultado = $this->model->actualizarCategoria($id, $nombre, $descripcion, $telem_id);
 
                 if ($resultado) {
                     header('Location: index.php?modulo=categoria&controlador=categoria&funcion=consult');
@@ -103,7 +107,7 @@ class CategoriaController
                     echo "Error al actualizar la categoría.";
                 }
             } else {
-                echo "El nombre es obligatorio.";
+                echo "Todos los campos son obligatorios.";
             }
         }
     }

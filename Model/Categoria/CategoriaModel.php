@@ -12,14 +12,24 @@ class CategoriaModel extends MasterModel
         parent::__construct();
     }
 
+
+    public function consultarTiposElemento()
+    {
+        $sql = "SELECT * FROM tipo_elemento ORDER BY telem_id ASC";
+        return $this->consult($sql);
+    }
+
+
     // ====================================
     // INSERTAR NUEVA CATEGORIA
     // ====================================
-    public function insertarCategorias($nombre, $descripcion)
+    public function insertarCategorias($nombre, $descripcion, $telem_id)
     {
         $nuevoId = $this->autoincrement('cate_id', 'categoria');
+        $descripcion = mysqli_real_escape_string($this->getConnect(), $descripcion);
 
-        $sql = "INSERT INTO categoria (cate_id, cate_nombre, cate_descripcion) VALUES ('$nuevoId', '$nombre', '$descripcion')";
+        $sql = "INSERT INTO categoria (cate_id, cate_nombre, cate_descripcion, telem_id) 
+                VALUES ('$nuevoId', '$nombre', '$descripcion', '$telem_id')";
         return $this->insert($sql);
     }
 
@@ -49,11 +59,16 @@ class CategoriaModel extends MasterModel
     // ====================================
     // ACTUALIZAR UNA CATEGORIA
     // ====================================
-    public function actualizarCategoria($id, $nombre, $descripcion)
+    public function actualizarCategoria($id, $nombre, $descripcion, $telem_id)
     {
+        $id = (int)$id;
         $descripcion = mysqli_real_escape_string($this->getConnect(), $descripcion);
 
-        $sql = "UPDATE categoria SET cate_nombre = '$nombre', cate_descripcion = '$descripcion' WHERE cate_id = $id";
+        $sql = "UPDATE categoria 
+                SET cate_nombre = '$nombre', 
+                    cate_descripcion = '$descripcion', 
+                    telem_id = '$telem_id'
+                WHERE cate_id = $id";
         return $this->update($sql);
     }
 

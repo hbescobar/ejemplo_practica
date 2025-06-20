@@ -35,6 +35,21 @@
                     placeholder="Breve descripción de la categoría..."></textarea>
             </div>
 
+            <!-- Campo: Tipo de Elemento -->
+            <div class="mb-3">
+                <label for="telem_id" class="form-label">
+                    <i class="bi bi-list-ol text-primary"></i> Tipo de Elemento <span class="text-danger">*</span>
+                </label>
+                <select name="telem_id" id="telem_id" class="form-select" required>
+                    <option value="" selected disabled>Selecciona una opción</option>
+                    <?php foreach ($tipos_elemento as $tipo): ?>
+                        <option value="<?= $tipo['telem_id'] ?>">
+                            <?= htmlspecialchars($tipo['telem_nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
             <!-- Botones de acción -->
             <div class="text-center mt-4">
                 <button type="submit" class="btn btn-success me-2">

@@ -86,6 +86,15 @@
                                     <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: CD-456">
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="elem_cate_id">
+                                        <option value="" disabled selected>Selecciona una categoría</option>
+                                        <?php foreach ($categoria as $catg) { ?>
+                                            <option value="<?= $catg['cate_id'] ?>"><?= $catg['cate_nombre'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label">Nombre del Elemento <span class="text-danger">*</span></label>
                                     <input type="text" name="elem_nombre" class="form-control" placeholder="Ej: Cinta adhesiva">
                                 </div>
