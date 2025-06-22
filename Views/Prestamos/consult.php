@@ -50,13 +50,13 @@
                                     
                                     <td>
                                         <?php if ($prestamos['estado_prestamo_id'] == 1) : ?>
-                                            <a href="<?= getUrl('prestamos', 'prestamos', 'cambiarEstado', ['id' => $prestamos['estado_prestamo_id'], 'estado' => 'Activo']); ?>" class="btn btn-sm btn-success">
+                                             <span class="btn btn-sm btn-success disabled" style="pointer-events: none;">
                                                 Activo
-                                            </a>
+                                            </span>
                                         <?php else : ?>
-                                            <a href="<?= getUrl('prestamoss', 'prestamoss', 'cambiarEstado', ['id' => $prestamos['estado_prestamo_id'], 'estado' => 'Activo']); ?>" class="btn btn-sm btn-secondary">
+                                             <span class="btn btn-sm btn-secondary disabled" style="pointer-events: none;">
                                                 Cerrado
-                                            </a>
+                                            </span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
@@ -64,6 +64,9 @@
                                         <?php if ($prestamos['estado_prestamo_id'] == 1): // 1 = Activo ?>
                                             <a href="<?= getUrl('prestamos', 'prestamos', 'modificar', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
+                                            </a>
+                                            <a href="<?= getUrl('prestamos', 'prestamos', 'devolver', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-danger" title="Finalizar" onclick="return confirm('¿Está seguro de finalizar este préstamo?');">
+                                                <i class='bx bx-check-circle'></i> 
                                             </a>
                                         <?php endif; ?>
                                         <a href="<?= getUrl('prestamos', 'prestamos', 'detalle', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-info" title="Ver Detalle">

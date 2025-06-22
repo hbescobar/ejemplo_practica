@@ -432,4 +432,46 @@ public function modificar()
      
 }
 
+
+public function devolver(){
+   
+   
+   
+        $prestamoID = $_GET['id'] ?? null;
+        
+        if (!$prestamoID) {
+            echo "<script>
+                alert('Error: ID del préstamo no proporcionado.');
+                window.history.back();
+            </script>";
+            exit;
+        }
+
+        $fields = ['estado_prestamo_id'];
+        $values = [$estadoPrestamoID = 2]; 
+        $result = $this->model->updateTest('prestamos_inventario', $fields, $values, 'id_prestamo', $prestamoID);
+
+        $IdsElementos = $this ->model->getElementos($prestamoID);
+        $IdsElementosPlano = array_column($IdsElementos, 'elem_id');
+        if ($result) {
+            
+            $ids = implode(',', $IdsElementosPlano);
+            $sql = "UPDATE elementos_inventario SET elem_estado_id = 1 WHERE elem_id IN ($ids)";
+            $this->model->consult($sql);
+
+            $this->showSweetAlert(
+                'success',
+                'Finalización exitosa',
+                'El préstamo ha sido finalizado correctamente.',
+                getUrl("Prestamos", "Prestamos", "consult")
+            );
+        } else {
+            echo "Error al ejecutar la consulta.";
+        }
+    }
+
+
+
+
+
 }

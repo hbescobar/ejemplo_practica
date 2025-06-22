@@ -191,4 +191,21 @@ class PrestamosModel extends MasterModel
         return $this->consult($sql);
     }
 
+
+    public function getElementos($id)
+    {
+        $sql = "SELECT elem_id FROM detalle_prestamo WHERE  id_prestamo = " . intval($id);
+        $result = $this->consult($sql);
+    
+        if (!$result) {
+            die("Error en la consulta: " . mysqli_error($this->getConnect()));
+        }
+    
+        $elementos = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+        $elementos[] = $row;
+        }
+
+    return $elementos;
+    }
 }
