@@ -145,4 +145,50 @@ class PrestamosModel extends MasterModel
 
         return $this->consult($sql);
     }
+
+
+     public function getPrestamoById($id)
+    {
+        $sql = "SELECT * FROM prestamos_inventario WHERE id_prestamo = " . intval($id);
+        $result = $this->consult($sql);
+
+        if (!$result) {
+            die("Error en la consulta: " . mysqli_error($this->getConnect()));
+        }
+
+        return $result ? mysqli_fetch_assoc($result) : null;
+    }
+    
+    
+    public function getElementosByPrestamoID($id)
+    {
+        $sql = "SELECT dp.elem_id, e.elem_nombre, e.elem_serie,  a.area_nombre, m.marca_nombre FROM detalle_prestamo dp JOIN elementos_inventario e ON dp.elem_id = e.elem_id LEFT JOIN area a ON e.elem_area_id = a.area_id LEFT JOIN marca m ON e.elem_marca_id = m.marca_id WHERE  id_prestamo = " . intval($id);
+        $result = $this->consult($sql);
+    
+        if (!$result) {
+            die("Error en la consulta: " . mysqli_error($this->getConnect()));
+        }
+    
+        $elementos = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+        $elementos[] = $row;
+        }
+
+    return $elementos;
+    }
+
+    public function sentenciaTable ($table){
+        $sql = "SELECT *  FROM $table ";
+        return $this->consult($sql);
+
+    }
+
+
+    public function deleteDetallePrestamo($prestamoID, $elementos)
+    {
+        $ids = implode(',', $elementos);
+        $sql = "DELETE FROM detalle_prestamo WHERE id_prestamo = $prestamoID AND elem_id IN ($ids)";
+        return $this->consult($sql);
+    }
+
 }

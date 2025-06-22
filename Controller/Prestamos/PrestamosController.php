@@ -227,4 +227,209 @@ public function consult()
         require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\consult.php';
     }
 
+
+   public function detalle(){
+
+    $prestamoID = $_GET['id'] ?? null;
+
+   
+    if (!$prestamoID) {
+        echo "<script>
+            alert('Error: ID del préstamo no proporcionado.');
+            window.history.back();
+        </script>";
+        exit;
+    }
+
+    
+    $prestamo = $this->model->getPrestamoById($prestamoID);
+
+    if (!$prestamo) {
+        echo "No se encontró información del préstamo con ID: " . $prestamoID;
+        exit;
+    }
+    $usuId = $prestamo['usu_id'];
+    $area = $this->model->consult("SELECT usu_nombre, usu_apellido, usu_telefono, usu_email FROM usuario  WHERE usu_id = $usuId");
+    $nombre = $area ? mysqli_fetch_assoc($area) : ['usu_nombre' => 'Nombre desconocido'];
+    $prestamo['nombre'] = $nombre['usu_nombre'];
+    $prestamo['apellido'] = $nombre['usu_apellido'];
+    $prestamo['telefono'] = $nombre['usu_telefono'];
+    $prestamo['email'] = $nombre['usu_email'];
+    
+
+ 
+    $destino = $prestamo['area_id'];
+    $area = $this->model->consult("SELECT nombre FROM area_destino WHERE id_area_destino = $destino");
+    $area = $area ? mysqli_fetch_assoc($area) : ['area_nombre' => 'Área desconocida'];
+    $prestamo['area_nombre'] = $area['nombre'];
+    $area_destino = $this->model->sentenciaTable('area_destino');
+
+    $elementos = $this->model->getElementosByPrestamoID($prestamoID);
+
+    
+    require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\detalle.php';
+    
+}
+
+
+
+public function modificar()
+    {
+        
+        $prestamoID = $_GET['id'] ?? null;
+
+    
+        if (!$prestamoID) {
+            echo "<script>
+                alert('Error: ID del préstamo no proporcionado para la vista   de editar.');
+                window.history.back();
+            </script>";
+            exit;
+        }
+
+        
+        $prestamo = $this->model->getPrestamoById($prestamoID);
+
+        if (!$prestamo) {
+            echo "No se encontró información del préstamo con ID: " . $prestamoID;
+            exit;
+        }
+        $usuId = $prestamo['usu_id'];
+        $area = $this->model->consult("SELECT usu_nombre, usu_apellido, usu_telefono, usu_email FROM usuario  WHERE usu_id = $usuId");
+        $nombre = $area ? mysqli_fetch_assoc($area) : ['usu_nombre' => 'Nombre desconocido'];
+        $prestamo['nombre'] = $nombre['usu_nombre'];
+        $prestamo['apellido'] = $nombre['usu_apellido'];
+        $prestamo['telefono'] = $nombre['usu_telefono'];
+        $prestamo['email'] = $nombre['usu_email'];
+        
+
+    
+        $destino = $prestamo['area_id'];
+        $area = $this->model->consult("SELECT nombre FROM area_destino WHERE id_area_destino = $destino");
+        $area = $area ? mysqli_fetch_assoc($area) : ['area_nombre' => 'Área desconocida'];
+        $prestamo['area_nombre'] = $area['nombre'];
+        $area_destino = $this->model->sentenciaTable('area_destino');
+
+        $elementos = $this->model->getElementosByPrestamoID($prestamoID);
+
+        echo '<script>';
+        echo 'const elementos = ' . json_encode($elementos) . ';';
+        echo 'console.log("lista de elementos", elementosIDs);'; 
+        echo 'console.log("Elementos seleccionados new:", elementos);';
+        echo '</script>';
+        
+        
+        $categorias = $this->model->sentenciaTable('categoria');
+        $elementosNew = $this->model->consult("SELECT elem_id, elem_nombre, elem_serie, elem_telem_id, elem_cate_id  FROM elementos_inventario WHERE elem_estado_id = 1");
+        require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\update.php';
+    }
+
+
+
+     public function adicionar()
+    {
+        $elementosIDs = $_GET['elem_ids'] ?? [];
+        $idPrestamo = $_GET['id_prestamo'] ?? null;
+       
+        
+        
+        
+        if (!$idPrestamo || empty($elementosIDs)) {
+            echo "<script>
+                alert('Error: Faltan datos para adicionar elementosdedededee.');
+                window.history.back();
+            </script>";
+            exit;
+        }
+
+        echo '<script>';
+        echo 'const elementos = ' . json_encode($elementosIDs) . ';';
+        echo 'const elementosIDs = ' . json_encode($prestamoID) . ';';
+        echo 'console.log("lista de elementos", elementosIDs);'; 
+        echo 'console.log("Elementos seleccionados new:", prestamoID);';
+        echo '</script>';
+        
+        
+        foreach ($elementosIDs as $id) 
+        {
+            
+            $this->model->update('elementos_inventario', ['elem_estado_id'], [2], 'elem_id', $id);
+            $idPrestamo_detalle = $this->model->autoincrement('id_detalle_prestamo', 'detalle_prestamo');
+
+            $fields = [
+                'id_detalle_prestamo',
+                'id_prestamo',
+                'elem_id',
+            ];
+            $values = [
+                $idPrestamo_detalle,
+                $idPrestamo, 
+                $id,        
+            ];
+
+           $result =  $this->model->insertTest('detalle_prestamo', $fields, $values);
+
+        }
+
+        if ($result) {    
+            $this->showSweetAlert(
+                'info',
+                'Modificación  exitosa',
+                'El préstamo ha sido modificado correctamente.',
+                getUrl("Prestamos", "Prestamos", "consult")
+            );
+        } else {
+            echo "Error al adicionar cantidad.";
+        }
+
+    }
+
+
+    public function update()
+{
+   
+    $prestamoID = $_POST['id_prestamo'] ?? null;
+    $fechaDevolucion = $_POST['fecha_devolucion'] ?? null;
+    $observaciones = $_POST['observaciones'] ?? null;
+    $destino = $_POST['destino'] ?? null;
+    
+    
+    $eliminarElementos = $_POST['eliminar_elementos'] ?? [];
+
+   
+    if (!$prestamoID) {
+        echo "<script>
+            alert('Error: ID del préstamo no proporcionado.');
+            window.history.back();
+        </script>";
+        exit;
+    }
+    
+    
+    if (!empty($eliminarElementos)) {
+        foreach ($eliminarElementos as $elemID) {
+            $this->model->updateTest('elementos_inventario', ['elem_estado_id'], [1], 'elem_id', $elemID);
+        }
+        $this->model->deleteDetallePrestamo($prestamoID, $eliminarElementos);
+    }
+    $fields = ['fecha_devolucion', 'observaciones', 'area_id'];
+    $values = [$fechaDevolucion, $observaciones, $destino];
+
+    $result = $this->model->updateTest('prestamos_inventario', $fields, $values, 'id_prestamo', $prestamoID);
+
+    if ($result) {
+        $this->showSweetAlert(
+            'success',
+            'Actualización exitosa',
+            'El préstamo ha sido modificado correctamente.',
+            getUrl("Prestamos", "Prestamos", "consult")
+        );
+    } else {
+        echo "Error al ejecutar la consulta.";
+    }
+
+
+     
+}
+
 }

@@ -60,15 +60,17 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <a href="<?= getUrl('prestamos', 'prestamos', 'getEdit', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-warning" title="Editar">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <?php if ($prestamos['estado_prestamo_id'] == 1): // 1 = Activo ?>
+                                            <a href="<?= getUrl('prestamos', 'prestamos', 'modificar', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
                                             </a>
-                                            <a href="<?= getUrl('prestamos', 'prestamos', 'ver', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-info" title="Ver Detalle">
-                                                <i class='bx bx-show'></i>
-                                            </a>
-                                        </div>
-                                    </td>
+                                        <?php endif; ?>
+                                        <a href="<?= getUrl('prestamos', 'prestamos', 'detalle', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-info" title="Ver Detalle">
+                                            <i class='bx bx-show'></i>
+                                        </a>
+                                    </div>
+                                </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else : ?>
