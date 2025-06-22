@@ -37,6 +37,15 @@
             <li><a class="dropdown-item" href="<?= getUrl('prestamos', 'prestamos', 'consult'); ?>">Consultar</a></li>
           </ul>
         </li>
+        <li class="nav-item dropdown mx-lg-2">
+          <a class="nav-link dropdown-toggle fw-semibold d-flex align-items-center" href="#" id="reservasDropdown" role="button" data-bs-toggle="dropdown">
+            <i class='bx bx-calendar me-1 fs-5 text-success'></i> Reservas
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="reservasDropdown">
+            <li><a class="dropdown-item" href="<?= getUrl('reservas', 'reservas', 'getInsert'); ?>">Registrar</a></li>
+            <li><a class="dropdown-item" href="<?= getUrl('reservas', 'reservas', 'consult'); ?>">Consultar</a></li>
+          </ul>
+        </li>
 
         <!-- Usuarios -->
         <li class="nav-item dropdown mx-lg-2">
@@ -82,6 +91,17 @@
 
             <li><a class="dropdown-item" href="<?= getUrl('carga', 'carga', 'createUsuarios'); ?>"><i class='bx bx-upload me-2 text-danger'></i>Cargar Usuarios</a></li>
             <li><a class="dropdown-item" href="<?= getUrl('carga', 'carga', 'createElements'); ?>"><i class='bx bx-upload me-2 text-danger'></i>Cargar Elementos</a></li>
+
+            <li>
+            <a class="dropdown-item" href="<?= getUrl('carga', 'carga', 'controlErrores'); ?>">
+              <i class='bx bx-error-circle me-2 text-warning'></i>Control de Errores
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="<?= getUrl('prestamos', 'prestamos', 'movimientos'); ?>">
+              <i class='bx bx-transfer-alt me-2 text-success'></i>Movimientos
+            </a>
+          </li>
           </ul>
         </li>
       </ul>
