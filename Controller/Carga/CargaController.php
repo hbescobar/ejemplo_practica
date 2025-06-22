@@ -273,4 +273,40 @@ class CargaController
         }
         exit;
     }
+
+
+
+    public function consult()
+    {
+        $resultado = $this->model->consultarCargaMasiva();
+
+        $cargas = [];
+        if ($resultado) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $cargas[] = $fila;
+            }
+        }
+
+        require_once 'C:\xampp\htdocs\inventario\Views\Carga\consult.php';
+    }
+
+
+    public function detalle()
+    {
+        $carga_id = $_GET['id'] ?? null;
+        if (!$carga_id) {
+            echo "ID de carga no proporcionado.";
+            exit;
+        }
+
+        // Traer solo la carga correspondiente al ID
+        $sql = "SELECT * FROM carga_masiva WHERE carga_id = '$carga_id'";
+        $resultado = $this->model->consult($sql);
+        $carga = null;
+        if ($resultado && $fila = mysqli_fetch_assoc($resultado)) {
+            $carga = $fila;
+        }
+
+        require_once 'C:\xampp\htdocs\inventario\Views\Carga\detalle.php';
+    }
 }

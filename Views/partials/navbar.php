@@ -103,7 +103,7 @@
             <li><a class="dropdown-item" href="<?= getUrl('carga', 'carga', 'createElements'); ?>"><i class='bx bx-upload me-2 text-danger'></i>Cargar Elementos</a></li>
 
             <li>
-            <a class="dropdown-item" href="<?= getUrl('carga', 'carga', 'controlErrores'); ?>">
+            <a class="dropdown-item" href="<?= getUrl('carga', 'carga', 'consult'); ?>">
               <i class='bx bx-error-circle me-2 text-warning'></i>Control de Errores
             </a>
           </li>
