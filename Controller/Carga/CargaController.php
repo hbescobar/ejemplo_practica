@@ -97,6 +97,11 @@ class CargaController
                 $primera = false; 
                 continue; 
             }
+             if (empty(array_filter($data, fn($v) => trim($v) !== ''))) {
+                continue;
+            }
+
+
             $numero_docu = $data[4];
             $sqlCheck = "SELECT 1 FROM usuario WHERE usu_numero_docu = '$numero_docu'";
 
@@ -108,13 +113,19 @@ class CargaController
                 continue;
             }
 
+            if (count($data) < 10) {
+                $errores[] = "Fila incompleta para usuario: $numero_docu";
+                $errorCarga = true;
+                continue;
+            }
+
             $resultado = $this->model->insertTest('usuario', [
                 'usu_nombre', 'usu_apellido', 'usu_telefono', 'usu_clave', 'usu_numero_docu', 
                 'usu_email', 'rol_id', 'tipo_docu_id', 'estado_id', 'usu_direccion'
             ], $data);
             
             if(!$resultado){
-                $errores[] = "Error al insertar usuario con identificación: $numero_docu"." revisar llaves foráneas, y datos no completados por favor.";
+                $errores[] = "Error al insertar usuario con identificación: $numero_docu"." revisar llaves foráneas.";
                 $errorCarga = true;
             } else {
                 $exitos++;
@@ -199,10 +210,24 @@ class CargaController
                 continue;
             }
 
-            $placa = $data[1];
+
+            if (empty(array_filter($data, fn($v) => trim($v) !== ''))) {
+                    continue;
+            }
+
+            $placa = trim($data[0]);
+
+
+            if (count($data) < 12) {
+                $errores[] = "Fila incompleta para placa: $placa";
+                $errorCarga = true;
+                continue;
+            }
 
             // Validar placas duplicadas
             $sqlCheck = "SELECT 1 FROM elementos_inventario WHERE elem_placa = '$placa'";
+            
+            
             $resultCheck = $this->model->consult($sqlCheck);
 
             if ($resultCheck && mysqli_fetch_assoc($resultCheck)) {
@@ -210,6 +235,7 @@ class CargaController
                 $errorCarga = true;
                 continue;
             }
+            
 
             // Insertar elemento
             $sqlInsert = "INSERT INTO elementos_inventario (
@@ -222,7 +248,7 @@ class CargaController
             $resultado = $this->model->insert($sqlInsert);
 
             if (!$resultado) {
-                $errores[] = "Error al insertar elemento con placa: $placa. Revisar llaves foráneas y datos incompletos.";
+                $errores[] = "Error al insertar elemento con placa: $placa. Revisar llaves foráneas.";
                 $errorCarga = true;
             } else {
                 $exitos++;
