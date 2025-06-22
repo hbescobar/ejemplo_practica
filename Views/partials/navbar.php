@@ -56,6 +56,16 @@
             <li><a class="dropdown-item" href="<?= getUrl('usuarios', 'usuarios', 'getInsert'); ?>">Registrar</a></li>
             <li><a class="dropdown-item" href="<?= getUrl('usuarios', 'usuarios', 'consult'); ?>">Consultar</a></li>
           </ul>
+          <!-- Reportes -->
+          <li class="nav-item dropdown mx-lg-2">
+            <a class="nav-link dropdown-toggle fw-semibold d-flex align-items-center" href="#" id="reportesDropdown" role="button" data-bs-toggle="dropdown">
+              <i class='bx bx-bar-chart-alt me-1 fs-5 text-primary'></i> Reportes
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="reportesDropdown">
+              <li><a class="dropdown-item" href="<?= getUrl('reportes', 'reportes', 'generar'); ?>">Generar Reporte</a></li>
+              <li><a class="dropdown-item" href="<?= getUrl('reportes', 'reportes', 'consultar'); ?>">Consultar Reportes</a></li>
+            </ul>
+          </li>
         </li>
 
         <!-- Configuración -->
