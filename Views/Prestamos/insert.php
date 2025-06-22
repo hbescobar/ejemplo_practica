@@ -136,6 +136,7 @@
 <!-- Boxicons + jQuery -->
 <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     let elementosSeleccionados = {};
@@ -243,8 +244,23 @@
     $('#formPaso1').submit(function(e) {
         e.preventDefault();
 
-        if (Object.keys(elementosSeleccionados).length === 0) {
-            alert('Seleccione al menos un elemento.');
+        if (!$('#usu_id').val()) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Seleccione un usuario.',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+        }
+
+       if (Object.keys(elementosSeleccionados).length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: 'Seleccione al menos un elemento.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
