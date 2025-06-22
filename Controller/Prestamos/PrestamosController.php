@@ -213,4 +213,18 @@ class PrestamosController
     exit;
 }
 
+public function consult()
+    {
+        $resultado = $this->model->consultarPrestamos();
+
+        $prestamos = [];
+        if ($resultado) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $prestamos[] = $fila;
+            }
+        }
+
+        require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\consult.php';
+    }
+
 }

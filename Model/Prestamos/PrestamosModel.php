@@ -127,4 +127,22 @@ class PrestamosModel extends MasterModel
 
         return $categorias;
     }
+
+
+    public function consultarPrestamos()
+    {
+        $sql = "
+        SELECT 
+            p.id_prestamo,
+            p.fecha_solicitud,
+            p.estado_prestamo_id,
+            u.usu_nombre,
+            u.usu_apellido
+        FROM prestamos_inventario p
+        JOIN usuario u ON p.usu_id = u.usu_id
+        WHERE 1=1
+    ";
+
+        return $this->consult($sql);
+    }
 }
