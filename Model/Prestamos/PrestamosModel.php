@@ -208,4 +208,21 @@ class PrestamosModel extends MasterModel
 
     return $elementos;
     }
+
+
+     public function consultarMovimientos()
+    {
+        $sql = "
+        SELECT 
+            m.*, 
+            u.usu_nombre, 
+            u.usu_apellido,
+            c.cate_nombre
+        FROM movimientos_elementos m
+        JOIN usuario u ON m.usuario = u.usu_id
+        JOIN  categoria c ON m.categoria_elm = c.cate_id
+    ";
+
+        return $this->consult($sql);
+    }
 }

@@ -108,7 +108,7 @@
             </a>
           </li>
           <li>
-            <a class="dropdown-item" href="<?= getUrl('prestamos', 'prestamos', 'movimientos'); ?>">
+            <a class="dropdown-item" href="<?= getUrl('prestamos', 'prestamos', 'consultarMovimientos'); ?>">
               <i class='bx bx-transfer-alt me-2 text-success'></i>Movimientos
             </a>
           </li>

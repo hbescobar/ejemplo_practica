@@ -472,6 +472,24 @@ public function devolver(){
 
 
 
+    public function consultarMovimientos()
+    {
+        $resultado = $this->model->consultarMovimientos();
+
+        $movimientos = [];
+        if ($resultado) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                $movimientos[] = $fila;
+            }
+        }
+
+
+
+        require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\consultMovements.php';
+    }
+
+
+
 
 
 }
