@@ -113,7 +113,7 @@ class CargaController
                 continue;
             }
 
-            if (count($data) < 10) {
+            if (count($data) < 10 || count($data) > 10) {
                 $errores[] = "Fila incompleta para usuario: $numero_docu";
                 $errorCarga = true;
                 continue;
@@ -218,8 +218,8 @@ class CargaController
             $placa = trim($data[0]);
 
 
-            if (count($data) < 12) {
-                $errores[] = "Fila incompleta para placa: $placa";
+            if (count($data) < 12 || count($data) > 12) {
+                $errores[] = "Fila incompleta ó se agregarón más campos a la placa: $placa";
                 $errorCarga = true;
                 continue;
             }

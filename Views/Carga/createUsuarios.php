@@ -25,7 +25,7 @@
 
 <!-- jQuery (para el JS que usas) -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     
     
@@ -95,8 +95,15 @@
 
     var archivo = $('#archivoUsuarios')[0].files[0];
     if (!archivo) {
-        alert('Por favor selecciona un archivo .csv');
-        return;
+             Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Por favor selecciona un archivo csv.',
+            confirmButtonColor: '#3085d6'
+             
+        });
+    return;
+
     }
 
     var formData = new FormData();
@@ -110,16 +117,21 @@
         contentType: false,
         success: function(respuesta)  {
             if (respuesta.indexOf('correctamente') !== -1) {
-                alert("Carga exitosa");
+                Swal.fire({
+                icon: 'success',
+                title: '¡Carga exitosa!',
+                text: 'Los usuarios se cargaron correctamente.',
+                confirmButtonColor: '#3085d6'
+                });
                 $('#formCargaUsuarios')[0].reset();
                 $('#nombreArchivo').text('Elegir archivo');
             } else {
-                alert(
-                    "Error en la carga. Por favor revisa que:\n" +
-                    "- Todos los campos requeridos estén diligenciados\n" +
-                    "- No existan datos duplicados (como identificaciones o correos)\n" +
-                    "- Los valores de claves foráneas (como rol,tipo de documento, estado del usuario) sean correctos"
-                );
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Carga fallida!',
+                    text: 'Por favor dirigirse al control de errores de carga masiva.',
+                    confirmButtonColor: '#3085d6'
+                    });
                 $('#formCargaUsuarios')[0].reset();
                 $('#nombreArchivo').text('Elegir archivo');
             }

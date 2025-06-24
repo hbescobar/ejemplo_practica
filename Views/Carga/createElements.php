@@ -25,7 +25,7 @@
 
 <!-- jQuery (para el JS que usas) -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Validar y mostrar nombre del archivo (opcional, Bootstrap 5 muestra automáticamente el nombre)
     $('#archivoElementos').on('change', function() {
@@ -76,8 +76,13 @@
 
         var archivo = $('#archivoElementos')[0].files[0];
         if (!archivo) {
-            alert('Por favor selecciona un archivo .csv');
-            return;
+             Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Por favor selecciona un archivo csv.',
+            confirmButtonColor: '#3085d6'
+    });
+    return;
         }
 
         var formData = new FormData();
@@ -91,15 +96,20 @@
             contentType: false,
             success: function(respuesta) {
                 if (respuesta.indexOf('correctamente') !== -1) {
-                    alert("Carga exitosa");
-                    $('#formCargaElementos')[0].reset();
+                    Swal.fire({
+                    icon: 'success',
+                    title: '¡Carga exitosa!',
+                    text: 'Los elementos  se cargaron correctamente.',
+                    confirmButtonColor: '#3085d6'
+                });
+                $('#formCargaElementos')[0].reset();
                 } else {
-                    alert(
-                        "Error en la carga. Por favor revisa que:\n" +
-                        "- Todos los campos requeridos estén diligenciados\n" +
-                        "- No existan datos duplicados (PLACA, SERIE, CODIGO)\n" +
-                        "- Los valores de claves foráneas sean correctos"
-                    );
+                     Swal.fire({
+                    icon: 'warning',
+                    title: '¡Carga fallida!',
+                    text: 'Por favor dirigirse al control de errores de carga masiva.',
+                    confirmButtonColor: '#3085d6'
+                    });
                     $('#formCargaElementos')[0].reset();
                 }
             },
