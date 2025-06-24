@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <div class="container mt-5">
     <div class="card shadow border-0">
         <div class="card-body">
@@ -54,7 +55,7 @@
                                                 Activo
                                             </span>
                                         <?php elseif ($prestamos['reserva_estado_id'] == 2) : ?>
-                                            <span class="btn btn-sm btn-warning disabled" style="pointer-events: none;">
+                                            <span class="btn btn-sm btn-warni disabled" style="pointer-events: none;">
                                                 Prestamo creado
                                             </span>
                                         <?php elseif ($prestamos['reserva_estado_id'] == 3) : ?>
@@ -69,11 +70,17 @@
                                             <a href="<?= getUrl('reservas', 'reservas', 'modificar', ['id' => $prestamos['reserva_id']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
                                             </a>
-                                            <a href="<?= getUrl('reservas', 'reservas', 'devolver', ['id' => $prestamos['reserva_id']]); ?>" class="btn btn-sm btn-danger" title="Cancelar" onclick="return confirm('¿Está seguro de finalizar este préstamo?');">
-                                                <i class='bx bx-check-circle'></i> 
+                                            <a href="<?= getUrl('reservas', 'reservas', 'reservas', ['id' => $prestamos['reserva_id']]); ?>"
+                                            class="btn btn-sm btn-danger btn-finalizar"
+                                            data-url="<?= getUrl('reservas', 'reservas', 'devolver', ['id' => $prestamos['reserva_id']]); ?>"
+                                            title="Finalizar">
+                                            <i class='bx bx-check-circle'></i>
                                             </a>
-                                            <a href="<?= getUrl('reservas', 'reservas', 'crearPrestamo', ['id' => $prestamos['reserva_id']]); ?>" class="btn btn-sm btn-sucess" title="Crear prestamo" onclick="return confirm('¿Está seguro de finalizar este préstamo?');">
-                                                <i class='bx bx-check-circle'></i> 
+                                            <a href="<?= getUrl('reservas', 'reservas', 'crearPrestamo', ['id' => $prestamos['reserva_id']]); ?>"
+                                            class="btn btn-sm btn-success btn-crear-prestamo"
+                                            data-url="<?= getUrl('reservas', 'reservas', 'crearPrestamo', ['id' => $prestamos['reserva_id']]); ?>"
+                                            title="Crear préstamo">
+                                            <i class='bx bx-check-circle'></i>
                                             </a>
                                         <?php endif; ?>
                                         <a href="<?= getUrl('reservas', 'reservas', 'detalle', ['id' => $prestamos['reserva_id']]); ?>" class="btn btn-sm btn-info" title="Ver Detalle">
@@ -197,4 +204,50 @@
 
         renderTabla();
     });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-finalizar').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            Swal.fire({
+                title: '¿Está seguro de finalizar esta reserva?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, finalizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-crear-prestamo').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            Swal.fire({
+                title: '¿Está seguro de crear el préstamo?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745', // verde
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, crear',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+});
 </script>

@@ -353,7 +353,7 @@ public function modificar()
         foreach ($elementosIDs as $id) 
         {
             
-            $this->model->update('elementos_inventario', ['elem_estado_id'], [2], 'elem_id', $id);
+            $this->model->updateTest('elementos_inventario', ['elem_estado_id'], [2], 'elem_id', $id);
             $idPrestamo_detalle = $this->model->autoincrement('id_detalle_prestamo', 'detalle_prestamo');
 
             $fields = [

@@ -147,7 +147,7 @@
     <!-- JS Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
 
 
@@ -207,7 +207,12 @@
 
             // Validar si los campos están vacíos
             if (elementosSeleccionados.length === 0) {
-                alert('Por favor selecciona al menos un elemento.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Por favor selecciona al menos un elemento.',
+                    confirmButtonColor: '#3085d6'
+                });
                 return;
             }
 

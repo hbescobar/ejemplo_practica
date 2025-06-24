@@ -578,7 +578,7 @@ private function showSweetAlert($icon, $title, $text, $redirectUrl)
         $estadoPrestamoID,
         $fechaSolicitud,
         $fechaEntrega,
-        $observaciones . " Se crea prestamo a partir de reserva por favor editar el prestamo",
+        $observaciones . " Se crea préstamo a partir de  la reserva por favor editar el prestamo con los datos correctos.",
         $usu_id   
       ];
 
@@ -611,7 +611,7 @@ private function showSweetAlert($icon, $title, $text, $redirectUrl)
         $this->showSweetAlert(
             'success',
             'Creación exitosa',
-            'El préstamo ha sido creado correctamente.',
+            'El préstamo ha sido creado correctamente. Por favor editar el préstamo con los datos correctos.',
             getUrl("Prestamos", "Prestamos", "consult")
         );
     } else {

@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <div class="container mt-5">
     <div class="card shadow border-0">
         <div class="card-body">
@@ -65,8 +66,11 @@
                                             <a href="<?= getUrl('prestamos', 'prestamos', 'modificar', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
                                             </a>
-                                            <a href="<?= getUrl('prestamos', 'prestamos', 'devolver', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-danger" title="Finalizar" onclick="return confirm('¿Está seguro de finalizar este préstamo?');">
-                                                <i class='bx bx-check-circle'></i> 
+                                            <a href="<?= getUrl('prestamos', 'prestamos', 'devolver', ['id' => $prestamos['id_prestamo']]); ?>"
+                                            class="btn btn-sm btn-danger btn-finalizar"
+                                            data-url="<?= getUrl('prestamos', 'prestamos', 'devolver', ['id' => $prestamos['id_prestamo']]); ?>"
+                                            title="Finalizar">
+                                            <i class='bx bx-check-circle'></i>
                                             </a>
                                         <?php endif; ?>
                                         <a href="<?= getUrl('prestamos', 'prestamos', 'detalle', ['id' => $prestamos['id_prestamo']]); ?>" class="btn btn-sm btn-info" title="Ver Detalle">
@@ -189,5 +193,28 @@
         });
 
         renderTabla();
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-finalizar').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+                Swal.fire({
+                    title: '¿Está seguro de finalizar este préstamo?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, finalizar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
     });
 </script>
