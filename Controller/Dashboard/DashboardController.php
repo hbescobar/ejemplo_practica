@@ -15,13 +15,10 @@ class DashboardController
     }
 
     // Función principal para mostrar el dashboard
+
     public function index()
     {
-        // Obtener algunos datos de ejemplo desde el modelo
-        $totalUsuarios = $this->model->getTotalUsuarios();
-        $totalRoles = $this->model->getTotalRoles();
-
-        // Pasar los datos a la vista
-        require_once 'C:\xampp\htdocs\inventario\index.php';
+        $totalUsuarios = $this->model->contarUsuariosActivos();
+        require_once 'C:\xampp\htdocs\inventario\Views\Dashboard\index.php';
     }
 }

@@ -29,4 +29,11 @@ class DashboardModel extends MasterModel
         $row = mysqli_fetch_assoc($result);
         return $row['total'] ?? 0;
     }
+
+    public function contarUsuariosActivos()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM usuario WHERE estado_id = 1";
+        $res = $this->consult($sql);
+        return mysqli_fetch_assoc($res)['total'] ?? 0;
+    }
 }
