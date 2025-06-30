@@ -24,10 +24,10 @@ class UsuariosModel extends MasterModel
 
         $sql = "INSERT INTO usuario (
                     usu_id, usu_nombre, usu_apellido, usu_telefono, usu_numero_docu,
-                    usu_email, usu_clave, rol_id, tipo_docu_id, estado_id, usu_direccion
+                    usu_email, usu_clave, rol_id, tipo_docu_id, usu_direccion
                 ) VALUES (
                     '$nuevoId', '{$data['usu_nombre']}', '{$data['usu_apellido']}', '{$data['usu_telefono']}', '{$data['usu_numero_docu']}',
-                    '{$data['usu_email']}', '{$data['usu_clave']}', '{$data['rol_id']}', '{$data['tipo_docu_id']}', '{$data['estado_id']}', '{$data['usu_direccion']}'
+                    '{$data['usu_email']}', '{$data['usu_clave']}', '{$data['rol_id']}', '{$data['tipo_docu_id']}', '{$data['usu_direccion']}'
                 )";
 
         return $this->insert($sql);
@@ -82,7 +82,6 @@ class UsuariosModel extends MasterModel
                     usu_clave = '{$data['usu_clave']}',
                     rol_id = '{$data['rol_id']}',
                     tipo_docu_id = '{$data['tipo_docu_id']}',
-                    estado_id = '{$data['estado_id']}',
                     usu_direccion = '{$data['usu_direccion']}'
                 WHERE usu_id = '{$data['usu_id']}'";
 
@@ -143,4 +142,16 @@ class UsuariosModel extends MasterModel
         $sql = "SELECT estado_id, estado_nombre FROM estado ORDER BY estado_nombre ASC";
         return $this->consult($sql);
     }
+
+    // ====================================
+    // VALIDAR SI EXISTE UN NÚMERO DE DOCUMENTO
+    // ====================================
+    public function existeNumeroDocumento($numero)
+    {
+        $sql = "SELECT COUNT(*) as total FROM usuario WHERE usu_numero_docu = '$numero'";
+        $resultado = $this->consult($sql);
+        $fila = mysqli_fetch_assoc($resultado);
+        return $fila['total'] > 0;
+    }
+
 }

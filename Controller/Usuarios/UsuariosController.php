@@ -44,9 +44,15 @@ class UsuariosController
                 'usu_clave'       => $_POST['usu_clave'] ?? '',
                 'rol_id'          => $_POST['rol_id'] ?? '',
                 'tipo_docu_id'    => $_POST['tipo_docu_id'] ?? '',
-                'estado_id'       => $_POST['estado_id'] ?? '',
                 'usu_direccion'   => $_POST['usu_direccion'] ?? '',
             ];
+
+            //Valida si el número de documento ya existe en la base de datos.
+            if ($this->model->existeNumeroDocumento($data['usu_numero_docu'])) {
+                $mensaje = "Ya existe un usuario con este número de documento.";//este mensaje se mostrará en la vista insert.php
+                require_once 'C:\xampp\htdocs\inventario\Views\Usuarios\insert.php';
+                return;
+            }
 
             // Validación básica
             if ($data['usu_nombre'] && $data['usu_apellido'] && $data['rol_id']) {
@@ -115,7 +121,6 @@ class UsuariosController
                 'usu_clave'       => $_POST['usu_clave'] ?? '',
                 'rol_id'          => $_POST['rol_id'] ?? '',
                 'tipo_docu_id'    => $_POST['tipo_docu_id'] ?? '',
-                'estado_id'       => $_POST['estado_id'] ?? '',
                 'usu_direccion'   => $_POST['usu_direccion'] ?? '',
             ];
 
@@ -182,6 +187,35 @@ class UsuariosController
             require_once 'C:\xampp\htdocs\inventario\Views\Usuarios\ver.php';
         } else {
             echo "ID no válido.";
+        }
+    }
+
+    // ==============================
+    // VALIDAR LA CLAVE DE USAARIO PARA CAMBIAR SU ESTADO
+    // ==============================
+    public function cambiarEstadoConClave()
+    {     
+        // Obtener los datos del formulario
+        $clave = $_POST['clave'] ?? '';//
+        $usuarioId = $_POST['usuario_id'] ?? null;
+        $nuevoEstado = $_POST['nuevo_estado'] ?? null;
+
+        // almacena en $usuarioSesion todo el array del usuario que está en sesión. Si no hay sesión iniciada, $usuarioSesion será null
+        $usuarioSesion = $_SESSION['usuario'] ?? null;
+
+        // Verificar que el usuario esté autenticado y que la clave coincida
+        if ($usuarioSesion && $clave === $usuarioSesion['usu_clave']) {
+            $estado = $this->model->buscarEstadoPorNombre($nuevoEstado);
+            if ($estado) {
+                $this->model->actualizarEstadoUsuario($usuarioId, $estado['estado_id']);
+                header('Location: ' . getUrl('usuarios', 'usuarios', 'consult'));// Redirigir a la lista de usuarios
+                exit();
+            } else {
+                echo "Estado inválido.";// Mostrar un mensaje de error si el estado no es válido
+            }
+        } else {
+            echo "<script>alert('Contraseña incorrecta'); window.history.back();</script>";// Mostrar un mensaje de error si la clave no coincide
+            exit();
         }
     }
 }

@@ -20,7 +20,7 @@
                     </p>
 
                     <!-- Formulario -->
-                    <form action="<?= getUrl('usuarios', 'usuarios', 'postEdit'); ?>" method="POST">
+                    <form action="<?= getUrl('usuarios', 'usuarios', 'postEdit'); ?>" method="POST" onsubmit="return validarForm(event)">
                         <!-- ID oculto -->
                         <input type="hidden" name="usu_id" value="<?= $usuario['usu_id']; ?>">
 
@@ -38,14 +38,15 @@
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="text-danger mt-1" id="errortipo_docu_id"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="usu_numero_docu" class="form-label">
                                     <i class='bx bx-barcode'></i> Número de Documento <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" name="usu_numero_docu" id="usu_numero_docu" class="form-control"
-                                    value="<?= $usuario['usu_numero_docu']; ?>" required
-                                    placeholder="Digita el número de documento">
+                                value="<?= $usuario['usu_numero_docu']; ?>" required placeholder="Digita el número de documento" onchange="validarNumDocum(this)">
+                                <div class="text-danger mt-1" id="errorusu_numero_docu"></div>
                             </div>
                         </div>
 
@@ -56,14 +57,16 @@
                                     <i class='bx bx-user'></i> Nombre <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" name="usu_nombre" id="usu_nombre" class="form-control"
-                                    value="<?= $usuario['usu_nombre']; ?>" required placeholder="Escribe el nombre">
+                                    value="<?= $usuario['usu_nombre']; ?>" required placeholder="Escribe el nombre" onchange="validarNombre(this)">
+                                <div class="text-danger mt-1" id="errorusu_nombre"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="usu_apellido" class="form-label">
                                     <i class='bx bx-user'></i> Apellido <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" name="usu_apellido" id="usu_apellido" class="form-control"
-                                    value="<?= $usuario['usu_apellido']; ?>" required placeholder="Escribe el apellido">
+                                    value="<?= $usuario['usu_apellido']; ?>" required placeholder="Escribe el apellido" onchange="validarApellido(this)">
+                                <div class="text-danger mt-1" id="errorusu_apellido"></div>
                             </div>
                         </div>
 
@@ -74,14 +77,16 @@
                                     <i class='bx bx-envelope'></i> Correo Electrónico <span class="text-danger">*</span>
                                 </label>
                                 <input type="email" name="usu_email" id="usu_email" class="form-control"
-                                    value="<?= $usuario['usu_email']; ?>" required placeholder="Correo electrónico">
+                                    value="<?= $usuario['usu_email']; ?>" required placeholder="Correo electrónico" onchange="validarCorreo(this)">
+                                <div class="text-danger mt-1" id="errorusu_email"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="usu_telefono" class="form-label">
                                     <i class='bx bx-phone'></i> Teléfono <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" name="usu_telefono" id="usu_telefono" class="form-control"
-                                    value="<?= $usuario['usu_telefono']; ?>" required placeholder="Número de contacto">
+                                    value="<?= $usuario['usu_telefono']; ?>" required placeholder="Número de contacto" onchange="validarTelefono(this)">
+                                <div class="text-danger mt-1" id="errorusu_telefono"></div>
                             </div>
                         </div>
 
@@ -91,10 +96,11 @@
                                 <i class='bx bx-map'></i> Dirección <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="usu_direccion" id="usu_direccion" class="form-control"
-                                value="<?= $usuario['usu_direccion']; ?>" required placeholder="Dirección actual">
+                                value="<?= $usuario['usu_direccion']; ?>" required placeholder="Dirección actual" onchange="validarDireccion(this)">
+                            <div class="text-danger mt-1" id="errorusu_direccion"></div>
                         </div>
 
-                        <!-- Rol y Estado -->
+                        <!-- Rol y Contraseña -->
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="rol_id" class="form-label">
@@ -109,28 +115,15 @@
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <!-- Contraseña -->
                             <div class="col-md-6">
-                                <label for="estado_id" class="form-label">
-                                    <i class='bx bx-toggle-left'></i> Estado <span class="text-danger">*</span>
+                                <label for="usu_clave" class="form-label">
+                                    <i class='bx bx-lock-alt'></i> Contraseña <span class="text-danger">*</span>
                                 </label>
-                                <select class="form-select" name="estado_id" id="estado_id" required>
-                                    <option value="" disabled>Selecciona el estado</option>
-                                    <?php foreach ($estados as $estado): ?>
-                                        <option value="<?= $estado['estado_id']; ?>" <?= ($usuario['estado_id'] == $estado['estado_id']) ? 'selected' : ''; ?>>
-                                            <?= $estado['estado_nombre']; ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <input type="password" name="usu_clave" id="usu_clave" class="form-control"
+                                    value="<?= $usuario['usu_clave']; ?>" required placeholder="Actualizar contraseña" onchange="validarClave(this)">
+                                <div class="text-danger mt-1" id="errorusu_clave"></div>
                             </div>
-                        </div>
-
-                        <!-- Contraseña -->
-                        <div class="mb-3">
-                            <label for="usu_clave" class="form-label">
-                                <i class='bx bx-lock-alt'></i> Contraseña <span class="text-danger">*</span>
-                            </label>
-                            <input type="password" name="usu_clave" id="usu_clave" class="form-control"
-                                value="<?= $usuario['usu_clave']; ?>" required placeholder="Actualizar contraseña">
                         </div>
 
                         <!-- Botones -->
@@ -142,11 +135,10 @@
                                 <i class='bx bx-arrow-back'></i> Cancelar
                             </a>
                         </div>
-
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script src="/Inventario/Web/Js/validaciones/validaciones.js"></script>
