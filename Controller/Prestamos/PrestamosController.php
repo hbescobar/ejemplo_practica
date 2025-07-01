@@ -28,7 +28,7 @@ class PrestamosController
         $elementos = $this->model->obtenerElementosDisponibles();
         $destinos = $this->model->obtenerAreasDestino();
 
-        require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\insert.php';
+        require_once __DIR__ . '/../../Views/Prestamos/insert.php';
     }
 
     // ==============================
@@ -343,8 +343,8 @@ public function consult()
     $elementos = $this->model->getElementosByPrestamoID($prestamoID);
 
     
-    require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\detalle.php';
-    
+
+    require_once __DIR__ . '/../../Views/Prestamos/detalle.php';    
 }
 
 
@@ -561,7 +561,7 @@ public function devolver(){
 
 
 
-        require_once 'C:\xampp\htdocs\inventario\Views\Prestamos\consultMovements.php';
+        require_once __DIR__ . '/../../Views/Prestamos/consultMovements.php';    
     }
 
 
