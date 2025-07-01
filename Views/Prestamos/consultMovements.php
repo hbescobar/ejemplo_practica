@@ -15,7 +15,8 @@
                         <option value="id">Por ID</option>
                         <option value="nombre">Por usuario que genero el movimiento </option>
                         <option value="fecha">Fecha de movimiento</option>
-                        <option value="estado">descripcion </option>
+                        <option value="categoria">Categoria</option>
+                        <option value="descripcion">Descripción</option>
                     </select>
                 </div>
 
@@ -36,6 +37,7 @@
                             <th>ID</th>
                             <th>Nombre solicitante</th>
                             <th>Fecha del movimiento</th>
+                            <th>Cantidad</th>
                             <th>Tipo de movimiento</th>
                             <th>Categoria</th>
                             <th>Descripción</th>
@@ -48,6 +50,7 @@
                                     <td><?= $movimiento ['id']; ?></td>
                                     <td><?= $movimiento['usu_nombre'] . ' ' . $movimiento['usu_apellido']; ?></td>
                                     <td><?= $movimiento['fecha_movimiento']; ?></td>
+                                    <td><?= $movimiento['cantidad']; ?></td>
                                     <td><?= $movimiento['movimiento']; ?></td>
                                     <td><?= $movimiento['cate_nombre']; ?></td>
                                     <td><?= $movimiento['descripcion']; ?></td>
@@ -91,12 +94,14 @@
 
             const filtradas = filas.filter(fila => {
                 const celdas = fila.cells;
-                const [id, nombre,fecha, estado] = [
-                    celdas[0].textContent.toLowerCase(),
-                    celdas[1].textContent.toLowerCase(),
-                    celdas[2].textContent.toLowerCase(),
-                    celdas[3].textContent.toLowerCase()
-                   
+                const [id, nombre, fecha, cantidad, tipoMov, categoria, descripcion] = [
+                    (celdas[0]?.textContent || '').toLowerCase().trim(),
+                    (celdas[1]?.textContent || '').toLowerCase().trim(),
+                    (celdas[2]?.textContent || '').toLowerCase().trim(),
+                    (celdas[3]?.textContent || '').toLowerCase().trim(),
+                    (celdas[4]?.textContent || '').toLowerCase().trim(),
+                    (celdas[5]?.textContent || '').toLowerCase().trim(),
+                    (celdas[6]?.textContent || '').toLowerCase().trim()
                 ];
 
                 switch (tipo) {
@@ -106,8 +111,14 @@
                         return nombre.includes(valor);
                     case 'fecha':
                         return fecha.includes(valor);
+                    case 'cantidad':
+                        return cantidad.includes(valor);
+                    case 'tipo':
+                        return tipo.includes(valor);
+                    case 'categoria':
+                        return categoria.includes(valor);
                     case 'descripcion':
-                        return estado.includes(valor);
+                        return descripcion.includes(valor);
                     default:
                         return true;
                 }

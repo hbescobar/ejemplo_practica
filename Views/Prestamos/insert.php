@@ -140,13 +140,19 @@
 
 <script>
     let elementosSeleccionados = {};
+    let cantidadesSeleccionadas = {};
+
+    $(document).on('input', 'input[name^="cantidades["]', function() {
+    var id = $(this).closest('.form-check').find('input[type=checkbox][name="elementos[]"]').val();
+    cantidadesSeleccionadas[id] = $(this).val();
+    });
 
     function actualizarListaSeleccionados() {
         const contenedor = $('#lista-seleccionados');
         contenedor.empty();
 
         for (const id in elementosSeleccionados) {
-            const nombre = elementosSeleccionados[id];
+            const nombre = elementosSeleccionados[id].nombre;
             const badge = $(`
                 <div class="badge bg-primary d-flex align-items-center p-2 px-3 rounded-pill">
                     <span class="me-2">${nombre}</span>
@@ -157,8 +163,8 @@
         }
     }
 
-    function agregarElemento(id, nombre) {
-        elementosSeleccionados[id] = nombre;
+    function agregarElemento(id, nombre, tipo) {
+        elementosSeleccionados[id] = { nombre: nombre, tipo: tipo };
         actualizarListaSeleccionados();
     }
 
@@ -170,15 +176,15 @@
 
     // Al seleccionar/deseleccionar un checkbox de elemento
     $(document).on('change', 'input[name="elementos[]"]', function() {
-        const id = $(this).val();
-        const label = $(`label[for="${$(this).attr('id')}"]`).text().trim();
-
-        if ($(this).is(':checked')) {
-            agregarElemento(id, label);
-        } else {
-            quitarElemento(id);
-        }
-    });
+    const id = $(this).val();
+    const label = $(`label[for="${$(this).attr('id')}"]`).text().trim();
+    const tipo = $(this).data('tipo');
+    if ($(this).is(':checked')) {
+        agregarElemento(id, label, tipo);
+    } else {
+        quitarElemento(id);
+    }
+});
 
     // Al hacer clic en la X del carrito
     $(document).on('click', '.quitar-elemento', function() {
@@ -264,6 +270,25 @@
             return;
         }
 
+        // --- Validar que haya al menos un elemento devolutivo seleccionado ---
+        let hayDevolutivo = false;
+        for (const id in elementosSeleccionados) {
+            if (elementosSeleccionados[id].tipo == 1) {
+                hayDevolutivo = true;
+                break;
+            }
+        }
+
+        if (!hayDevolutivo) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: 'Debe seleccionar al menos un elemento DEVOLUTIVO.',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+
         // Insertar datos del usuario
         const usuario = $('#usu_id option:selected');
         $('#infoUsuario').html(`Nombre: <strong>${usuario.text()}</strong><br>Documento: <strong>${usuario.data('doc') || 'No registrado'}</strong><br>Correo: <strong>${usuario.data('email') || 'No registrado'}</strong>`);
@@ -271,7 +296,8 @@
         // Insertar lista de elementos seleccionados
         let html = '';
         for (const id in elementosSeleccionados) {
-            html += `<li>${elementosSeleccionados[id]}</li>`;
+            let cantidad = cantidadesSeleccionadas[id] ? ` <span class="badge bg-info text-dark ms-2">Cantidad: ${cantidadesSeleccionadas[id]}</span>` : '';
+            html += `<li>${elementosSeleccionados[id].nombre}${cantidad}</li>`;
         }
         $('#infoElementos').html(html);
 
@@ -285,19 +311,25 @@
 
     // Envío final paso 2
     $('#formPaso2').submit(function(e) {
-        $(this).find('input[name="elementos[]"]').remove();
-        $(this).find('input[name="usu_id"]').remove();
+    $(this).find('input[name="elementos[]"]').remove();
+    $(this).find('input[name="usu_id"]').remove();
 
-        for (const id in elementosSeleccionados) {
-            $('#formPaso2').append(`<input type="hidden" name="elementos[]" value="${id}">`);
-        }
+    for (const id in elementosSeleccionados) {
+        $('#formPaso2').append(`<input type="hidden" name="elementos[]" value="${id}">`);
+    }
 
-        $('#formPaso2').append(`<input type="hidden" name="usu_id" value="${$('#usu_id').val()}">`);
+    $('#formPaso2').append(`<input type="hidden" name="usu_id" value="${$('#usu_id').val()}">`);
 
-        if (!this.checkValidity()) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).addClass('was-validated');
-        }
-    });
+    for (const id in cantidadesSeleccionadas) {
+    if (elementosSeleccionados[id] && cantidadesSeleccionadas[id]) {
+        $('#formPaso2').append(`<input type="hidden" name="cantidades[${id}]" value="${cantidadesSeleccionadas[id]}">`);
+    }
+    }
+
+    if (!this.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('was-validated');
+    }
+});
 </script>

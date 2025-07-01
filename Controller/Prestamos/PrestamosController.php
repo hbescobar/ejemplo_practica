@@ -35,51 +35,51 @@ class PrestamosController
     // OBTENER ELEMENTOS POR CATEGORÍA (AJAX)
     // ==============================
     public function getElementosPorCategoria()
-    {
-        if (isset($_POST['cate_id'])) {
-            $cate_ids = $_POST['cate_id'];
-            if (!is_array($cate_ids)) {
-                $cate_ids = [$cate_ids];
-            }
-            $elementos = $this->model->obtenerElementosPorCategorias($cate_ids);
-
-            if (!empty($elementos)) {
-                foreach ($elementos as $elem) {
-                    echo '<div class="form-check mb-2">';
-                    echo '<input class="form-check-input" type="checkbox" name="elementos[]" value="' . $elem['elem_id'] . '" id="elem_' . $elem['elem_id'] . '">';
-                    echo '<label class="form-check-label" for="elem_' . $elem['elem_id'] . '">';
-                    echo htmlspecialchars($elem['elem_nombre']) . ' (Placa: ' . htmlspecialchars($elem['elem_placa']) . ', Serie: ' . htmlspecialchars($elem['elem_serie']) . ')';
-                    if (isset($elem['elem_telem_id']) && $elem['elem_telem_id'] == 2) {
-                        echo ' <span class="badge bg-info text-dark ms-2">Disponible: ' . intval($elem['elem_cantidad']) . '</span>';
-                        echo '<input type="number" class="form-control d-inline-block ms-2" style="width:100px;" ';
-                        echo 'name="cantidades[' . $elem['elem_id'] . ']" min="1" max="' . intval($elem['elem_cantidad']) . '" ';
-                        echo 'placeholder="Cantidad" disabled>';
-                    }
-                    echo '</label></div>';
+        {
+            if (isset($_POST['cate_id'])) {
+                $cate_ids = $_POST['cate_id'];
+                if (!is_array($cate_ids)) {
+                    $cate_ids = [$cate_ids];
                 }
-                // Script para habilitar/deshabilitar la caja de texto según el checkbox
-                echo '<script>
-                    $(function(){
-                        $("input[type=checkbox][name=\'elementos[]\']").change(function(){
-                            var id = $(this).val();
-                            var input = $("input[name=\'cantidades[" + id + "]\']");
-                            if($(this).is(":checked")){
-                                input.prop("disabled", false).focus();
-                            } else {
-                                input.prop("disabled", true).val("");
-                            }
-                        });
+                $elementos = $this->model->obtenerElementosPorCategorias($cate_ids);
+
+                if (!empty($elementos)) {
+                    foreach ($elementos as $elem) {
+                        echo '<div class="form-check mb-2">';
+                        // Agrega data-tipo al input
+                        echo '<input class="form-check-input" type="checkbox" name="elementos[]" value="' . $elem['elem_id'] . '" id="elem_' . $elem['elem_id'] . '" data-tipo="' . intval($elem['elem_telem_id']) . '">';
+                        echo '<label class="form-check-label" for="elem_' . $elem['elem_id'] . '">';
+                        echo htmlspecialchars($elem['elem_nombre']) . ' (Placa: ' . htmlspecialchars($elem['elem_placa']) . ', Serie: ' . htmlspecialchars($elem['elem_serie']) . ')';
+                        if (isset($elem['elem_telem_id']) && $elem['elem_telem_id'] == 2) {
+                            echo ' <span class="badge bg-info text-dark ms-2">Disponible: ' . intval($elem['elem_cantidad']) . '</span>';
+                            echo '<input type="number" class="form-control d-inline-block ms-2" style="width:100px;" ';
+                            echo 'name="cantidades[' . $elem['elem_id'] . ']" min="1" max="' . intval($elem['elem_cantidad']) . '" ';
+                            echo 'placeholder="Cantidad" disabled>';
+                        }
+                        echo '</label></div>';
+                    }
+
+                    // Script para habilitar/deshabilitar la caja de texto según el checkbox
+                    echo '<script>
+                    $(document).on("change", "input[type=checkbox][name=\'elementos[]\']", function(){
+                        var id = $(this).val();
+                        var input = $("input[name=\'cantidades[" + id + "]\']");
+                        if($(this).is(":checked")){
+                            input.prop("disabled", false).focus();
+                        } else {
+                            input.prop("disabled", true); // No borres el valor aquí
+                        }
                     });
                 </script>';
+                } else {
+                    echo '<p class="text-warning">No hay elementos disponibles en estas categorías.</p>';
+                }
             } else {
-                echo '<p class="text-warning">No hay elementos disponibles en estas categorías.</p>';
+                echo '<p class="text-danger">Categoría no recibida.</p>';
             }
-        } else {
-            echo '<p class="text-danger">Categoría no recibida.</p>';
-        }
 
-        exit;
-    }
+            exit;
+        }
 
 
     // ==============================
@@ -113,8 +113,26 @@ class PrestamosController
         $elementos = isset($_POST['elementos']) ? $_POST['elementos'] : [];
 
 
-        // Recibe las cantidades (array asociativo: [elem_id => cantidad])
-        $cantidades = isset($_POST['cantidades']) ? $_POST['cantidades'] : [];
+        
+         /*
+
+        foreach ($cantidades as $elemID => $cantidadSolicitada) {
+        
+        $sql = "SELECT elem_cantidad FROM elementos_inventario WHERE elem_id = " . intval($elemID);
+        $result = $this->model->sentencia($sql);
+        $row = mysqli_fetch_assoc($result);
+        $cantidadDisponible = $row['elem_cantidad'] ?? 0;
+
+            if ($cantidadSolicitada > $cantidadDisponible) {
+                $this->showSweetAlert(
+                'error',
+                'Cantidad excedida',
+                "La cantidad solicitada ($cantidadSolicitada) para el elemento $elemID es mayor a la disponible ($cantidadDisponible).",
+                "javascript:window.history.back();"
+            );
+            exit;
+            }
+        } */
 
         if (empty($elementos)) {
             echo "No se seleccionaron elementos.";
@@ -146,26 +164,80 @@ class PrestamosController
         ];
 
         $result = $this->model->insertTest('prestamos_inventario', $fields, $values);
-
+        $cantidades = isset($_POST['cantidades']) ? $_POST['cantidades'] : [];
+        echo "<script>console.log('Elementos:', " . json_encode($elementos) . ");</script>";
+        echo "<script>console.log('Cantidades:', " . json_encode($cantidades) . ");</script>";
+        //var_dump($_POST['cantidades']); exit;
+        
         if ($result) {
-
             foreach ($elementos as $id) {
 
-                $this->model->updateTest('elementos_inventario', ['elem_estado_id'], [2], 'elem_id', $id);
-                $idPrestamo_detalle = $this->model->autoincrement('id_detalle_prestamo', 'detalle_prestamo');
+                
+                $sqlTipo = "SELECT elem_telem_id, elem_cate_id, elem_nombre FROM elementos_inventario WHERE elem_id = " . intval($id);
+                $resultTipo = $this->model->consult($sqlTipo);
+                $rowTipo = mysqli_fetch_assoc($resultTipo);
+                $tipoElemento = $rowTipo['elem_telem_id'] ?? 1; // 1=devolutivo, 2=no devolutivo
+                $categoriaElemento = $rowTipo['elem_cate_id'] ?? null; // Obtener la categoría del elemento
+                $nombreElemento = $rowTipo['elem_nombre'] ?? 'Elemento desconocido'; // Obtener el nombre del elemento
+                $elementos = isset($_POST['elementos']) ? $_POST['elementos'] : [];
+                $cantidadSolicitada = $cantidades[$id] ?? 1;
 
-                $fields = [
-                    'id_detalle_prestamo',
-                    'id_prestamo',
-                    'elem_id',
-                ];
-                $values = [
-                    $idPrestamo_detalle,
-                    $idPrestamo,
-                    $id,
-                ];
+                if ($tipoElemento == 1) {
+                    // Lógica para elementos devolutivos
 
-                $this->model->insertTest('detalle_prestamo', $fields, $values);
+                    $this->model->updateTest('elementos_inventario', ['elem_estado_id'], [2], 'elem_id', $id);
+                    $idPrestamo_detalle = $this->model->autoincrement('id_detalle_prestamo', 'detalle_prestamo');
+
+                    $fields = [
+                        'id_detalle_prestamo',
+                        'id_prestamo',
+                        'elem_id',
+                    ];
+                    $values = [
+                        $idPrestamo_detalle,
+                        $idPrestamo,
+                        $id,
+                    ];
+
+                    $this->model->insertTest('detalle_prestamo', $fields, $values);
+                } else {
+                    // Lógica para elementos no devolutivos
+                    $sqlRestar = "UPDATE elementos_inventario SET elem_cantidad = elem_cantidad - $cantidadSolicitada WHERE elem_id = $id";
+                    $this->model->update($sqlRestar);
+                    
+                    $idMovimiento = $this->model->autoincrement('id', 'movimientos_elementos');
+                    $fechaMovimiento = date('Y-m-d H:i:s');
+                    $salida = "Salida";
+                    $descripcion_movimiento = "Salida de elemento no devolutivo" . " (ID: $id, Nombre: $nombreElemento, Cantidad: $cantidadSolicitada)";
+                    
+                    
+                    $fields = [
+                        'id',
+                        'fecha_movimiento',
+                        'usuario',
+                        'cantidad',
+                        'categoria_elm',
+                        'movimiento',
+                        'descripcion',
+                    ];
+
+                    $values = [
+                        $idMovimiento,
+                        $fechaMovimiento,
+                        $usu_id,
+                        $cantidadSolicitada,
+                        $categoriaElemento,
+                        $salida,
+                        $descripcion_movimiento
+                    ];
+                    $result = $this->model->insertTest('movimientos_elementos', $fields, $values);
+                    
+                    
+                    if (!$result) {
+                        error_log("Error al insertar movimiento: " . print_r($values, true));
+                    }
+                }
+
             }
             $this->showSweetAlert(
                 'success',
@@ -177,6 +249,10 @@ class PrestamosController
             echo "Error al registrar el préstamo.";
         }
     }
+
+
+
+
 
     private function showSweetAlert($icon, $title, $text, $redirectUrl)
     {
