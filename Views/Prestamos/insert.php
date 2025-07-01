@@ -1,130 +1,143 @@
 <?php // Suponiendo que $usuarios y $destinos llegan desde el controlador 
 ?>
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 p-4 rounded-4 shadow-lg border-15 border-primary bg-white" style="background: linear-gradient(135deg,rgb(253, 253, 253) 70%,rgb(143, 167, 235) 100%);">      
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <h4 class="fw-bold text-primary text-center mb-4">
                         <i class="bx bx-transfer-alt"></i> Registrar Préstamo
-                    </h4>
+                        </h4>
 
-                    <p class="text-muted small text-center mb-4">
-                        <span class="text-danger">*</span> Campos obligatorios.
-                    </p>
+                        <p class="text-muted small text-center mb-4">
+                            <span class="text-danger">*</span> Campos obligatorios.
+                        </p>
 
-                    <div id="prestamoCarousel" class="carousel slide" data-bs-interval="false" data-bs-wrap="false">
-                        <div class="carousel-inner">
+                        <div id="prestamoCarousel" class="carousel slide" data-bs-interval="false" data-bs-wrap="false">
+                            <div class="carousel-inner">
 
-                            <!-- Paso 1 -->
-                            <div class="carousel-item active">
-                                <form id="formPaso1" class="needs-validation" novalidate>
-                                    <div class="row g-3">
-
-                                        <!-- Usuario -->
-                                        <div class="col-md-6">
-                                            <label for="usu_id" class="form-label"><i class="bx bx-user"></i> Usuario <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="usu_id" name="usu_id" required>
-                                                <option value="" selected disabled>Seleccione un usuario</option>
-                                                <?php foreach ($usuarios as $usuario): ?>
-                                                    <option value="<?= $usuario['usu_id'] ?>"
-                                                        data-doc="<?= $usuario['usu_numero_docu'] ?? '' ?>"
-                                                        data-email="<?= $usuario['usu_email'] ?? '' ?>">
-                                                        <?= htmlspecialchars($usuario['usu_nombre'] . ' ' . $usuario['usu_apellido']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <div class="invalid-feedback">Seleccione un usuario.</div>
+                                <!-- Paso 1 -->
+                                <div class="carousel-item active">
+                                    <form id="formPaso1" class="needs-validation" novalidate>
+                                        <div class="row">
+                                            <!-- Panel izquierdo: Formulario -->
+                                            <div class="col-lg-8">
+                                                <div class="row g-3">
+                                                    <!-- Usuario -->
+                                                    <div class="col-md-6">
+                                                        <label for="usu_id" class="form-label"><i class="bx bx-user"></i> Usuario <span class="text-danger">*</span></label>
+                                                        <select class="form-select" id="usu_id" name="usu_id" required>
+                                                            <option value="" selected disabled>Seleccione un usuario</option>
+                                                            <?php foreach ($usuarios as $usuario): ?>
+                                                                <option value="<?= $usuario['usu_id'] ?>"
+                                                                    data-doc="<?= $usuario['usu_numero_docu'] ?? '' ?>"
+                                                                    data-email="<?= $usuario['usu_email'] ?? '' ?>">
+                                                                    <?= htmlspecialchars($usuario['usu_nombre'] . ' ' . $usuario['usu_apellido']) ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                        <div class="invalid-feedback">Seleccione un usuario.</div>
+                                                    </div>
+                                                    <!-- Tipo de Elemento -->
+                                                    <div class="col-md-6">
+                                                        <label for="tipo_elemento" class="form-label"><i class="bx bx-cube"></i> Tipo de Elemento <span class="text-danger">*</span></label>
+                                                        <select class="form-select" id="tipo_elemento" required>
+                                                            <option value="" selected disabled>Seleccione tipo</option>
+                                                            <option value="1">Devolutivo</option>
+                                                            <option value="2">No Devolutivo</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">Seleccione un tipo de elemento.</div>
+                                                    </div>
+                                                    <!-- Categorías -->
+                                                    <div class="col-12">
+                                                        <label for="cate_id" class="form-label"><i class="bx bx-category-alt"></i> Categoría <span class="text-danger">*</span></label>
+                                                        <select class="form-select" id="cate_id" name="cate_id[]" multiple required disabled>
+                                                            <option value="" disabled>Seleccione primero el tipo de elemento</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">Seleccione al menos una categoría.</div>
+                                                    </div>
+                                                    <!-- Elementos disponibles -->
+                                                    <div class="col-12">
+                                                        <label class="form-label text-primary fw-semibold"><i class="bx bx-box"></i> Elementos disponibles</label>
+                                                        <div id="elementos-container" class="border rounded bg-light-subtle p-3">
+                                                            <p class="text-muted small mb-0">Seleccione una categoría para mostrar elementos.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Botón continuar -->
+                                                <div class="text-center mt-4">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bx bx-right-arrow-alt"></i> Continuar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <!-- Panel derecho: Carrito -->
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="card border-success shadow-sm h-100">
+                                                    <div class="card-body">
+                                                        <label class="form-label text-success fw-semibold">
+                                                            <i class="bx bx-cart"></i> Lista de elementos seleccionados
+                                                        </label>
+                                                        <div id="lista-seleccionados" class="d-flex flex-column gap-2"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                    </form>
+                                </div>
 
-                                        <!-- Tipo de Elemento -->
-                                        <div class="col-md-6">
-                                            <label for="tipo_elemento" class="form-label"><i class="bx bx-cube"></i> Tipo de Elemento <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="tipo_elemento" required>
-                                                <option value="" selected disabled>Seleccione tipo</option>
-                                                <option value="1">Devolutivo</option>
-                                                <option value="2">No Devolutivo</option>
-                                            </select>
-                                            <div class="invalid-feedback">Seleccione un tipo de elemento.</div>
-                                        </div>
-
-                                        <!-- Categorías -->
-                                        <div class="col-12">
-                                            <label for="cate_id" class="form-label"><i class="bx bx-category-alt"></i> Categoría <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="cate_id" name="cate_id[]" multiple required disabled>
-                                                <option value="" disabled>Seleccione primero el tipo de elemento</option>
-                                            </select>
-                                            <div class="invalid-feedback">Seleccione al menos una categoría.</div>
-                                        </div>
-
-                                        <!-- Elementos disponibles -->
-                                        <div class="col-12">
-                                            <label class="form-label text-primary fw-semibold"><i class="bx bx-box"></i> Elementos disponibles</label>
-                                            <div id="elementos-container" class="border rounded bg-light-subtle p-3">
-                                                <p class="text-muted small mb-0">Seleccione una categoría para mostrar elementos.</p>
+                                <!-- Paso 2 -->
+                                <div class="carousel-item">
+                                    <form id="formPaso2" action="<?= getUrl('prestamos', 'prestamos', 'postInsert'); ?>" method="POST" class="needs-validation" novalidate>
+                                        <div class="card border-primary shadow-sm mb-4">
+                                            <div class="card-body">
+                                                <h5 class="mb-3 text-primary"><i class="bx bx-user"></i> Datos del Usuario</h5>
+                                                <p id="infoUsuario" class="small text-muted mb-3"></p>
                                             </div>
                                         </div>
 
-                                        <!-- Carrito de selección visual -->
-                                        <div class="col-12 mt-3">
-                                            <label class="form-label text-success fw-semibold"><i class="bx bx-cart"></i> Lista de elementos seleccionados</label>
-                                            <div id="lista-seleccionados" class="d-flex flex-wrap gap-2"></div>
+                                        <div class="card border-info shadow-sm mb-4">
+                                        <div class="card-body">
+                                                <h5 class="mb-3 text-info"><i class="bx bx-box"></i> Elementos Seleccionados</h5>
+                                                <div id="infoElementos" class="small"></div>
+                                            </div>
                                         </div>
 
-                                    </div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label for="fecha_prestamo" class="form-label"><i class="bx bx-calendar"></i> Fecha de Entrega <span class="text-danger">*</span></label>
+                                                <input type="date" class="form-control" id="fecha_prestamo" name="fecha_prestamo" required>
+                                                <div class="invalid-feedback">Seleccione la fecha.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="area_destino" class="form-label"><i class="bx bx-map"></i> Destino <span class="text-danger">*</span></label>
+                                                <select class="form-select" id="area_destino" name="area_destino" required>
+                                                    <option value="" selected disabled>Seleccione un destino</option>
+                                                    <?php foreach ($destinos as $destino): ?>
+                                                        <option value="<?= $destino['id_area_destino'] ?>"><?= htmlspecialchars($destino['nombre']) ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <div class="invalid-feedback">Seleccione un destino.</div>
+                                            </div>
+                                        </div>
 
-                                    <!-- Botón continuar -->
-                                    <div class="text-center mt-4">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bx bx-right-arrow-alt"></i> Continuar
-                                        </button>
-                                    </div>
-                                </form>
+                                        <div class="mb-3">
+                                            <label for="observaciones" class="form-label"><i class="bx bx-comment"></i> Observaciones</label>
+                                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="(Opcional) Comentarios adicionales..."></textarea>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between">
+                                            <button type="button" id="btnVolver" class="btn btn-secondary">
+                                                <i class="bx bx-arrow-back"></i> Volver
+                                            </button>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bx bx-check"></i> Finalizar préstamo
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
                             </div>
-
-                            <!-- Paso 2 -->
-                            <div class="carousel-item">
-                                <form id="formPaso2" action="<?= getUrl('prestamos', 'prestamos', 'postInsert'); ?>" method="POST" class="needs-validation" novalidate>
-                                    <h5 class="mb-3"><i class="bx bx-user"></i> Datos del Usuario</h5>
-                                    <p id="infoUsuario" class="small text-muted mb-3"></p>
-
-                                    <h5 class="mb-3"><i class="bx bx-box"></i> Elementos Seleccionados</h5>
-                                    <ul id="infoElementos" class="small text-muted mb-3"></ul>
-
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-6">
-                                            <label for="fecha_prestamo" class="form-label"><i class="bx bx-calendar"></i> Fecha de Entrega <span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" id="fecha_prestamo" name="fecha_prestamo" required>
-                                            <div class="invalid-feedback">Seleccione la fecha.</div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="area_destino" class="form-label"><i class="bx bx-map"></i> Destino <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="area_destino" name="area_destino" required>
-                                                <option value="" selected disabled>Seleccione un destino</option>
-                                                <?php foreach ($destinos as $destino): ?>
-                                                    <option value="<?= $destino['id_area_destino'] ?>"><?= htmlspecialchars($destino['nombre']) ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <div class="invalid-feedback">Seleccione un destino.</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="observaciones" class="form-label"><i class="bx bx-comment"></i> Observaciones</label>
-                                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="(Opcional) Comentarios adicionales..."></textarea>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between">
-                                        <button type="button" id="btnVolver" class="btn btn-secondary">
-                                            <i class="bx bx-arrow-back"></i> Volver
-                                        </button>
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="bx bx-check"></i> Finalizar préstamo
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-
                         </div>
                     </div>
                 </div>
