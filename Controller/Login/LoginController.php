@@ -9,9 +9,6 @@ class LoginController
 {
     private $model;
 
-    // ====================================
-    // CONSTRUCTOR
-    // ====================================
     public function __construct()
     {
         $this->model = new LoginModel();
@@ -22,18 +19,15 @@ class LoginController
     // ====================================
     public function getLogin()
     {
-        // Obtener el resultado crudo de roles
+        $roles = [];
         $resultado = $this->model->obtenerRoles();
 
-        // Convertir el resultado mysqli_result a un array asociativo
-        $roles = [];
         if ($resultado) {
             while ($fila = mysqli_fetch_assoc($resultado)) {
                 $roles[] = $fila;
             }
         }
 
-        // Pasar el array de roles a la vista
         require_once 'C:\xampp\htdocs\inventario\Views\Login\login.php';
     }
 
@@ -47,37 +41,84 @@ class LoginController
             $clave = $_POST['usu_clave'] ?? '';
             $rol_id = $_POST['rol_id'] ?? '';
 
-            if ($num_docum !== '' && $clave !== '' && $rol_id !== '') {
-                $usuario = $this->model->validarLogin($num_docum, $clave, $rol_id);
+            $usuario = $this->model->validarLogin($num_docum, $clave, $rol_id);
 
-                if ($usuario) {
-                    session_start();
-                    $_SESSION['usuario'] = $usuario;
-
-                    // Redirigir al dashboard donde se incluye el navbar
-                    header('Location: index.php?modulo=dashboard&controlador=dashboard&funcion=index');
-                    exit();
-                } else {
-                    // Redirigir con error para mostrar alerta
-                    header('Location: index.php?modulo=login&controlador=login&funcion=getLogin&error=1');
-                    exit();
+            if ($usuario) {
+                // Validar si está activo
+                if ($usuario['estado_id'] != 1) {
+                    $this->showSweetAlert(
+                        'warning',
+                        'Usuario inhabilitado',
+                        'Tu cuenta está desactivada. Contacta al administrador.',
+                        'index.php?modulo=login&controlador=login&funcion=getLogin'
+                    );
+                    return;
                 }
+
+                // Si está activo, continuar
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+
+                $_SESSION['usuario'] = $usuario;
+
+                $this->showSweetAlert(
+                    'success',
+                    '¡Bienvenido!',
+                    'Ingreso exitoso al sistema.',
+                    'index.php?modulo=dashboard&controlador=dashboard&funcion=index'
+                );
             } else {
-                // Redirigir con error para mostrar alerta
-                header('Location: index.php?modulo=login&controlador=login&funcion=getLogin&error=1');
-                exit();
+                $this->showSweetAlert(
+                    'error',
+                    'Credenciales incorrectas',
+                    'Número de documento, clave o rol incorrecto.',
+                    'index.php?modulo=login&controlador=login&funcion=getLogin'
+                );
             }
         }
     }
+
 
     // ====================================
     // CERRAR SESIÓN
     // ====================================
     public function logout()
     {
-        session_start();
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
         session_destroy();
         header('Location: /Inventario/');
         exit();
     }
-}   
+
+    // ====================================
+    // SWEETALERT REUTILIZABLE
+    // ====================================
+    private function showSweetAlert($icon, $title, $text, $redirectUrl)
+    {
+        // Si el icono es "success", uso un color azul personalizado
+        $iconColor = ($icon === 'success') ? '#0d6efd' : ''; 
+
+        echo "
+    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    <script>
+        Swal.fire({
+            icon: '$icon',
+            title: '$title',
+            text: '$text',
+            iconColor: '$iconColor',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            didClose: () => {
+                window.location.href = '$redirectUrl';
+            }
+        });
+    </script>
+    ";
+        exit();
+    }
+}

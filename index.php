@@ -12,12 +12,14 @@ function esAjax() {
 
 $isAjax = esAjax();
 
+// Incluir head si no es petición AJAX
 if (!$isAjax) {
     include_once __DIR__ . '/Views/partials/head.php';
 }
 
 echo "<div class='contenedor'>";
 
+// Si no hay sesión, ir al login
 if (!isset($_SESSION['usuario'])) {
     $_GET['modulo'] = $_GET['modulo'] ?? 'login';
     $_GET['controlador'] = $_GET['controlador'] ?? 'login';
@@ -25,8 +27,8 @@ if (!isset($_SESSION['usuario'])) {
 
     resolve();
 } else {
+    // Si hay sesión y no es AJAX, incluir navbar
     if (!$isAjax) {
-        // Sólo mostrar navbar si no es AJAX
         include_once __DIR__ . '/Views/partials/navbar.php';
     }
 
@@ -39,7 +41,8 @@ if (!isset($_SESSION['usuario'])) {
 
 echo "</div>";
 
-if (!$isAjax) {
+// Incluir footer solo si no es AJAX y hay sesión activa
+if (!$isAjax && isset($_SESSION['usuario'])) {
     include_once __DIR__ . '/Views/partials/footer.php';
 }
 

@@ -33,23 +33,18 @@ class LoginModel extends MasterModel
     // ====================================
     public function validarLogin($num_docum, $clave, $rol_id)
     {
-        
         $sql = "SELECT * FROM usuario
-        WHERE usu_numero_docu = '$num_docum' 
-        AND usu_clave = '$clave' 
-        AND rol_id = $rol_id
-        AND estado_id = 1
-        LIMIT 1";
-
+            WHERE usu_numero_docu = '$num_docum' 
+            AND usu_clave = '$clave' 
+            AND rol_id = $rol_id
+            LIMIT 1";
 
         $resultado = $this->consult($sql);
 
-        // Validar si hay resultados
         if ($resultado && mysqli_num_rows($resultado) > 0) {
-            return mysqli_fetch_assoc($resultado);
+            return mysqli_fetch_assoc($resultado); // Devuelve usuario aunque esté inactivo
         }
 
-        return false; // Login fallido
+        return false;
     }
-    
 }

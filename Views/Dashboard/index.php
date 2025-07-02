@@ -44,4 +44,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Botón flotante de ayuda -->
+    <button id="boton-ayuda" class="btn btn-primary rounded-circle shadow-lg">
+        <i class='bx bx-bot fs-3'></i>
+    </button>
+
 </div>
+
+<style>
+    #boton-ayuda {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 60px;
+        height: 60px;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.2s ease;
+    }
+
+    #boton-ayuda:hover {
+        transform: scale(1.1);
+    }
+</style>
