@@ -11,7 +11,7 @@
                         <span class="text-danger">*</span> Los campos con asterisco son obligatorios.
                     </p>
 
-                    <form action="<?= getUrl("elementos", "elementos", "postInsert") ?>" method="POST">
+                    <form action="<?= getUrl("elementos", "elementos", "postInsert") ?>" method="POST" onsubmit="return validarElementos(event)">
                         <!-- Tipo de Elemento -->
                         <div class="mb-3">
                             <label for="tipoElementos" class="form-label">
@@ -30,19 +30,23 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Placa del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_placa" class="form-control" placeholder="Ej: PLQ-00123">
+                                    <input type="text" name="elem_placa" class="form-control" placeholder="Ej: PLQ-00123" onchange="validarPlaca(this)">
+                                    <div class="text-danger mt-1" id="errorelem_placa"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Serie del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_serie" class="form-control" placeholder="Ej: S12345-XYZ">
+                                    <input type="text" name="elem_serie" class="form-control" placeholder="Ej: S12345-XYZ" onchange="validarSerieElemento(this)">
+                                    <div class="text-danger mt-1" id="errorelem_serie"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Código del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: COD-78910">
+                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: COD-78910" onchange="validarCodElem(this)">
+                                    <div class="text-danger mt-1" id="errorelem_codigo"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nombre del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_nombre" class="form-control" placeholder="Ej: Computador portátil">
+                                    <input type="text" name="elem_nombre" class="form-control" placeholder="Ej: Computador portátil" onchange="validarNombreElem(this)">
+                                    <div class="text-danger mt-1" id="errorelem_nombre"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Área <span class="text-danger">*</span></label>
@@ -64,7 +68,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Modelo <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_modelo" class="form-control" placeholder="Ej: ThinkPad L14 Gen3">
+                                    <input type="text" name="elem_modelo" class="form-control" placeholder="Ej: ThinkPad L14 Gen3" onchange="validarModeloElem(this)">
+                                    <div class="text-danger mt-1" id="errorelem_modelo"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Marca <span class="text-danger">*</span></label>
@@ -83,7 +88,8 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Código del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: CD-456">
+                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: CD-456" onchange="validarCodElemNoDevo(this)">
+                                    <div class="text-danger mt-1" id="errorelem_codigoNoDevo"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Categoría <span class="text-danger">*</span></label>
@@ -96,11 +102,13 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Nombre del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_nombre" class="form-control" placeholder="Ej: Cinta adhesiva">
+                                    <input type="text" name="elem_nombre" class="form-control" placeholder="Ej: Cinta adhesiva" onchange="validarNombreElemNoDevo(this)">
+                                    <div class="text-danger mt-1" id="errorelem_nombre_NoDevo"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Cantidad <span class="text-danger">*</span></label>
-                                    <input type="number" name="elem_cantidad" class="form-control" placeholder="Ej: 50" min="1">
+                                    <input type="number" name="elem_cantidad" class="form-control" placeholder="Ej: 50" min="1" onchange="validarCant(this)">
+                                    <div class="text-danger mt-1" id="errorelem_cantidad"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Unidad de Medida <span class="text-danger">*</span></label>
@@ -130,6 +138,7 @@
         </div>
     </div>
 </div>
+<script src="/Inventario/Web/Js/validaciones/validaciones_elementos.js"></script>
 
 <!-- Script para mostrar grupos según tipo -->
 <script>

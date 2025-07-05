@@ -204,4 +204,48 @@ class ElementosController
         header("Location: index.php?modulo=elementos&controlador=elementos&funcion=consult");
         exit();
     }
+
+    /* ───────────── Registrar Entrada ───────────── */
+    public function registrarEntrada()
+    {
+        // 1. Solo aceptar POST
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . getUrl('elementos','elementos','consult'));
+            exit;
+        }
+
+        // 2. Datos del formulario
+        $elemento_id = intval($_POST['elem_id'] ?? 0);
+        $cantidad    = intval($_POST['cantidad'] ?? 0);
+        $comentario  = trim($_POST['comentario'] ?? '');
+        //array del usuario logueado
+        $usuario_id  = $_SESSION['usuario']['usu_id'] ?? 0;
+        $fecha = $_POST['fecha'] ?? date('Y-m-d');
+
+        // 3. Validación básica
+        if ($elemento_id <= 0 || $cantidad <= 0 || $usuario_id <= 0) {
+            header('Location: ' . getUrl('elementos','elementos','consult'));
+            exit;
+        }
+
+        // 4. Actualizar inventario
+        $this->model->sumarCantidad($elemento_id, $cantidad);
+
+        // 4‑bis. Obtener nombre del elemento para la descripción
+        $elemento = $this->model->getElementoById($elemento_id);
+        $nombre_elemento = $elemento['elem_nombre'] ?? 'Desconocido';
+
+        // 4‑ter. Construir descripción
+        $texto = $comentario !== ''
+            ? $comentario
+            : "Entrada manual de elemento (ID: $elemento_id, Nombre: $nombre_elemento, Cantidad: $cantidad)";
+
+        $this->model->registrarMovimientoEntrada(
+            $usuario_id, $elemento_id, $cantidad, $texto, $fecha
+        );
+
+        // 5. Volver al listado
+        header('Location: ' . getUrl('elementos','elementos','consult'));
+        exit;
+    }
 }

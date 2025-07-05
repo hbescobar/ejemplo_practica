@@ -92,9 +92,15 @@
                                                     </a>
                                                 <?php endif; ?>
                                             <?php else : ?>
-                                                <a href="<?= getUrl('elementos', 'elementos', 'getAgregarCantidad', ['id' => $el['elem_id']]) ?>" class="btn btn-sm btn-success" title="Agregar Cantidad">
+                                                <!-- Botón para agregar cantidad -->
+                                                <button class="btn btn-sm btn-success btn-add"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modalEntrada"
+                                                        data-id="<?= $el['elem_id'] ?>"
+                                                        data-nombre="<?= htmlspecialchars($el['elem_nombre']) ?>"
+                                                        title="Agregar Cantidad">
                                                     <i class='bx bx-plus'></i>
-                                                </a>
+                                                </button>
                                             <?php endif; ?>
                                         </div>
                                     </td>
@@ -107,6 +113,42 @@
                         <?php endif; ?>
                     </tbody>
                 </table>
+
+                <!-- Modal de Entrada de Cantidad -->
+                <div class="modal fade" id="modalEntrada" tabindex="-1" aria-labelledby="modalEntradaLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form method="POST" action="<?= getUrl('elementos', 'elementos', 'registrarEntrada') ?>"><!-- Formulario para registrar entrada -->
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalEntradaLabel">Registrar Entrada</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                            <input type="hidden" name="elem_id" id="inputElemId">
+
+                            <div class="mb-3">
+                                <label for="inputNombreElemento" class="form-label">Elemento</label>
+                                <input type="text" class="form-control" id="inputNombreElemento" disabled>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputCantidad" class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" name="cantidad" id="inputCantidad" min="1" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputFecha" class="form-label">Fecha de entrada</label>
+                                <input type="date" class="form-control" name="fecha" id="inputFecha" required>
+                            </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Registrar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <!-- Paginación -->
@@ -118,6 +160,24 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para registrar entrada de cantidad -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('modalEntrada');
+        modal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const nombre = button.getAttribute('data-nombre');
+
+        document.getElementById('inputElemId').value = id;
+        document.getElementById('inputNombreElemento').value = nombre;
+
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('inputFecha').value = hoy;
+        });
+    });
+</script>
 
 <!-- JS búsqueda + paginación -->
 <script>

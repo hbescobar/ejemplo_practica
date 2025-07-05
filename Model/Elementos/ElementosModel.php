@@ -195,4 +195,53 @@ class ElementosModel extends MasterModel
         $res = $this->consult($sql);
         return mysqli_fetch_assoc($res);
     }
+
+    /* ────────────────────────────────────────────────────────────
+    OBTENER ELEMENTO POR ID (sólo id y nombre)
+    ────────────────────────────────────────────────────────────*/
+    public function getElementoById($id)
+    {
+        $id = intval($id);
+        $sql = "SELECT elem_id, elem_nombre
+                FROM elementos_inventario
+                WHERE elem_id = $id
+                LIMIT 1";
+        $res = $this->consult($sql);
+        return $res ? mysqli_fetch_assoc($res) : null;
+    }
+
+    /* ────────────────────────────────────────────────────────────
+    SUMAR CANTIDAD A UN ELEMENTO
+    ────────────────────────────────────────────────────────────*/
+    public function sumarCantidad($elemento_id, $cantidad)
+    {
+        $sql = "UPDATE elementos_inventario
+                SET elem_cantidad = elem_cantidad + $cantidad
+                WHERE elem_id = $elemento_id";
+        return $this->update($sql);
+    }
+    
+
+    /* ────────────────────────────────────────────────────────────
+    REGISTRAR MOVIMIENTO DE ENTRADA
+    ────────────────────────────────────────────────────────────*/
+    public function registrarMovimientoEntrada($usuario_id, $elemento_id, $cantidad, $comentario, $fecha)
+    {
+        // Sacamos la categoría del elemento (para la FK)
+        $catRow = $this->consult(
+            "SELECT elem_cate_id
+            FROM elementos_inventario
+            WHERE elem_id = $elemento_id"
+        );
+        $categoria = $catRow ? mysqli_fetch_assoc($catRow)['elem_cate_id'] : 'NULL';
+
+        $id = $this->autoincrement('id', 'movimientos_elementos');
+        $descripcion = mb_substr($comentario, 0, 100); // evita overflow
+
+        $sql = "INSERT INTO movimientos_elementos
+                (id, fecha_movimiento, usuario, cantidad, categoria_elm, movimiento, descripcion)
+                VALUES ($id, '$fecha', $usuario_id, $cantidad, $categoria, 'Entrada', '$descripcion')";
+
+        return $this->insert($sql);
+    }
 }

@@ -63,11 +63,19 @@
         <!-- Reportes -->
         <li class="nav-item dropdown mx-lg-2">
           <a class="nav-link dropdown-toggle fw-semibold d-flex align-items-center" href="#" id="reportesDropdown" role="button" data-bs-toggle="dropdown">
-            <i class='bx bx-bar-chart-alt me-1 fs-5 text-white'></i> Reportes
+            <i class='bx bx-bar-chart-alt-2 me-1 fs-5 text-white'></i> Reportes
           </a>
           <ul class="dropdown-menu" aria-labelledby="reportesDropdown">
-            <li><a class="dropdown-item" href="<?= getUrl('reportes', 'reportes', 'generar'); ?>">Generar Reporte</a></li>
-            <li><a class="dropdown-item" href="<?= getUrl('reportes', 'reportes', 'consultar'); ?>">Consultar Reportes</a></li>
+            <li>
+              <a class="dropdown-item" href="<?= getUrl('reportes', 'reportes', 'verElementos'); ?>">
+                <i class='bx bx-error-alt me-2 text-danger'></i> Monitoreo de Elementos
+              </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="<?= getUrl('reportes', 'reportes', 'verElementosMasPrestados'); ?>">
+                    <i class='bx bx-transfer-alt text-info me-2'></i> Elementos más prestados
+                </a>
+            </li>
           </ul>
         </li>
 
