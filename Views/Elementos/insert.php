@@ -80,6 +80,19 @@
                                         <?php } ?>
                                     </select>
                                 </div>
+                                <!-- Recomendaciones -->
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Recomendaciones <small class="text-muted">(opcional)</small>
+                                    </label>
+                                    <textarea name="recomendaciones"
+                                            class="form-control"
+                                            rows="2"
+                                            placeholder="Ej.: Recordar llevar memoria SD para usar la cámara"
+                                            oninput="validarRecomendaciones(this)"
+                                            maxlength="250"></textarea>
+                                    <div class="text-danger mt-1" id="errorRecomDev"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -119,8 +132,23 @@
                                         <?php } ?>
                                     </select>
                                 </div>
+                                <!-- Recomendaciones -->
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Recomendaciones <small class="text-muted">(opcional)</small>
+                                    </label>
+                                    <textarea name="recomendaciones"
+                                            class="form-control"
+                                            rows="2"
+                                            placeholder="Ej.: Recordar llevar memoria SD para usar la cámara"
+                                            oninput="validarRecomendaciones(this)"
+                                            maxlength="250"></textarea>
+                                    <div class="text-danger mt-1" id="errorRecomNo"></div>
+                                </div>
                             </div>
                         </div>
+                        
+                        
 
                         <!-- Botones -->
                         <div class="text-center mt-4">
@@ -147,24 +175,24 @@
     const grupoNoDev = document.getElementById('grupoNoDevolutivo');
 
     function toggleFields(tipo) {
-        const inputsDev = grupoDev.querySelectorAll("input, select");
-        const inputsNoDev = grupoNoDev.querySelectorAll("input, select");
+        const inputsDev = grupoDev.querySelectorAll("input, select, textarea");
+        const inputsNo  = grupoNoDev.querySelectorAll("input, select, textarea");
 
-        if (tipo === '1') {
+        if (tipo === '1') {                 // DEVOLUTIVO
             grupoDev.classList.remove('d-none');
-            grupoNoDev.classList.add('d-none');
+            grupoNoDev.classList.add  ('d-none');
             inputsDev.forEach(el => el.disabled = false);
-            inputsNoDev.forEach(el => el.disabled = true);
-        } else if (tipo === '2') {
+            inputsNo .forEach(el => el.disabled = true );
+        } else if (tipo === '2') {          // NO DEVOLUTIVO
             grupoNoDev.classList.remove('d-none');
-            grupoDev.classList.add('d-none');
-            inputsNoDev.forEach(el => el.disabled = false);
-            inputsDev.forEach(el => el.disabled = true);
-        } else {
+            grupoDev.classList.add  ('d-none');
+            inputsNo .forEach(el => el.disabled = false);
+            inputsDev.forEach(el => el.disabled = true );
+        } else {                            // ninguno seleccionado
+            inputsDev.forEach(el => el.disabled = true );
+            inputsNo .forEach(el => el.disabled = true );
             grupoDev.classList.add('d-none');
             grupoNoDev.classList.add('d-none');
-            inputsDev.forEach(el => el.disabled = true);
-            inputsNoDev.forEach(el => el.disabled = true);
         }
     }
 

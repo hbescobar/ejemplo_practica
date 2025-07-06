@@ -69,6 +69,16 @@
                                 <label class="form-label"><i class='bx bx-paint'></i> Marca</label>
                                 <div class="form-control bg-light"><?= $elemento['marca'] ?? '---' ?></div>
                             </div>
+
+                            <!-- Recomendaciones -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Recomendaciones <small class="text-muted">(opcional)</small>
+                                </label>
+                                <div class="form-control bg-light">
+                                    <?= !empty($elemento['recomendaciones']) ? htmlspecialchars($elemento['recomendaciones']) : '---' ?>
+                                </div>
+                            </div>     
                         </div>
 
                     <?php else: ?>
@@ -94,6 +104,15 @@
                             <div class="col-md-6">
                                 <label class="form-label"><i class='bx bx-ruler'></i> Unidad de Medida</label>
                                 <div class="form-control bg-light"><?= $elemento['unidad_medida'] ?? '---' ?></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Recomendaciones <small class="text-muted">(opcional)</small>
+                                </label>
+                                <div class="form-control bg-light">
+                                    <?= !empty($elemento['recomendaciones']) ? htmlspecialchars($elemento['recomendaciones']) : '---' ?>
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>

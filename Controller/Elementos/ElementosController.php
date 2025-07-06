@@ -45,7 +45,7 @@ class ElementosController
             $data = [
                 'elem_placa'       => $_POST['elem_placa']       ?? null,
                 'elem_serie'       => $_POST['elem_serie']       ?? null,
-                'elem_codigo'      => $_POST['elem_codigo'], // ya validado
+                'elem_codigo'      => $_POST['elem_codigo'],
                 'elem_nombre'      => $_POST['elem_nombre']      ?? null,
                 'elem_telem_id'    => $_POST['elem_telem_id']    ?? null,
                 'elem_area_id'     => $_POST['elem_area_id']     ?? null,
@@ -54,7 +54,8 @@ class ElementosController
                 'elem_unidad_id'   => $_POST['elem_unidad_id']   ?? null,
                 'elem_modelo'      => $_POST['elem_modelo']      ?? null,
                 'elem_marca_id'    => $_POST['elem_marca_id']    ?? null,
-                'elem_estado_id'   => 1
+                'elem_estado_id'   => 1,
+                'recomendaciones' => $_POST['recomendaciones'] ?? null,
             ];
 
             $resultado = $this->model->insertElemento($data);
@@ -152,8 +153,9 @@ class ElementosController
                 'elem_area_id'   => $_POST['elem_area_id'] ?? null,
                 'elem_cate_id'   => $_POST['elem_cate_id'] ?? null,
                 'elem_marca_id'  => $_POST['elem_marca_id'] ?? null,
-                'elem_cantidad'  => $_POST['elem_cantidad'] ?? null,
-                'elem_unidad_id' => $_POST['elem_unidad_id'] ?? null
+                //'elem_cantidad'  => $_POST['elem_cantidad'] ?? null,
+                'elem_unidad_id' => $_POST['elem_unidad_id'] ?? null,
+                'recomendaciones' => $_POST['recomendaciones'] ?? null
             ];
 
             // Validación básica común
@@ -164,11 +166,6 @@ class ElementosController
 
             // Validaciones específicas por tipo
             if ($data['elem_telem_id'] == 2) { // No Devolutivo
-                if (empty($data['elem_cantidad']) || $data['elem_cantidad'] <= 0) {
-                    echo "<script>alert('La cantidad debe ser mayor a cero para elementos no devolutivos.'); history.back();</script>";
-                    return;
-                }
-
                 if (empty($data['elem_unidad_id'])) {
                     echo "<script>alert('Debe seleccionar una unidad de medida.'); history.back();</script>";
                     return;
@@ -205,7 +202,7 @@ class ElementosController
         exit();
     }
 
-    /* ───────────── Registrar Entrada ───────────── */
+    //Funcion para registrar una entrada de inventario
     public function registrarEntrada()
     {
         // 1. Solo aceptar POST

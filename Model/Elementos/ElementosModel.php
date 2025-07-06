@@ -64,8 +64,8 @@ class ElementosModel extends MasterModel
     // INSERTAR NUEVO ELEMENTO
     // ====================================
     public function insertElemento($data)
-    {
-        $sql = "INSERT INTO elementos_inventario (
+{
+    $sql = "INSERT INTO elementos_inventario (
                 elem_placa,
                 elem_serie,
                 elem_codigo,
@@ -77,24 +77,29 @@ class ElementosModel extends MasterModel
                 elem_unidad_id,
                 elem_modelo,
                 elem_marca_id,
-                elem_estado_id
+                elem_estado_id,
+                recomendaciones         
             ) VALUES (
-                " . ($data['elem_placa'] ? "'" . $data['elem_placa'] . "'" : "NULL") . ",
-                " . ($data['elem_serie'] ? "'" . $data['elem_serie'] . "'" : "NULL") . ",
-                '" . $data['elem_codigo'] . "',
-                '" . $data['elem_nombre'] . "',
-                " . $data['elem_telem_id'] . ",
-                " . ($data['elem_area_id'] ? $data['elem_area_id'] : "NULL") . ",
-                " . ($data['elem_cate_id'] ? $data['elem_cate_id'] : "NULL") . ",
-                " . ($data['elem_cantidad'] ? $data['elem_cantidad'] : "NULL") . ",
-                " . ($data['elem_unidad_id'] ? $data['elem_unidad_id'] : "NULL") . ",
+                " . ($data['elem_placa']  ? "'" . $data['elem_placa']  . "'" : "NULL") . ",
+                " . ($data['elem_serie']  ? "'" . $data['elem_serie']  . "'" : "NULL") . ",
+                '" .  $data['elem_codigo'] . "',
+                '" .  $data['elem_nombre'] . "',
+                " .  $data['elem_telem_id'] . ",
+                " . ($data['elem_area_id'] ?  $data['elem_area_id'] : "NULL") . ",
+                " . ($data['elem_cate_id'] ?  $data['elem_cate_id'] : "NULL") . ",
+                " . ($data['elem_cantidad']?  $data['elem_cantidad']: "NULL") . ",
+                " . ($data['elem_unidad_id']? $data['elem_unidad_id']: "NULL") . ",
                 " . ($data['elem_modelo'] ? "'" . $data['elem_modelo'] . "'" : "NULL") . ",
-                " . ($data['elem_marca_id'] ? $data['elem_marca_id'] : "NULL") . ",
-                " . $data['elem_estado_id'] . "
+                " . ($data['elem_marca_id']?  $data['elem_marca_id'] : "NULL") . ",
+                " .  $data['elem_estado_id'] . ",                
+                " . ($data['recomendaciones']
+                ? "'" . mysqli_real_escape_string($this->getConnect(),
+                                                $data['recomendaciones']) . "'"
+                : "NULL") . "
             )";
+    return $this->insert($sql);
+}
 
-        return $this->insert($sql);
-    }
 
     // ======================================
     // CONSULTAR ELEMENTOS CON SUS RELACIONES
@@ -103,12 +108,14 @@ class ElementosModel extends MasterModel
     {
         $sql = "SELECT 
                 ei.elem_id,
+                ei.recomendaciones,
                 ei.elem_placa,
                 ei.elem_serie,
                 ei.elem_codigo,
                 ei.elem_nombre,
                 ei.elem_modelo,
                 ei.elem_cantidad,
+                ei.recomendaciones,
                 te.telem_nombre AS tipo_elemento,
                 a.area_nombre AS area,
                 c.cate_nombre AS categoria,
@@ -171,7 +178,13 @@ class ElementosModel extends MasterModel
                 elem_cate_id    = " . ($data['elem_cate_id'] ? $data['elem_cate_id'] : "NULL") . ",
                 elem_marca_id   = " . ($data['elem_marca_id'] ? $data['elem_marca_id'] : "NULL") . ",
                 elem_cantidad   = " . ($data['elem_cantidad'] ? $data['elem_cantidad'] : "NULL") . ",
-                elem_unidad_id  = " . ($data['elem_unidad_id'] ? $data['elem_unidad_id'] : "NULL") . "
+                elem_unidad_id  = " . ($data['elem_unidad_id'] ? $data['elem_unidad_id'] : "NULL") . ",
+                recomendaciones = " . (
+                    $data['recomendaciones']
+                        ? "'" . mysqli_real_escape_string($this->getConnect(), $data['recomendaciones']) . "'"
+                        : "NULL"
+                ) . "
+
             WHERE elem_id = " . $data['elem_id'];
 
         return $this->update($sql);

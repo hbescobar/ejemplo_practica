@@ -2,29 +2,47 @@
 // VALIDACIONES PARA ELEMENTOS DEVOLUTIVOS
 //============================================
 
-//La funcion validarCamposVacios se encargar de validar los campos vacios del formulario
+/* ──────────────────────────────────────────────
+Valida que los inputs/ selects requeridos NO estén
+vacíos, pero **ignora** los que pertenezcan a un
+bloque (#grupoDevolutivo o #grupoNoDevolutivo)
+que está oculto con la clase d-none.
+────────────────────────────────────────────── */
 function validarCamposVacios(form) {
-    let camposValidos = true;
-    const inputs = form.querySelectorAll("input[required], select[required], textarea[required]");
+    let valido = true;
 
-    inputs.forEach((input) => {
+    /* toma todos los campos con atributo required */
+    const inputs = form.querySelectorAll('[required]');
+
+    inputs.forEach(input => {
+
+        /* 1. Si está deshabilitado => ignóralo.             */
         if (input.disabled) return;
 
-        const mensajeError = document.getElementById(`error${input.name}`);
-        if (input.value.trim() === "" || input.value === null) {
-            if (mensajeError) {
-                mensajeError.textContent = "Este campo es obligatorio.";
-            }
-            input.classList.add("is-invalid");
-            camposValidos = false;
+        /* 2. Si su bloque padre está oculto (d‑none) => ignóralo. */
+        const grupoDev = input.closest('#grupoDevolutivo');
+        const grupoNo  = input.closest('#grupoNoDevolutivo');
+
+        if ( (grupoDev && grupoDev.classList.contains('d-none')) ||
+            (grupoNo  && grupoNo.classList.contains('d-none')) ) {
+            return;
+        }
+
+        /* 3. Validar realmente el campo */
+        const errorBox = document.getElementById('error' + input.name);
+        const vacio    = input.value.trim() === '' || input.value === '0';
+
+        if (vacio) {
+            errorBox && (errorBox.textContent = 'Este campo es obligatorio.');
+            input.classList.add('is-invalid');
+            valido = false;
         } else {
-            if (mensajeError) {
-                mensajeError.textContent = "";
-            }
-            input.classList.remove("is-invalid");
+            errorBox && (errorBox.textContent = '');
+            input.classList.remove('is-invalid');
         }
     });
-    return camposValidos;
+
+    return valido;          // true si todo está OK
 }
 
 //validacion placa de elemento
@@ -162,63 +180,78 @@ function validarCant(input) {
     }
 }
 
-/* function validarElementos(event) {
-    const form = event.target; // Obtiene el formulario actual
-    const camposLlenos = validarCamposVacios(form); // Verifica que no haya campos vacíos
+// Validación para el textarea de recomendaciones
+// Permite letras, números, espacios y los signos de puntuación . , ; : ( ) ! ?
+function validarRecomendaciones(textarea) {
+    /* si está deshabilitado o vacío  ⇒  no es obligatorio */
+    if (textarea.disabled || textarea.value.trim() === '') {
+        textarea.classList.remove('is-invalid');
+        const err = textarea.parentElement.querySelector('div.text-danger');
+        err && (err.textContent = '');
+        return true;
+    }
 
-    //obtiene los inputs del formulario
-    const placaInput = document.querySelector('input[name="elem_placa"]');
-    const serieInput = document.querySelector('input[name="elem_serie"]');
-    const codElemInput = document.querySelector('input[name="elem_codigo"]');
-    const nombreElemInput = document.querySelector('input[name="elem_nombre"]');
-    const modeloInput = document.querySelector('input[name="elem_modelo"]');
-    const cantidadInput = document.querySelector('input[name="elem_cantidad"]');
-    const unidadMedidaSelect = document.querySelector('select[name="elem_unidad_id"]');
+    /* solo letras, números, espacios*/
+    const regex = /^[a-zA-Z0-9À-ÿ\s.,;:()!?-]{1,250}$/;
+    const error = textarea.parentElement.querySelector('div.text-danger');
 
-    // Llama a las funciones de validación para cada campo
-    const placaValido = validarPlaca(placaInput);
-    const serieValido = validarElemento(serieInput);
-    const codElemValido = validarCodElem(codElemInput);
-    const nombreElemValido = validarNombreElem(nombreElemInput);
-    const modeloValido = validarModeloElem(modeloInput);
-    const cantidadValido = validarCant(cantidadInput);
-    const unidadMedidaValido = validarUnidadMedida(unidadMedidaSelect);
-
-    // Si alguna validación falla, evita el envío del formulario
-    if (!camposLlenos || !placaValido || !serieValido || !codElemValido || !nombreElemValido || !modeloValido || !cantidadValido || !unidadMedidaValido) {
-        event.preventDefault(); // Detiene el envío del formulario
-        alert("Por favor, corrige los errores antes de enviar el formulario.");
+    if (!regex.test(textarea.value)) {
+        error.textContent = 'Solo letras/números (máx. 250 car.).';
+        textarea.classList.add('is-invalid');
         return false;
     }
-    return true; // Permite el envío si todo está correcto
-} */
+    error.textContent = '';
+    textarea.classList.remove('is-invalid');
+    return true;
+}
 
 function validarElementos(event) {
-    const form = event.target;                // formulario que dispara el submit
-    const camposLlenos = validarCamposVacios(form);   // verifica requeridos
+    const form = event.target;
+    const tipo = document.getElementById('tipoElementos').value;   
+    let   todoOK = validarCamposVacios(form);                      
 
-    /* Captura de inputs */
-    const placaInput      = form.querySelector('[name="elem_placa"]');
-    const serieInput      = form.querySelector('[name="elem_serie"]');
-    const codElemInput    = form.querySelector('[name="elem_codigo"]');
-    const nombreElemInput = form.querySelector('[name="elem_nombre"]');
-    const modeloInput     = form.querySelector('[name="elem_modelo"]');
-    const cantidadInput   = form.querySelector('[name="elem_cantidad"]');
+    // ── toma los bloques de elementos ───────────────────────────
+    const bloqueDev = document.getElementById('grupoDevolutivo');
+    const bloqueNo  = document.getElementById('grupoNoDevolutivo');
 
-    /* Llamadas a las funciones de validación (nombres exactos) */
-    const placaValida     = validarPlaca(placaInput);
-    const serieValida     = validarSerieElemento(serieInput);     // ← nombre corregido
-    const codigoValido    = validarCodElem(codElemInput);
-    const nombreValido    = validarNombreElem(nombreElemInput);
-    const modeloValido    = validarModeloElem(modeloInput);
-    const cantidadValida  = validarCant(cantidadInput);
+    // ── validar según el tipo de elemento ───────────────────
+    if (tipo === '1') {  // ── DEVOLUTIVO ──
+        const placa   = bloqueDev.querySelector('input[name="elem_placa"]');
+        const serie   = bloqueDev.querySelector('input[name="elem_serie"]');
+        const codigo  = bloqueDev.querySelector('input[name="elem_codigo"]');
+        const nombre  = bloqueDev.querySelector('input[name="elem_nombre"]');
+        const modelo  = bloqueDev.querySelector('input[name="elem_modelo"]');
 
-    /* Si algo falla, bloquea el envío */
-    if (!(camposLlenos && placaValida && serieValida && codigoValido &&
-          nombreValido && modeloValido && cantidadValida)) {
-        event.preventDefault();                     // detiene submit
-        alert("Por favor, corrige los errores antes de enviar el formulario.");
+        todoOK = todoOK && validarPlaca(placa);
+        todoOK = todoOK && validarSerieElemento(serie);
+        todoOK = todoOK && validarCodElem(codigo);
+        todoOK = todoOK && validarNombreElem(nombre);
+        todoOK = todoOK && validarModeloElem(modelo);
+
+    } else if (tipo === '2') {  // ── NO DEVOLUTIVO ──
+        const codigo   = bloqueNo.querySelector('input[name="elem_codigo"]');
+        const nombre   = bloqueNo.querySelector('input[name="elem_nombre"]');
+        const cantidad = bloqueNo.querySelector('input[name="elem_cantidad"]');
+
+        todoOK = todoOK && validarCodElemNoDevo(codigo);
+        todoOK = todoOK && validarNombreElemNoDevo(nombre);
+        todoOK = todoOK && validarCant(cantidad);
+        // la unidad de medida ya la revisa validarCamposVacios()
+    }
+
+    /* validar el textarea de recomendaciones que esté visible */
+    const recomVisible = form.querySelector(
+        'textarea[name="recomendaciones"]:not([disabled])'
+    );
+    if (recomVisible) {
+        todoOK = todoOK && validarRecomendaciones(recomVisible);
+    }
+
+    /* ── detener envío si hay errores ───────────────────────── */
+    if (!todoOK) {
+        event.preventDefault();
+        alert('Por favor, corrige los campos marcados en rojo.');
         return false;
     }
-    return true;                                    // todo OK, permite submit
+    return true;
 }

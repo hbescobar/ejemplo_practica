@@ -89,6 +89,13 @@
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
+                                <!-- Campo Recomendaciones -->
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label">
+                                        Recomendaciones <small class="text-muted">(opcional)</small>
+                                    </label>
+                                    <textarea name="recomendaciones" class="form-control" rows="3"><?= htmlspecialchars($elemento['recomendaciones'] ?? '') ?></textarea>
+                                </div>
                             </div>
 
                             <!-- ================ -->
@@ -104,10 +111,10 @@
                                     <label class="form-label">Nombre del Elemento <span class="text-danger">*</span></label>
                                     <input type="text" name="elem_nombre" class="form-control" value="<?= $elemento['elem_nombre'] ?>" required>
                                 </div>
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <label class="form-label">Cantidad <span class="text-danger">*</span></label>
                                     <input type="number" name="elem_cantidad" class="form-control" value="<?= $elemento['elem_cantidad'] ?>" min="1" required>
-                                </div>
+                                </div> -->
                                 <div class="col-md-6">
                                     <label class="form-label">Unidad de Medida <span class="text-danger">*</span></label>
                                     <select class="form-select" name="elem_unidad_id" required>
@@ -118,6 +125,13 @@
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                </div>
+                                <!-- Campo Recomendaciones -->
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Recomendaciones <small class="text-muted">(opcional)</small>
+                                    </label>
+                                    <textarea name="recomendaciones" class="form-control" rows="3"><?= htmlspecialchars($elemento['recomendaciones'] ?? '') ?></textarea>
                                 </div>
                             </div>
                         <?php endif; ?>
