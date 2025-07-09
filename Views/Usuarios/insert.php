@@ -113,48 +113,10 @@
                                 <i class='bx bx-arrow-back'></i> Cancelar
                             </a>
                         </div>
-                    </form>
-
-                    <!-- Modal de Documento Duplicado -->
-                    <div class="modal fade" id="modalDuplicado" tabindex="-1" aria-labelledby="modalDuplicadoLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                            <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title" id="modalDuplicadoLabel">Error de Registro</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body">
-                                Ya existe un usuario con este número de documento.
-                            </div>
-                            <div class="modal-footer">
-                                <button id="btnOkDuplicado" type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Modal de Documento Duplicado -->                  
+                    </form>                 
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script src="/Inventario/Web/Js/validaciones/validaciones.js"></script>
-
-<!-- Script para mostrar el modal y redirigir -->
-<?php if (isset($mensaje) && $mensaje === "Ya existe un usuario con este número de documento."): ?> <!--mensaje de error que se muestra si el número de documento ya existe, es decir si mensaje es igual a "Ya existe un usuario con este número de documento." -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var modal = new bootstrap.Modal(document.getElementById('modalDuplicado'));
-        modal.show();
-
-        const boton = document.getElementById('btnOkDuplicado');
-        boton.addEventListener('click', () => {
-            window.location.href = 'index.php?modulo=usuarios&controlador=usuarios&funcion=getInsert';
-        });
-
-        document.getElementById('modalDuplicado').addEventListener('hidden.bs.modal', () => {
-            window.location.href = 'index.php?modulo=usuarios&controlador=usuarios&funcion=getInsert';
-        });
-    });
-</script>
-<?php endif; ?>

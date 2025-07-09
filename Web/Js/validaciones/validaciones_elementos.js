@@ -111,22 +111,41 @@ function validarNombreElem(input) {
     }
 }
 
-//Validacion modelo del elemento
+
+// ──────────────────────────────────────────────
+//  Modelo  (campo OPCIONAL)
+// ──────────────────────────────────────────────
 function validarModeloElem(input) {
+
+    /*Si el input NO está activo, ya es válido */
     if (input.disabled) return true;
-    const regexModelo = /^[a-zA-ZÀ-ÿ0-9\s]{1,40}$/; // Permite de 1 a 40 letras, números y espacios
-    const mensajeError = document.getElementById("errorelem_modelo"); // Selecciona el contenedor del mensaje
 
-    if (!regexModelo.test(input.value)) {
-        mensajeError.textContent = "El modelo no es válido. No debe contener caracteres especiales.";
-        input.classList.add("is-invalid");
-    } else {
-        mensajeError.textContent = "";
-        input.classList.remove("is-invalid");
-        return true; // Retorna true si el modelo es válido
+    const valor = input.value.trim();
+    const msg   = document.getElementById('errorelem_modelo');
+
+    /*Si está vacío → válido (es opcional) */
+    if (valor === '') {
+        msg.textContent = '';
+        input.classList.remove('is-invalid');
+        return true;
     }
-}
 
+    /*Solo si trae algo lo validamos               *
+     *    letras, números, espacios, guión, máx. 40    */
+    const regex = /^[a-zA-ZÀ-ÿ0-9\s-]{1,40}$/;
+
+    if (!regex.test(valor)) {
+        msg.textContent =
+        'El modelo no es válido. Solo letras, números y espacios (máx. 40).';
+        input.classList.add('is-invalid');
+        return false;
+    }
+
+    /* 4. Valor correcto                              */
+    msg.textContent = '';
+    input.classList.remove('is-invalid');
+    return true;
+}
 //============================================
 // VALIDACIONES PARA ELEMENTOS NO DEVOLUTIVOS
 //============================================

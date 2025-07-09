@@ -39,6 +39,8 @@
                             <th>Código</th>
                             <th>Nombre</th>
                             <th>Tipo</th>
+                            <th>Categoría</th>
+                            <th>Placa</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -59,6 +61,8 @@
                                     <td><?= htmlspecialchars($el['elem_codigo']) ?></td>
                                     <td><?= htmlspecialchars($el['elem_nombre']) ?></td>
                                     <td><?= htmlspecialchars($el['tipo_elemento']) ?></td>
+                                    <td><?= htmlspecialchars($el['categoria']) ?></td>
+                                    <td><?= htmlspecialchars($el['elem_placa']) ?></td>
                                     <td>
                                         <span class="badge bg-<?= $badge ?>">
                                             <?= htmlspecialchars($el['estado']) ?>
@@ -201,10 +205,10 @@
             const filtradas = filas.filter(fila => {
                 const celdas = fila.cells;
                 const [codigo, nombre, tipoEl, estado] = [
-                    celdas[0].textContent.toLowerCase(),
-                    celdas[1].textContent.toLowerCase(),
-                    celdas[2].textContent.toLowerCase(),
-                    celdas[3].textContent.toLowerCase()
+                    celdas[0].textContent.toLowerCase(),//codigo
+                    celdas[1].textContent.toLowerCase(),// nombre
+                    celdas[2].textContent.toLowerCase(),//tipo
+                    celdas[5].textContent.toLowerCase()// estado
                 ];
 
                 // Aplica el filtro según el tipo elegido

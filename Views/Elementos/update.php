@@ -75,8 +75,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Modelo <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_modelo" class="form-control" value="<?= $elemento['elem_modelo'] ?>" required>
+                                    <label class="form-label">Modelo <small class="text-muted">(opcional)</small></label>
+                                    <input type="text" name="elem_modelo" class="form-control" value="<?= $elemento['elem_modelo'] ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Marca <span class="text-danger">*</span></label>

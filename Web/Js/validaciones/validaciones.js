@@ -120,7 +120,7 @@ function validarClave(input) {
     const mensajeError = document.getElementById("errorusu_clave"); // Selecciona el contenedor del mensaje
 
     if (!regexClave.test(input.value)) {
-        mensajeError.textContent = "La contraseña no es válida. Debe tener al menos 8 caracteres, una letra y un número.";
+        mensajeError.textContent = "La contraseña no es válida. Debe tener al menos 8 caracteres, una letra y un número.sin caracteres especiales.";
         input.classList.add("is-invalid"); 
         return false; // Retorna false si la contraseña no es válida
     } else {

@@ -17,6 +17,23 @@ class ElementosController
         $this->model = new ElementosModel();
     }
 
+    // ==============================
+    // MOSTRAR ALERTA CON SWEETALERT
+    // ==============================
+    private function showSweetAlert(string $icon,string $title,string $text,string $redirectUrl)
+    {
+        echo "
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        <script>
+            Swal.fire({
+                icon: '$icon',
+                title: '$title',
+                text: `$text`,
+                confirmButtonText: 'Aceptar'
+            }).then(()=>{ window.location.href = '$redirectUrl'; });
+        </script>";
+    }
+
     // ====================================================
     // MOSTRAR FORMULARIO PARA REGISTRAR UN NUEVO ELEMENTO
     // ====================================================
@@ -54,17 +71,64 @@ class ElementosController
                 'elem_unidad_id'   => $_POST['elem_unidad_id']   ?? null,
                 'elem_modelo'      => $_POST['elem_modelo']      ?? null,
                 'elem_marca_id'    => $_POST['elem_marca_id']    ?? null,
-                'elem_estado_id'   => 1,
+                'elem_estado_id'   => 1,//por defecto activo
                 'recomendaciones' => $_POST['recomendaciones'] ?? null,
             ];
 
-            $resultado = $this->model->insertElemento($data);
+            //     existsCodigo($codigo), existsPlaca($placa), existsSerie($serie) )
+            if ($this->model->existsCodigo($data['elem_codigo'])) {
+                $this->showSweetAlert(
+                    'warning',
+                    'Código duplicado',
+                    "El código '{$data['elem_codigo']}' ya está registrado.",
+                    getUrl('elementos','elementos','getInsert')
+                );
+                return;
+            }
 
+            if ($data['elem_placa'] && $this->model->existsPlaca($data['elem_placa'])) {
+                $this->showSweetAlert(
+                    'warning',
+                    'Placa duplicada',
+                    "La placa '{$data['elem_placa']}' ya está registrada.",
+                    getUrl('elementos','elementos','getInsert')
+                );
+                return;
+            }
+
+            if ($data['elem_serie'] && $this->model->existsSerie($data['elem_serie'])) {
+                $this->showSweetAlert(
+                    'warning',
+                    'Serie duplicada',
+                    "La serie '{$data['elem_serie']}' ya está registrada.",
+                    getUrl('elementos','elementos','getInsert')
+                );
+                return;
+            }
+
+            $resultado = $this->model->insertElemento($data);
+            /* 
             if ($resultado) {
                 header('Location: index.php?modulo=elementos&controlador=elementos&funcion=consult');
                 exit();
             } else {
                 echo "Error al insertar el elemento.";
+            } */
+
+            if ($resultado) {
+                $this->showSweetAlert(
+                    'success',
+                    '¡Registrado!',
+                    'El elemento se guardó correctamente.',
+                    getUrl('elementos','elementos','consult')
+                );
+            } else {
+                $this->showSweetAlert(
+                    'error',
+                    'Error',
+                    'No se pudo guardar el elemento. Intenta nuevamente.',
+                    getUrl('elementos','elementos','getInsert')
+                );
             }
         }
     }
@@ -82,7 +146,6 @@ class ElementosController
                 $elementos[] = $fila;
             }
         }
-
         require_once 'C:\xampp\htdocs\inventario\Views\Elementos\consult.php';
     }
 
@@ -157,6 +220,39 @@ class ElementosController
                 'elem_unidad_id' => $_POST['elem_unidad_id'] ?? null,
                 'recomendaciones' => $_POST['recomendaciones'] ?? null
             ];
+
+            // Validaciones de duplicados 
+            if ($this->model->existsCodigoOtro($data['elem_codigo'], $data['elem_id'])) {
+                $this->showSweetAlert(
+                    'warning',
+                    'Código duplicado',
+                    "El código '{$data['elem_codigo']}' ya pertenece a otro elemento.",
+                    getUrl('elementos','elementos','getEdit')."&id={$data['elem_id']}"
+                );
+                return;
+            }
+
+            if ($data['elem_placa'] &&
+                $this->model->existsPlacaOtro($data['elem_placa'], $data['elem_id'])) {
+                $this->showSweetAlert(
+                    'warning',
+                    'Placa duplicada',
+                    "La placa '{$data['elem_placa']}' ya pertenece a otro elemento.",
+                    getUrl('elementos','elementos','getEdit')."&id={$data['elem_id']}"
+                );
+                return;
+            }
+
+            if ($data['elem_serie'] &&
+                $this->model->existsSerieOtro($data['elem_serie'], $data['elem_id'])) {
+                $this->showSweetAlert(
+                    'warning',
+                    'Serie duplicada',
+                    "La serie '{$data['elem_serie']}' ya pertenece a otro elemento.",
+                    getUrl('elementos','elementos','getEdit')."&id={$data['elem_id']}"
+                );
+                return;
+            }
 
             // Validación básica común
             if (empty($data['elem_codigo']) || empty($data['elem_nombre'])) {

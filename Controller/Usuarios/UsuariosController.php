@@ -9,6 +9,16 @@ class UsuariosController
 {
     private $model;
 
+    private function showSweetAlert(string $icon, string $title, string $text, string $url)
+    {
+        echo "
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        <script>
+            Swal.fire({ icon:'$icon', title:'$title', text:'$text', confirmButtonText:'Aceptar'})
+                .then(()=>{ window.location.href = '$url'; });
+        </script>";
+    }
+
     // ==============================
     // CONSTRUCTOR: CREA EL MODELO
     // ==============================
@@ -47,24 +57,32 @@ class UsuariosController
                 'usu_direccion'   => $_POST['usu_direccion'] ?? '',
             ];
 
-            //Valida si el número de documento ya existe en la base de datos.
+            /*documento duplicado ---- */
             if ($this->model->existeNumeroDocumento($data['usu_numero_docu'])) {
-                $mensaje = "Ya existe un usuario con este número de documento.";//este mensaje se mostrará en la vista insert.php
-                require_once 'C:\xampp\htdocs\inventario\Views\Usuarios\insert.php';
+                    $this->showSweetAlert(
+                        'error',
+                        'Documento duplicado',
+                        'Ya existe un usuario con ese número de documento.',
+                        getUrl('usuarios','usuarios','getInsert')   // redirigir al mismo form
+                    );
                 return;
             }
 
-            // Validación básica
-            if ($data['usu_nombre'] && $data['usu_apellido'] && $data['rol_id']) {
-                $resultado = $this->model->insertarUsuario($data);
-                if ($resultado) {
-                    header('Location: index.php?modulo=usuarios&controlador=usuarios&funcion=consult');
-                    exit();
-                } else {
-                    echo "Error al insertar el usuario.";
-                }
+            /*Condicion para insertar el registro*/
+            if ($this->model->insertarUsuario($data)) {
+                $this->showSweetAlert(
+                    'success',
+                    'Usuario registrado',
+                    'El usuario se guardó correctamente.',
+                    getUrl('usuarios','usuarios','consult')
+                );
             } else {
-                echo "Los campos obligatorios no fueron completados.";
+                $this->showSweetAlert(
+                    'error',
+                    'Error inesperado',
+                    'No se pudo registrar el usuario.',
+                    getUrl('usuarios','usuarios','getInsert')
+                );
             }
         }
     }
@@ -124,6 +142,20 @@ class UsuariosController
                 'usu_direccion'   => $_POST['usu_direccion'] ?? '',
             ];
 
+            if ($this->model->documentoDuplicadoEnOtro(
+                $data['usu_numero_docu'],
+                $data['usu_id'])) {
+
+            // Si el número de documento ya está asignado a otro usuario, mostrar un mensaje de error
+            $this->showSweetAlert(
+                'error',
+                'Documento duplicado',
+                'Ese número de documento ya está asignado a otro usuario.',
+                "index.php?modulo=usuarios&controlador=usuarios&funcion=getEdit&id={$data['usu_id']}"
+            );
+            return;
+            }
+            
             if ($data['usu_id'] && $data['usu_nombre']) {
                 $resultado = $this->model->actualizarUsuario($data);
                 if ($resultado) {

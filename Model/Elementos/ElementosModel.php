@@ -61,6 +61,39 @@ class ElementosModel extends MasterModel
     }
 
     // ====================================
+    // No duplicar códigos elementos
+    // ====================================
+    public function existsCodigo(string $codigo): bool //esta funcion verifica si el código ya existe en la base de datos,  el : bool significa que la función retornará un valor booleano (true o false)
+    {
+        $sql = "SELECT 1 FROM elementos_inventario
+                WHERE elem_codigo = '" . mysqli_real_escape_string($this->getConnect(), $codigo) . "'
+                LIMIT 1";
+        return (bool) mysqli_fetch_row($this->consult($sql));
+    }
+
+    // ====================================
+    // No duplicar placas
+    // ====================================
+    public function existsPlaca(string $placa): bool
+    {
+        $sql = "SELECT 1 FROM elementos_inventario
+                WHERE elem_placa = '" . mysqli_real_escape_string($this->getConnect(), $placa) . "'
+                LIMIT 1";
+        return (bool) mysqli_fetch_row($this->consult($sql));
+    }
+
+    // ====================================
+    // No duplicar series
+    // ====================================
+    public function existsSerie(string $serie): bool
+    {
+        $sql = "SELECT 1 FROM elementos_inventario
+                WHERE elem_serie = '" . mysqli_real_escape_string($this->getConnect(), $serie) . "'
+                LIMIT 1";
+        return (bool) mysqli_fetch_row($this->consult($sql));
+    }
+
+    // ====================================
     // INSERTAR NUEVO ELEMENTO
     // ====================================
     public function insertElemento($data)
@@ -129,8 +162,8 @@ class ElementosModel extends MasterModel
             LEFT JOIN marca m ON ei.elem_marca_id = m.marca_id
             LEFT JOIN unidad_medida u ON ei.elem_unidad_id = u.id_unidad_medidas
             LEFT JOIN estado_elementos es ON ei.elem_estado_id = es.id_estado_elementos
-            ORDER BY ei.elem_id DESC";
-
+            ORDER BY ei.elem_id ASC";
+            
         return $this->consult($sql);
     }
 
@@ -159,6 +192,40 @@ class ElementosModel extends MasterModel
             LIMIT 1";
 
         return $this->consult($sql);
+    }
+
+
+        // ====================================
+    // No duplicar códigos en otro elemento
+    // ====================================
+    public function existsCodigoOtro(string $codigo,int $elem_id): bool {
+    $sql = "SELECT 1 FROM elementos_inventario
+            WHERE elem_codigo = '" . mysqli_real_escape_string($this->getConnect(), $codigo) . "'
+                AND elem_id <> $elem_id
+                LIMIT 1";
+        return (bool) mysqli_fetch_row($this->consult($sql));
+    }
+
+    // ====================================
+    // No duplicar placas en otro elemento
+    // ====================================
+    public function existsPlacaOtro(string $placa,int $elem_id): bool {
+        $sql = "SELECT 1 FROM elementos_inventario
+                WHERE elem_placa = '" . mysqli_real_escape_string($this->getConnect(), $placa) . "'
+                AND elem_id <> $elem_id
+                LIMIT 1";
+        return (bool) mysqli_fetch_row($this->consult($sql));
+    }
+
+    // ====================================
+    // No duplicar series en otro elemento
+    // ====================================
+    public function existsSerieOtro(string $serie,int $elem_id): bool {
+        $sql = "SELECT 1 FROM elementos_inventario
+                WHERE elem_serie = '" . mysqli_real_escape_string($this->getConnect(), $serie) . "'
+                AND elem_id <> $elem_id
+                LIMIT 1";
+        return (bool) mysqli_fetch_row($this->consult($sql));
     }
 
     // ====================================
@@ -257,4 +324,7 @@ class ElementosModel extends MasterModel
 
         return $this->insert($sql);
     }
+
+
+
 }

@@ -148,10 +148,21 @@ class UsuariosModel extends MasterModel
     // ====================================
     public function existeNumeroDocumento($numero)
     {
-        $sql = "SELECT COUNT(*) as total FROM usuario WHERE usu_numero_docu = '$numero'";
-        $resultado = $this->consult($sql);
-        $fila = mysqli_fetch_assoc($resultado);
-        return $fila['total'] > 0;
+        $sql = "SELECT 1 FROM usuario WHERE usu_numero_docu = '$numero' LIMIT 1";
+        return mysqli_num_rows($this->consult($sql)) > 0;
     }
 
+    // ====================================
+    // VALIDAR SI UN NÚMERO DE DOCUMENTO ESTÁ DUPLICADO EN OTRO USUARIO
+    // ====================================
+    public function documentoDuplicadoEnOtro($numero, $idActual)
+    {
+        $sql = "SELECT COUNT(*) AS total
+                FROM usuario
+                WHERE usu_numero_docu = '$numero'
+                AND usu_id <> '$idActual'";   //excluye al propio usuario
+        $res = $this->consult($sql);
+        $row = mysqli_fetch_assoc($res);
+        return $row['total'] > 0;               //true si algún OTRO lo tiene
+    }
 }

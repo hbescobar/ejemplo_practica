@@ -30,7 +30,7 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Placa del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_placa" class="form-control" placeholder="Ej: PLQ-00123" onchange="validarPlaca(this)">
+                                    <input type="text" name="elem_placa" class="form-control" placeholder="Ej: 922818451" onchange="validarPlaca(this)">
                                     <div class="text-danger mt-1" id="errorelem_placa"></div>
                                 </div>
                                 <div class="col-md-6">
@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Código del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: COD-78910" onchange="validarCodElem(this)">
+                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: COD78910" onchange="validarCodElem(this)">
                                     <div class="text-danger mt-1" id="errorelem_codigo"></div>
                                 </div>
                                 <div class="col-md-6">
@@ -67,7 +67,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Modelo <span class="text-danger">*</span></label>
+                                    <label class="form-label">Modelo <small class="text-muted">(opcional)</small></label>
                                     <input type="text" name="elem_modelo" class="form-control" placeholder="Ej: ThinkPad L14 Gen3" onchange="validarModeloElem(this)">
                                     <div class="text-danger mt-1" id="errorelem_modelo"></div>
                                 </div>
@@ -82,9 +82,7 @@
                                 </div>
                                 <!-- Recomendaciones -->
                                 <div class="mb-3">
-                                    <label class="form-label">
-                                        Recomendaciones <small class="text-muted">(opcional)</small>
-                                    </label>
+                                    <label class="form-label">Recomendaciones <small class="text-muted">(opcional)</small></label>
                                     <textarea name="recomendaciones"
                                             class="form-control"
                                             rows="2"
@@ -101,7 +99,7 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Código del Elemento <span class="text-danger">*</span></label>
-                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: CD-456" onchange="validarCodElemNoDevo(this)">
+                                    <input type="text" name="elem_codigo" class="form-control" placeholder="Ej: COD456" onchange="validarCodElemNoDevo(this)">
                                     <div class="text-danger mt-1" id="errorelem_codigoNoDevo"></div>
                                 </div>
                                 <div class="col-md-6">
