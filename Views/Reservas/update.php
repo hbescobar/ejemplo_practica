@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-group">
                     <label>Fecha de entrega:</label>
-                    <input type="date" class="form-control rounded-pill" name="reserva_fecha_entrega" value="<?php echo $reserva['reserva_fecha_entrega']; ?>" required>
+                    <input type="date" class="form-control rounded-pill" name="reserva_fecha_entrega" value="<?php echo $reserva['reserva_fecha_entrega']; ?>" min="<?= date('Y-m-d') ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="destino">Seleccionar un destino:</label>

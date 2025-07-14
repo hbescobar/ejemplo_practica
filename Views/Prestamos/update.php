@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group">
                     <label>Fecha de Devolución:</label>
-                    <input type="date" class="form-control rounded-pill" name="fecha_devolucion" value="<?php echo $prestamo['fecha_devolucion']; ?>" required>
+                    <input type="date" class=" form-control rounded-pill" name="fecha_devolucion" value="<?php echo $prestamo['fecha_devolucion']; ?>" min="<?= date('Y-m-d') ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Observaciones:</label>
