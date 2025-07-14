@@ -1,6 +1,6 @@
 <?php // Suponiendo que $usuarios y $destinos llegan desde el controlador 
 ?>
-<div class="container mt-5 mb-5 p-4 rounded-4 shadow-lg border-15 border-primary bg-white" style="background: linear-gradient(135deg,rgb(253, 253, 253) 70%,rgb(50, 133, 86) 100%);">      
+<div class="container mt-5 mb-5 p-4 rounded-4 shadow-lg border-15 border-primary bg-white" style="background: linear-gradient(135deg,rgb(253, 253, 253) 70%,rgb(50, 131, 85) 100%);">      
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-sm border-0">
@@ -24,20 +24,23 @@
                                             <div class="col-lg-8">
                                                 <div class="row g-3">
                                                     <!-- Usuario -->
-                                                    <div class="col-md-6">
-                                                        <label for="usu_id" class="form-label"><i class="bx bx-user"></i> Usuario <span class="text-danger">*</span></label>
-                                                        <select class="form-select" id="usu_id" name="usu_id" required>
-                                                            <option value="" selected disabled>Seleccione un usuario</option>
-                                                            <?php foreach ($usuarios as $usuario): ?>
-                                                                <option value="<?= $usuario['usu_id'] ?>"
-                                                                    data-doc="<?= $usuario['usu_numero_docu'] ?? '' ?>"
-                                                                    data-email="<?= $usuario['usu_email'] ?? '' ?>">
-                                                                    <?= htmlspecialchars($usuario['usu_nombre'] . ' ' . $usuario['usu_apellido']) ?>
-                                                                </option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-                                                        <div class="invalid-feedback">Seleccione un usuario.</div>
-                                                    </div>
+                                                    <!-- Usuario -->
+<div class="col-md-6">
+    <label for="usu_id" class="form-label">
+        <i class="bx bx-user"></i> Usuario <span class="text-danger">*</span>
+    </label>
+    <select class="form-select" id="usu_id" name="usu_id" required>
+        <option value="" selected disabled>Seleccione un usuario</option>
+        <?php foreach ($usuarios as $usuario): ?>
+            <option value="<?= $usuario['usu_id'] ?>"
+                data-doc="<?= $usuario['usu_numero_docu'] ?? '' ?>"
+                data-email="<?= $usuario['usu_email'] ?? '' ?>">
+                <?= htmlspecialchars($usuario['usu_nombre'] . ' ' . $usuario['usu_apellido']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <div class="invalid-feedback">Seleccione un usuario.</div>
+</div>
                                                     <!-- Tipo de Elemento -->
                                                     <div class="col-md-6">
                                                         <label for="tipo_elemento" class="form-label"><i class="bx bx-cube"></i> Tipo de Elemento <span class="text-danger">*</span></label>
@@ -59,7 +62,7 @@
                                                     <!-- Elementos disponibles -->
                                                     <div class="col-12">
                                                         <label class="form-label text-primary fw-semibold"><i class="bx bx-box"></i> Elementos disponibles</label>
-                                                        <div id="elementos-container" class="border rounded bg-light-subtle p-3">
+                                                        <div id="elementos-container" class="border rounded bg-light-subtle p-3" style="max-height: 150px; overflow-y: auto;">
                                                             <p class="text-muted small mb-0">Seleccione una categoría para mostrar elementos.</p>
                                                         </div>
                                                     </div>
@@ -73,12 +76,12 @@
                                             </div>
                                             <!-- Panel derecho: Carrito -->
                                             <div class="col-lg-4 mb-3">
-                                                <div class="card border-success shadow-sm h-100">
+                                                <div class="card border-success shadow-sm">
                                                     <div class="card-body">
                                                         <label class="form-label text-success fw-semibold">
                                                             <i class="bx bx-cart"></i> Lista de elementos seleccionados
                                                         </label>
-                                                        <div id="lista-seleccionados" class="d-flex flex-column gap-2"></div>
+                                                        <div id="lista-seleccionados" class="d-flex flex-column gap-2" style="max-height: 400px; overflow-y: auto;"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -106,7 +109,7 @@
                                         <div class="row g-3 mb-3">
                                             <div class="col-md-6">
                                                 <label for="fecha_prestamo" class="form-label"><i class="bx bx-calendar"></i> Fecha de Entrega <span class="text-danger">*</span></label>
-                                                <input type="date" class="form-control" id="fecha_prestamo" name="fecha_prestamo" required>
+                                                <input type="date" class="form-control" id="fecha_prestamo" required min="<?= date('Y-m-d') ?>" name="fecha_prestamo" required>
                                                 <div class="invalid-feedback">Seleccione la fecha.</div>
                                             </div>
                                             <div class="col-md-6">
@@ -150,6 +153,10 @@
 <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
     let elementosSeleccionados = {};
@@ -160,21 +167,32 @@
     cantidadesSeleccionadas[id] = $(this).val();
     });
 
-    function actualizarListaSeleccionados() {
-        const contenedor = $('#lista-seleccionados');
-        contenedor.empty();
 
-        for (const id in elementosSeleccionados) {
-            const nombre = elementosSeleccionados[id].nombre;
-            const badge = $(`
-                <div class="badge bg-primary d-flex align-items-center p-2 px-3 rounded-pill">
-                    <span class="me-2">${nombre}</span>
-                    <button type="button" class="btn-close btn-close-white btn-sm quitar-elemento" aria-label="Quitar" data-id="${id}"></button>
-                </div>
-            `);
-            contenedor.append(badge);
-        }
+
+    $(function() {
+        $('#usu_id').select2({
+            placeholder: "Buscar usuario...",
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#formPaso1') // Esto es importante si el select está en un modal o carousel
+        });
+    });
+
+    function actualizarListaSeleccionados() {
+    const contenedor = $('#lista-seleccionados');
+    contenedor.empty();
+
+    for (const id in elementosSeleccionados) {
+        const nombre = elementosSeleccionados[id].nombre;
+        const badge = $(`
+            <div class="bg-primary text-white d-flex align-items-center p-2 px-3 rounded-pill mb-2">
+                <span class="me-2">${nombre}</span>
+                <button type="button" class="btn-close btn-close-white btn-sm quitar-elemento" aria-label="Quitar" data-id="${id}"></button>
+            </div>
+        `);
+        contenedor.append(badge);
     }
+}
 
     function agregarElemento(id, nombre, tipo) {
         elementosSeleccionados[id] = { nombre: nombre, tipo: tipo };

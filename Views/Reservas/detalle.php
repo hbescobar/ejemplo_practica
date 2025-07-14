@@ -12,7 +12,7 @@
     <title>Detalle de la reserva</title>
 </head>
 <body>
-    <div class="container-fluid min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="container py-5">
         <div class="p-5 rounded shadow-lg" style="background: linear-gradient(135deg, rgb(255, 255, 255), rgb(234, 238, 234)); 
             border: 1px solid rgb(59, 105, 255); 
             max-width: 800px; 

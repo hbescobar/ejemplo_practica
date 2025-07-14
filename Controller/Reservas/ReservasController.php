@@ -204,9 +204,10 @@ class ReservasController
         $fechaEntrega = $_POST['fecha_prestamo'];
         $horaDevolucion = $_POST['reserva_fecha_fin'];
         $horaEntrega = $_POST['reserva_fecha_inicio'];
-        $observaciones = $_POST['observaciones'];
+        $observaciones = mysqli_real_escape_string($this->model->getConnect(), $_POST['observaciones']);
         $destino = $_POST['area_destino'];
         $estadoReservaID = 1;
+        date_default_timezone_set('America/Bogota'); // O la zona horaria de tu país
         $fechaSolicitud = date('Y-m-d');
         $usu_id = $_POST['usu_id'];
         //validar que el elemento seleccionado sea un array

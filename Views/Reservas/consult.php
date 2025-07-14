@@ -2,14 +2,14 @@
 <div class="container mt-5">
     <div class="card shadow border-0">
         <div class="card-body">
-            <h4 class="fw-bold text-primary text-center mb-4">
+            <h4 class="fw-bold text-dark text-center mb-4">
                 <i class='bx bx-user'></i> Listado de reservas
             </h4>
 
             <!-- Filtro y búsqueda -->
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                 <div class="input-group" style="max-width: 220px;">
-                    <label class="input-group-text bg-primary text-white" for="filtroTipo">
+                    <label class="input-group-text bg-success text-white" for="filtroTipo">
                         <i class='bx bx-filter-alt'></i>
                     </label>
                     <select id="filtroTipo" class="form-select">
@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="input-group" style="max-width: 300px;">
-                    <span class="input-group-text bg-primary text-white">
+                    <span class="input-group-text bg-success text-white">
                         <i class='bx bx-search'></i>
                     </span>
                     <input type="search" id="buscadorPrestamos" class="form-control" placeholder="Buscar..." aria-label="Buscar">

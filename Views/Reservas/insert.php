@@ -5,7 +5,7 @@
         <div class="col-lg-10">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
-                    <h4 class="fw-bold text-primary text-center mb-4">
+                    <h4 class="fw-bold text-dark text-center mb-4">
                         <i class="bx bx-transfer-alt"></i> Registrar reservas
                     </h4>
 
@@ -60,7 +60,7 @@
                                         <!-- Elementos disponibles -->
                                         <div class="col-12">
                                             <label class="form-label text-primary fw-semibold"><i class="bx bx-box"></i> Elementos disponibles</label>
-                                            <div id="elementos-container" class="border rounded bg-light-subtle p-3">
+                                            <div id="elementos-container" class="border rounded bg-light-subtle p-3" style="max-height: 100px; overflow-y: auto;">
                                                 <p class="text-muted small mb-0">Seleccione una categoría para mostrar elementos.</p>
                                             </div>
                                         </div>
@@ -85,16 +85,23 @@
                             <!-- Paso 2 -->
                             <div class="carousel-item">
                                 <form id="formPaso2" action="<?= getUrl('reservas', 'reservas', 'postInsert'); ?>" method="POST" class="needs-validation" novalidate>
-                                    <h5 class="mb-3"><i class="bx bx-user"></i> Datos del Usuario</h5>
-                                    <p id="infoUsuario" class="small text-muted mb-3"></p>
+                                    <div class="card border-primary shadow-sm mb-4">
+                                            <div class="card-body">
+                                                <h5 class="mb-3 text-primary"><i class="bx bx-user"></i> Datos del Usuario</h5>
+                                                <p id="infoUsuario" class="small text-muted mb-3"></p>
+                                            </div>
+                                        </div>
 
-                                    <h5 class="mb-3"><i class="bx bx-box"></i> Elementos Seleccionados</h5>
-                                    <ul id="infoElementos" class="small text-muted mb-3"></ul>
-
+                                    <div class="card border-info shadow-sm mb-4">
+                                        <div class="card-body">
+                                                <h5 class="mb-3 text-info"><i class="bx bx-box"></i> Elementos Seleccionados</h5>
+                                                <div id="infoElementos" class="small"></div>
+                                            </div>
+                                        </div>
                                     <div class="row g-3 mb-3">
                                         <div class="col-md-6">
                                             <label for="fecha_prestamo" class="form-label"><i class="bx bx-calendar"></i> Fecha de solicitud <span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" id="fecha_prestamo" name="fecha_prestamo" required>
+                                            <input type="date" class="form-control" id="fecha_prestamo" name="fecha_prestamo" required min="<?= date('Y-m-d') ?>">
                                             <div class="invalid-feedback">Seleccione la fecha.</div>
                                         </div>
                                         
@@ -111,7 +118,7 @@
 
                                         <div class="col-md-6">
                                             <label for="fecha_prestamo" class="form-label"><i class="bx bx-calendar"></i> Fecha de Entrega <span class="text-danger">*</span></label>
-                                            <input type="date" class="form-control" id="fecha_prestamo_entrega" name="fecha_prestamo_entrega" required>
+                                            <input type="date" class="form-control" id="fecha_prestamo_entrega" name="fecha_prestamo_entrega" required min="<?= date('Y-m-d') ?>">
                                             <div class="invalid-feedback">Seleccione la fecha.</div>
                                         </div>
 

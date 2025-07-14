@@ -92,15 +92,20 @@ class PrestamosController
             echo "Datos incompletos para el préstamo.";
             return;
         }
-
+        // Configurar la zona horaria
+        date_default_timezone_set('America/Bogota'); // O la zona horaria de tu país
         // Validar que se reciban los elementos y cantidades
         $cantidadElemento = 1;
         $fechaDevolucion = $_POST['fecha_prestamo'];
-        $observaciones = $_POST['observaciones'];
+        $observaciones = mysqli_real_escape_string($this->model->getConnect(), $_POST['observaciones']);
         $destino = $_POST['area_destino'];
         $estadoPrestamoID = 1;
         $fechaSolicitud = date('Y-m-d');
-        $usu_id = $_POST['usu_id'];
+         echo "<script>
+                console.log('fecha_solicitud:', " . json_encode($fechaSolicitud) . ");
+         </script>";
+        
+         $usu_id = $_POST['usu_id'];
 
         //validar que el elemento seleccionado sea un array
 
@@ -246,6 +251,10 @@ class PrestamosController
                 getUrl("Prestamos", "Prestamos", "getInsert")
             );
         } else {
+             echo "<script>
+                console.log('Campos:', " . json_encode($fields) . ");
+                console.log('Valores:', " . json_encode($values) . ");
+            </script>";
             echo "Error al registrar el préstamo.";
         }
     }
