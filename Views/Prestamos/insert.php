@@ -1,13 +1,13 @@
 <?php // Suponiendo que $usuarios y $destinos llegan desde el controlador 
 ?>
-<div class="container mt-5 mb-5 p-4 rounded-4 shadow-lg border-15 border-primary bg-white" style="background: linear-gradient(135deg,rgb(253, 253, 253) 70%,rgb(143, 167, 235) 100%);">      
+<div class="container mt-5 mb-5 p-4 rounded-4 shadow-lg border-15 border-primary bg-white" style="background: linear-gradient(135deg,rgb(253, 253, 253) 70%,rgb(50, 133, 86) 100%);">      
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
-                    <h4 class="fw-bold text-primary text-center mb-4">
+                    <h4 class="fw-bold text-dark text-center mb-4">
                         <i class="bx bx-transfer-alt"></i> Registrar Préstamo
-                        </h4>
+                    </h4>
 
                         <p class="text-muted small text-center mb-4">
                             <span class="text-danger">*</span> Campos obligatorios.
