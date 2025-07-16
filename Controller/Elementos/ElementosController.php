@@ -45,6 +45,9 @@ class ElementosController
         $tipoElementos = $this->model->obtenerTipoElementos();
         $unidadMedida = $this->model->obtenerUnidadMedida();
 
+        $form_data = $_SESSION['form_data'] ?? [];
+        unset($_SESSION['form_data']); // Limpiar para no usarlo otra vez sin querer
+
         require_once 'C:\xampp\htdocs\inventario\Views\Elementos\insert.php';
     }
 
@@ -75,8 +78,14 @@ class ElementosController
                 'recomendaciones' => $_POST['recomendaciones'] ?? null,
             ];
 
+            // Fuerza cantidad a 1 si es devolutivo
+            if ($data['elem_telem_id'] == 1) {
+                $data['elem_cantidad'] = 1;
+            }
+
             //     existsCodigo($codigo), existsPlaca($placa), existsSerie($serie) )
             if ($this->model->existsCodigo($data['elem_codigo'])) {
+                $_SESSION['form_data'] = $data; // Guardar el formulario
                 $this->showSweetAlert(
                     'warning',
                     'Código duplicado',
@@ -87,6 +96,7 @@ class ElementosController
             }
 
             if ($data['elem_placa'] && $this->model->existsPlaca($data['elem_placa'])) {
+                 $_SESSION['form_data'] = $data; // Guardar el formulario
                 $this->showSweetAlert(
                     'warning',
                     'Placa duplicada',
@@ -97,6 +107,7 @@ class ElementosController
             }
 
             if ($data['elem_serie'] && $this->model->existsSerie($data['elem_serie'])) {
+                 $_SESSION['form_data'] = $data; // Guardar el formulario
                 $this->showSweetAlert(
                     'warning',
                     'Serie duplicada',
@@ -107,14 +118,6 @@ class ElementosController
             }
 
             $resultado = $this->model->insertElemento($data);
-            /* 
-            if ($resultado) {
-                header('Location: index.php?modulo=elementos&controlador=elementos&funcion=consult');
-                exit();
-            } else {
-                echo "Error al insertar el elemento.";
-            } */
-
             if ($resultado) {
                 $this->showSweetAlert(
                     'success',
@@ -216,10 +219,15 @@ class ElementosController
                 'elem_area_id'   => $_POST['elem_area_id'] ?? null,
                 'elem_cate_id'   => $_POST['elem_cate_id'] ?? null,
                 'elem_marca_id'  => $_POST['elem_marca_id'] ?? null,
-                //'elem_cantidad'  => $_POST['elem_cantidad'] ?? null,
+                'elem_cantidad'  => $_POST['elem_cantidad'] ?? null,
                 'elem_unidad_id' => $_POST['elem_unidad_id'] ?? null,
                 'recomendaciones' => $_POST['recomendaciones'] ?? null
             ];
+
+            // Fuerza cantidad a 1 si es devolutivo
+            if ($data['elem_telem_id'] == 1) {
+                $data['elem_cantidad'] = 1;
+            }
 
             // Validaciones de duplicados 
             if ($this->model->existsCodigoOtro($data['elem_codigo'], $data['elem_id'])) {
@@ -272,9 +280,13 @@ class ElementosController
             $resultado = $this->model->actualizarElemento($data);
 
             if ($resultado) {
-                header("Location: " . getUrl("elementos", "elementos", "consult"));
-            } else {
-                echo "<script>alert('Error al actualizar el elemento.'); history.back();</script>";
+                $this->showSweetAlert(
+                    'success',
+                    'Elemento actualizado',
+                    'La información fue guardada correctamente.',
+                    getUrl("elementos", "elementos", "consult")
+                );
+                return;
             }
         }
     }

@@ -1,14 +1,14 @@
 <div class="container mt-5">
     <div class="card shadow border-0">
         <div class="card-body">
-            <h4 class="fw-bold text-primary text-center mb-4">
+            <h4 class="fw-bold text-success text-center mb-4">
                 <i class='bx bx-package'></i> Listado de Elementos
             </h4>
 
-            <!-- Filtro y búsqueda -->
+            <!-- Filtro, busqueda y exportacion excel-->
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                 <div class="input-group" style="max-width: 220px;">
-                    <label class="input-group-text bg-primary text-white" for="filtroTipo">
+                    <label class="input-group-text bg-success text-white" for="filtroTipo">
                         <i class='bx bx-filter-alt'></i>
                     </label>
                     <select id="filtroTipo" class="form-select">
@@ -20,15 +20,21 @@
                 </div>
 
                 <div class="input-group" style="max-width: 300px;">
-                    <span class="input-group-text bg-primary text-white">
+                    <span class="input-group-text bg-success text-white">
                         <i class='bx bx-search'></i>
                     </span>
                     <input type="search" id="buscadorElementos" class="form-control" placeholder="Buscar..." aria-label="Buscar">
                 </div>
 
-                <a href="<?= getUrl('elementos', 'elementos', 'getInsert') ?>" class="btn btn-success">
-                    <i class='bx bx-plus-circle'></i> Nuevo Elemento
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="<?= getUrl('elementos', 'elementos', 'getInsert') ?>" class="btn btn-success">
+                        <i class='bx bx-plus-circle'></i> Nuevo Elemento
+                    </a>
+                    <!-- Botón para exportar a Excel -->
+                    <button id="btnExportarExcel" class="btn btn-outline-success" type="button">
+                        <i class='bx bx-download'></i> Exportar Excel
+                    </button>
+                </div>
             </div>
 
             <!-- Tabla -->
@@ -161,9 +167,76 @@
                     <ul class="pagination" id="paginacionTabla"></ul>
                 </nav>
             </div>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
         </div>
     </div>
 </div>
+
+<!-- Esto hace que se exporte el excel -->
+<script>
+document.getElementById('btnExportarExcel').addEventListener('click', function () {
+    const tabla = document.getElementById('tablaElementos');
+    const filas = Array.from(tabla.querySelectorAll('tbody tr'));
+    const filasExportar = [];
+
+    // Agregar encabezados
+    const headers = [];
+    tabla.querySelectorAll('thead th').forEach(th => headers.push(th.innerText));
+    filasExportar.push(headers);
+
+    // Obtener el filtro y búsqueda actual
+    const inputBusqueda = document.getElementById('buscadorElementos');
+    const filtroTipo = document.getElementById('filtroTipo');
+    const valor = inputBusqueda.value.toLowerCase().trim();
+    const tipo = filtroTipo.value;
+
+    // Filtrar todas las filas según el filtro y búsqueda (igual que en renderTabla)
+    const filtradas = filas.filter(fila => {
+        const celdas = fila.cells;
+        const [codigo, nombre, tipoEl, categoria, placa, estado] = [
+            celdas[0].textContent.toLowerCase(),
+            celdas[1].textContent.toLowerCase(),
+            celdas[2].textContent.toLowerCase(),
+            celdas[3].textContent.toLowerCase(),
+            celdas[4].textContent.toLowerCase(),
+            celdas[5].textContent.toLowerCase()
+        ];
+        switch (tipo) {
+            case 'codigo':
+                return codigo.includes(valor);
+            case 'nombre':
+                return nombre.includes(valor);
+            case 'tipo':
+                return tipoEl.includes(valor);
+            case 'estado':
+                return estado.includes(valor);
+            default:
+                return true;
+        }
+    });
+
+    // Agregar todas las filas filtradas (sin importar la página)
+    filtradas.forEach(fila => {
+        const row = [];
+        fila.querySelectorAll('td').forEach(td => {
+            // Limpia saltos de línea y espacios extra
+            let texto = td.textContent.replace(/\s+/g, ' ').trim();
+            row.push(texto);
+        });
+        filasExportar.push(row);
+    });
+
+    // Crear hoja y libro
+    const ws = XLSX.utils.aoa_to_sheet(filasExportar);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Elementos");
+
+    // Descargar
+    XLSX.writeFile(wb, "elementos_filtrados.xlsx");
+});
+</script>
+
 
 <!-- Modal para registrar entrada de cantidad -->
 <script>
@@ -257,6 +330,15 @@
                 a.className = 'page-link';
                 a.href = '#';
                 a.innerHTML = label;
+
+                //Cambio de color Números y flechas en verde
+                if (!isNaN(label) || label === '&laquo;' || label === '&raquo;') {
+                    a.classList.add('text-success');
+                }
+                // Activo: fondo y borde verde, texto blanco
+                if (active) {
+                    a.classList.add('bg-success', 'text-white', 'border-success');
+                }
 
                 a.onclick = e => {
                     e.preventDefault();

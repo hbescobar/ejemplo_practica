@@ -1,40 +1,42 @@
 <div class="container mt-5">
     <div class="card shadow border-0">
         <div class="card-body">
-            
-            <div class="mx-n4 mb-4 pb-2 border-bottom border-1 border-primary border-opacity-25"
-                style="box-shadow:0 0 4px rgba(13,110,253,.25);  /* blur 4 px, opacidad 25 % */
-                        border-radius:.5rem;">
-            <h4 class="m-0 py-2 d-flex justify-content-center align-items-center gap-2
-                        fw-bold text-primary">
-                <i class="bx bx-user fs-4"></i>
-                Listado de Usuarios
+            <h4 class="fw-bold text-success text-center mb-4">
+                <i class='bx bx-package'></i> Listado de Usuarios
             </h4>
-            </div>
 
-            <!-- Filtro y búsqueda -->
+            <!-- Filtro, busqueda y exportacion a excel -->
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                 <div class="input-group" style="max-width: 220px;">
-                    <label class="input-group-text bg-primary text-white" for="filtroTipo">
+                    <label class="input-group-text bg-success text-white" for="filtroTipo">
                         <i class='bx bx-filter-alt'></i>
                     </label>
                     <select id="filtroTipo" class="form-select">
                         <option value="codigo">Por N° Documento</option>
                         <option value="nombre">Por Nombre</option>
+                        <option value="correo">Por Correo</option>
+                        <option value="telefono">Por Teléfono</option>
                         <option value="rol">Por Rol</option>
                     </select>
                 </div>
 
                 <div class="input-group" style="max-width: 300px;">
-                    <span class="input-group-text bg-primary text-white">
+                    <span class="input-group-text bg-success text-white">
                         <i class='bx bx-search'></i>
                     </span>
                     <input type="search" id="buscadorUsuarios" class="form-control" placeholder="Buscar..." aria-label="Buscar">
                 </div>
 
-                <a href="<?= getUrl('usuarios', 'usuarios', 'getInsert'); ?>" class="btn btn-success">
-                    <i class='bx bx-user-plus'></i> Registrar Nuevo Usuario
-                </a>
+                <!-- Agrupa los botones aquí -->
+                <div class="d-flex gap-2">
+                    <a href="<?= getUrl('usuarios', 'usuarios', 'getInsert'); ?>" class="btn btn-success">
+                        <i class='bx bx-user-plus'></i> Registrar Nuevo Usuario
+                    </a>
+                    <!-- Botón para exportar a Excel -->
+                    <button id="btnExportarExcelUsuarios" class="btn btn-outline-success" type="button">
+                        <i class='bx bxs-file-export'></i> Exportar Excel
+                    </button>
+                </div>
             </div>
 
             <!-- Tabla -->
@@ -143,9 +145,70 @@
                     <ul class="pagination" id="paginacionTabla"></ul>
                 </nav>
             </div>
+            <!-- Importar librería para exportar a Excel -->
+            <!-- Esta libreria permite exportar tablas HTML a archivos Excel -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
         </div>
     </div>
 </div>
+
+<!-- JS para exportar a Excel -->
+<script>
+// Función para exportar la tabla a Excel
+document.getElementById('btnExportarExcelUsuarios').addEventListener('click', function () {
+    const tabla = document.getElementById('tablaUsuarios');// Obtener la tabla
+    const filas = Array.from(tabla.querySelectorAll('tbody tr'));// Convertir las filas de la tabla en un array
+    const filasExportar = [];// Array para almacenar las filas a exportar
+
+    // Agregar los encabezados de la tabla
+    const headers = [];// Array para los encabezados vacío
+    tabla.querySelectorAll('thead th').forEach(th => headers.push(th.innerText));// Agregar los encabezados al array
+    filasExportar.push(headers);// Agregar los encabezados al array de filas a exportar
+
+    // Obtener el filtro y búsqueda actual
+    const inputBusqueda = document.getElementById('buscadorUsuarios');
+    const filtroTipo = document.getElementById('filtroTipo');
+    const valor = inputBusqueda.value.toLowerCase().trim();
+    const tipo = filtroTipo.value;
+
+    // Filtrar todas las filas según el filtro y búsqueda
+    const filtradas = filas.filter(fila => {
+        const celdas = fila.cells;
+        const [codigo, nombre, rol] = [
+            celdas[2].textContent.toLowerCase(), // Numero de Documento
+            celdas[3].textContent.toLowerCase(), // Nombre Completo
+            celdas[6].textContent.toLowerCase(), // Rol
+        ];
+        switch (tipo) {
+            case 'codigo':
+                return codigo.includes(valor);
+            case 'nombre':
+                return nombre.includes(valor);
+            case 'rol':
+                return rol.includes(valor);
+            default:
+                return true;
+        }
+    });
+
+    // Agregar todas las filas filtradas
+    filtradas.forEach(fila => {
+        const row = [];
+        fila.querySelectorAll('td').forEach(td => {
+            let texto = td.textContent.replace(/\s+/g, ' ').trim();
+            row.push(texto);
+        });
+        filasExportar.push(row);
+    });
+
+    // Crear hoja y libro
+    const ws = XLSX.utils.aoa_to_sheet(filasExportar);// Convertir el array de filas a una hoja de Excel
+    XLSX.utils.book_append_sheet(wb, ws, "Usuarios");// Agregar la hoja al libro
+
+    // Descargar
+    XLSX.writeFile(wb, "usuarios_filtrados.xlsx");// Descargar el archivo Excel
+});
+</script>
 
 <!-- JS Este script maneja el modal para cambio de estado -->
 <script>
@@ -160,7 +223,6 @@
 <!-- JS búsqueda + paginación -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-
         // Elementos del DOM
         const inputBusqueda = document.getElementById('buscadorUsuarios'); // Input para escribir la búsqueda
         const filtroTipo = document.getElementById('filtroTipo'); // Select para elegir el tipo de filtro
@@ -175,13 +237,14 @@
             const valor = inputBusqueda.value.toLowerCase().trim(); // Texto de búsqueda en minúsculas
             const tipo = filtroTipo.value; // Tipo de filtro seleccionado
 
-
             // Filtrar las filas según lo que se escribió y el tipo seleccionado
             const filtradas = filas.filter(fila => {
                 const celdas = fila.cells;
-                const [codigo, nombre, rol] = [
+                const [codigo, nombre, correo, telefono, rol] = [
                     celdas[2].textContent.toLowerCase(), // Numero de Documento
                     celdas[3].textContent.toLowerCase(), // Nombre Completo
+                    celdas[4].textContent.toLowerCase(), // Correo
+                    celdas[5].textContent.toLowerCase(), // Teléfono
                     celdas[6].textContent.toLowerCase(), // Rol
                 ];
 
@@ -191,10 +254,14 @@
                         return codigo.includes(valor);
                     case 'nombre':
                         return nombre.includes(valor);
+                    case 'correo':
+                        return correo.includes(valor);
+                    case 'telefono':
+                        return telefono.includes(valor);
                     case 'rol':
                         return rol.includes(valor);
                     default:
-                        return true; // Si no se selecciona nada, no filtra
+                        return true;
                 }
             });
             
@@ -250,6 +317,15 @@
                 a.className = 'page-link';
                 a.href = '#';
                 a.innerHTML = label;
+
+                //Cambio de color Números y flechas en verde
+                if (!isNaN(label) || label === '&laquo;' || label === '&raquo;') {
+                    a.classList.add('text-success');
+                }
+                // Activo: fondo y borde verde, texto blanco
+                if (active) {
+                    a.classList.add('bg-success', 'text-white', 'border-success');
+                }
 
                 a.onclick = e => {
                     e.preventDefault();

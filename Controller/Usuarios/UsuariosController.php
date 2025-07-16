@@ -36,6 +36,9 @@ class UsuariosController
         $tipos_doc = $this->model->obtenerTiposDocumento();
         $estados = $this->model->obtenerEstados();
 
+        $form_data = $_SESSION['form_data'] ?? [];
+        unset($_SESSION['form_data']); // Limpiar para no usarlo otra vez sin querer
+
         require_once 'C:\xampp\htdocs\inventario\Views\Usuarios\insert.php';
     }
 
@@ -59,6 +62,7 @@ class UsuariosController
 
             /*documento duplicado ---- */
             if ($this->model->existeNumeroDocumento($data['usu_numero_docu'])) {
+                $_SESSION['form_data'] = $data; // Guardar el formulario
                     $this->showSweetAlert(
                         'error',
                         'Documento duplicado',
@@ -155,6 +159,19 @@ class UsuariosController
             );
             return;
             }
+
+            // Ejecutar actualización
+            $resultado = $this->model->actualizarUsuario($data);
+
+            if ($resultado) {
+                $this->showSweetAlert(
+                    'success',
+                    'Usuario actualizado',
+                    'La información fue guardada correctamente.',
+                    getUrl("usuarios", "usuarios", "consult")
+                );
+                return;
+            }
             
             if ($data['usu_id'] && $data['usu_nombre']) {
                 $resultado = $this->model->actualizarUsuario($data);
@@ -240,13 +257,21 @@ class UsuariosController
             $estado = $this->model->buscarEstadoPorNombre($nuevoEstado);
             if ($estado) {
                 $this->model->actualizarEstadoUsuario($usuarioId, $estado['estado_id']);
-                header('Location: ' . getUrl('usuarios', 'usuarios', 'consult'));// Redirigir a la lista de usuarios
+                $this->showSweetAlert(
+                    'success',
+                    'Estado actualizado',
+                    'El estado del usuario fue actualizado correctamente.',
+                    getUrl('usuarios', 'usuarios', 'consult')
+                );
                 exit();
-            } else {
-                echo "Estado inválido.";// Mostrar un mensaje de error si el estado no es válido
             }
         } else {
-            echo "<script>alert('Contraseña incorrecta'); window.history.back();</script>";// Mostrar un mensaje de error si la clave no coincide
+            $this->showSweetAlert(
+                'error',
+                'Contraseña incorrecta',
+                'La contraseña ingresada es incorrecta.',
+                getUrl('usuarios', 'usuarios', 'consult')
+            );
             exit();
         }
     }

@@ -324,7 +324,4 @@ class ElementosModel extends MasterModel
 
         return $this->insert($sql);
     }
-
-
-
 }
