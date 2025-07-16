@@ -132,8 +132,8 @@ function validarClave(input) {
 }
 
 function validarForm(event) {
-    const form = event.target; // Obtiene el formulario actual
-    const camposLlenos = validarCamposVacios(form); // Verifica que no haya campos vacíos
+    const form = event.target;
+    const camposLlenos = validarCamposVacios(form);
 
     // Obtiene los campos del formulario
     const correoInput = document.querySelector('input[name="usu_email"]');
@@ -142,7 +142,7 @@ function validarForm(event) {
     const apellidoInput = document.querySelector('input[name="usu_apellido"]');
     const telefonoInput = document.querySelector('input[name="usu_telefono"]');
     const claveInput = document.querySelector('input[name="usu_clave"]');
-    const direccionInput = document.querySelector('input[name="usu_direccion"]'); // Campo de dirección
+    const direccionInput = document.querySelector('input[name="usu_direccion"]');
 
     // Llama a las funciones de validación para cada campo
     const correoValido = validarCorreo(correoInput);
@@ -151,14 +151,18 @@ function validarForm(event) {
     const apellidoValido = validarApellido(apellidoInput);
     const telefonoValido = validarTelefono(telefonoInput);
     const claveValida = validarClave(claveInput);
-    const direccionValida = validarDireccion(direccionInput); // Valida la dirección
+    const direccionValida = validarDireccion(direccionInput);
 
-    // Si alguna validación falla, evita el envío del formulario
+    // Si alguna validación falla, muestra SweetAlert y detiene el envío
     if (!camposLlenos || !correoValido || !numDocumValido || !nombreValido || !apellidoValido || !telefonoValido || !claveValida || !direccionValida) {
-        event.preventDefault(); // Detiene el envío del formulario
-        alert("Por favor, corrige los errores antes de enviar el formulario.");
+        event.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Campos incompletos o inválidos',
+            text: 'Por favor, corrige los campos marcados en rojo.',
+            confirmButtonColor: '#3085d6',
+        });
         return false;
     }
-
-    return true; // Permite el envío si todo está correcto
+    return true;
 }

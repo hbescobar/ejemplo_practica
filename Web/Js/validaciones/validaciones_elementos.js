@@ -47,7 +47,7 @@ function validarCamposVacios(form) {
 
 //validacion placa de elemento
 function validarPlaca(input) {
-    if (input.disabled) return true; // <--- Agrega esto
+    if (input.disabled) return true;
     const regexPlaca = /^[a-zA-Z0-9\- ]+$/; // Permite letras, números, guiones y espacios pero no permite caracteres especiales
     const mensajeError = document.getElementById("errorelem_placa"); // Selecciona el contenedor del mensaje
 
@@ -141,7 +141,7 @@ function validarModeloElem(input) {
         return false;
     }
 
-    /* 4. Valor correcto                              */
+    /* 4. Valor correcto*/
     msg.textContent = '';
     input.classList.remove('is-invalid');
     return true;
@@ -202,25 +202,28 @@ function validarCant(input) {
 // Validación para el textarea de recomendaciones
 // Permite letras, números, espacios y los signos de puntuación . , ; : ( ) ! ?
 function validarRecomendaciones(textarea) {
-    /* si está deshabilitado o vacío  ⇒  no es obligatorio */
-    if (textarea.disabled || textarea.value.trim() === '') {
-        textarea.classList.remove('is-invalid');
-        const err = textarea.parentElement.querySelector('div.text-danger');
-        err && (err.textContent = '');
-        return true;
+    const tipoElemento = document.getElementById("tipoElementos")?.value;
+    const errorId = (tipoElemento === "1") ? "errorRecomDev" : "errorRecomNo";
+    const error = document.getElementById(errorId);
+
+    const valor = textarea.value.trim();
+
+    if (valor === '') {
+        textarea.classList.remove("is-invalid");
+        if (error) error.textContent = '';
+        return true; // es opcional, no obligatorio
     }
 
-    /* solo letras, números, espacios*/
-    const regex = /^[a-zA-Z0-9À-ÿ\s.,;:()!?-]{1,250}$/;
-    const error = textarea.parentElement.querySelector('div.text-danger');
+    const regex = /^[a-zA-Z0-9À-ÿ\s.,;:()¡!¿?"'-]{1,250}$/;
 
-    if (!regex.test(textarea.value)) {
-        error.textContent = 'Solo letras/números (máx. 250 car.).';
-        textarea.classList.add('is-invalid');
+    if (!regex.test(valor)) {
+        textarea.classList.add("is-invalid");
+        if (error) error.textContent = "Solo se permiten letras, números y signos de puntuación válidos.";
         return false;
     }
-    error.textContent = '';
-    textarea.classList.remove('is-invalid');
+
+    textarea.classList.remove("is-invalid");
+    if (error) error.textContent = '';
     return true;
 }
 
@@ -250,27 +253,31 @@ function validarElementos(event) {
     } else if (tipo === '2') {  // ── NO DEVOLUTIVO ──
         const codigo   = bloqueNo.querySelector('input[name="elem_codigo"]');
         const nombre   = bloqueNo.querySelector('input[name="elem_nombre"]');
-        const cantidad = bloqueNo.querySelector('input[name="elem_cantidad"]');
+        /* const cantidad = bloqueNo.querySelector('input[name="elem_cantidad"]'); */
 
         todoOK = todoOK && validarCodElemNoDevo(codigo);
         todoOK = todoOK && validarNombreElemNoDevo(nombre);
-        todoOK = todoOK && validarCant(cantidad);
+        /* todoOK = todoOK && validarCant(cantidad); */
         // la unidad de medida ya la revisa validarCamposVacios()
     }
 
     /* validar el textarea de recomendaciones que esté visible */
-    const recomVisible = form.querySelector(
-        'textarea[name="recomendaciones"]:not([disabled])'
-    );
-    if (recomVisible) {
-        todoOK = todoOK && validarRecomendaciones(recomVisible);
+    const recom = form.querySelector('textarea[name="recomendaciones"]:not([disabled])');
+    if (recom) {
+        const resultado = validarRecomendaciones(recom);
+        todoOK = resultado && todoOK;  // Asegura que se acumule correctamente
     }
 
     /* ── detener envío si hay errores ───────────────────────── */
     if (!todoOK) {
         event.preventDefault();
-        alert('Por favor, corrige los campos marcados en rojo.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Campos incompletos o inválidos',
+            text: 'Por favor, corrige los campos marcados en rojo.',
+            confirmButtonColor: '#3085d6',
+        });
         return false;
-    }
+    } 
     return true;
 }
