@@ -5,12 +5,12 @@
 =========================================================== -->
 
 <!-- ===================== NAVBAR INICIO ===================== -->
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm w-100" style="background-color: #1E8449;">
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm w-100" style="background-color: #2a8c4a;">
   <div class="container-fluid px-4">
 
     <!-- Logo -->
     <a class="navbar-brand fw-bold fs-5 text-white d-flex align-items-center" href="index.php?modulo=dashboard&controlador=dashboard&funcion=index">
-      <i class='bx bx-package me-2 fs-4'></i> InvenSys
+      <i class='bx bx-package me-2 fs-4'></i> Inventix
     </a>
 
     <!-- Boton para menu responsive -->
@@ -256,7 +256,7 @@
   }
 
   #modalNotificaciones .modal-body::-webkit-scrollbar-thumb {
-    background-color: #0d6efd;
+    background-color: #2a8c4a;
     border-radius: 4px;
   }
 

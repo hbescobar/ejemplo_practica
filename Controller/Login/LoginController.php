@@ -39,12 +39,10 @@ class LoginController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $num_docum = $_POST['usu_numero_docu'] ?? '';
             $clave = $_POST['usu_clave'] ?? '';
-            $rol_id = $_POST['rol_id'] ?? '';
 
-            $usuario = $this->model->validarLogin($num_docum, $clave, $rol_id);
+            $usuario = $this->model->validarLogin($num_docum, $clave);
 
             if ($usuario) {
-                // Validar si está activo
                 if ($usuario['estado_id'] != 1) {
                     $this->showSweetAlert(
                         'warning',
@@ -55,12 +53,11 @@ class LoginController
                     return;
                 }
 
-                // Si está activo, continuar
                 if (session_status() == PHP_SESSION_NONE) {
                     session_start();
                 }
 
-                $_SESSION['usuario'] = $usuario;
+                $_SESSION['usuario'] = $usuario; // El usuario ya trae su rol_id y/o nombre del rol
 
                 $this->showSweetAlert(
                     'success',
@@ -72,13 +69,12 @@ class LoginController
                 $this->showSweetAlert(
                     'error',
                     'Credenciales incorrectas',
-                    'Número de documento, clave o rol incorrecto.',
+                    'Número de documento o clave incorrectos.',
                     'index.php?modulo=login&controlador=login&funcion=getLogin'
                 );
             }
         }
     }
-
 
     // ====================================
     // CERRAR SESIÓN
@@ -100,7 +96,7 @@ class LoginController
     private function showSweetAlert($icon, $title, $text, $redirectUrl)
     {
         // Si el icono es "success", uso un color azul personalizado
-        $iconColor = ($icon === 'success') ? '#0d6efd' : ''; 
+        $iconColor = ($icon === 'success') ? '#0d6efd' : '';
 
         echo "
     <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>

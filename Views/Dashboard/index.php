@@ -64,14 +64,14 @@
 
     <!-- ========== BOTON FLOTANTE DE AYUDA ========== -->
     <button id="boton-ayuda" class="btn rounded-circle shadow-lg text-white"
-        style="background-color: #1E8449; border: none;">
+        style="background-color: #2a8c4a; border: none;">
         <i class='bx bx-bot fs-3'></i>
     </button>
 
     <!-- ========== CHAT FLOTANTE DE AYUDA ========== -->
     <div id="chat-ayuda" class="card shadow-lg">
         <div class="card-header text-white d-flex justify-content-between align-items-center"
-            style="background-color: #1E8449;">
+            style="background-color: #2a8c4a;">
             <span><i class='bx bx-help-circle me-2'></i>Centro de Ayuda</span>
             <button class="btn-close btn-close-white" aria-label="Cerrar" onclick="toggleChat()"></button>
         </div>

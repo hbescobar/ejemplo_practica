@@ -15,7 +15,7 @@
     <!-- === Ola SVG superior decorativa === -->
     <div class="wave-container">
         <svg viewBox="0 0 1440 150" preserveAspectRatio="none" style="transform: scaleX(-1);">
-            <path d="M0,90 C360,0 1080,180 1440,90 L1440,150 L0,150 Z" fill="#1E8449"></path>
+            <path d="M0,90 C360,0 1080,180 1440,90 L1440,150 L0,150 Z" fill="#2a8c4a"></path>
         </svg>
     </div>
 
@@ -64,7 +64,7 @@
 
     /* === Footer visual === */
     .footer-content {
-        background-color: #1E8449;
+        background-color: #2a8c4a;
     }
 
     /* === Responsive === */
