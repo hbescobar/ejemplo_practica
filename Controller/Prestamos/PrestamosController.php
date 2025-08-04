@@ -470,7 +470,7 @@ public function modificar()
     }
 
 
-    public function update()
+public function update()
 {
    
     $prestamoID = $_POST['id_prestamo'] ?? null;
@@ -572,9 +572,5 @@ public function devolver(){
 
         require_once __DIR__ . '/../../Views/Prestamos/consultMovements.php';    
     }
-
-
-
-
 
 }
