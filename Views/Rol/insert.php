@@ -14,14 +14,15 @@
             Los campos marcados con <span class="text-danger fw-bold">*</span> son obligatorios.
         </p>
 
-        <form action="<?php echo getUrl('rol', 'rol', 'postInsert'); ?>" method="post">
+        <form action="<?php echo getUrl('rol', 'rol', 'postInsert'); ?>" method="post" onsubmit="return validarRol(event)">
 
             <!-- Campo: Nombre del Rol -->
             <div class="mb-3">
                 <label for="rol_nombre" class="form-label">
                     <i class="bi bi-person-lines-fill text-primary"></i> Nombre del Rol <span class="text-danger">*</span>
                 </label>
-                <input type="text" name="rol_nombre" id="rol_nombre" class="form-control" required>
+                <input type="text" name="rol_nombre" id="rol_nombre" class="form-control"  onchange="validarNombreRol(this)" required>
+                <div class="text-danger mt-1" id="error_rol_nombre"></div>
             </div>
 
             <!-- Campo: Estado -->
@@ -53,3 +54,5 @@
 
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

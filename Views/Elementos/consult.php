@@ -14,6 +14,8 @@
                     <select id="filtroTipo" class="form-select">
                         <option value="codigo">Por Código</option>
                         <option value="nombre">Por Nombre</option>
+                        <option value="placa">Por placa</option>
+                        <option value="categoria">Por Categoría</option>
                         <option value="estado">Por Estado</option>
                         <option value="tipo">Por Tipo</option>
                     </select>
@@ -180,9 +182,13 @@ document.getElementById('btnExportarExcel').addEventListener('click', function (
     const filas = Array.from(tabla.querySelectorAll('tbody tr'));
     const filasExportar = [];
 
-    // Agregar encabezados
+    // Agregar encabezados ingnorando al columna acciones
     const headers = [];
-    tabla.querySelectorAll('thead th').forEach(th => headers.push(th.innerText));
+    tabla.querySelectorAll('thead th').forEach((th, index) => {
+        if (index < 6) { // <--no incluimso la columna 7 (Acciones)
+            headers.push(th.innerText);
+        }
+    });
     filasExportar.push(headers);
 
     // Obtener el filtro y búsqueda actual
@@ -195,34 +201,41 @@ document.getElementById('btnExportarExcel').addEventListener('click', function (
     const filtradas = filas.filter(fila => {
         const celdas = fila.cells;
         const [codigo, nombre, tipoEl, categoria, placa, estado] = [
-            celdas[0].textContent.toLowerCase(),
-            celdas[1].textContent.toLowerCase(),
-            celdas[2].textContent.toLowerCase(),
-            celdas[3].textContent.toLowerCase(),
-            celdas[4].textContent.toLowerCase(),
-            celdas[5].textContent.toLowerCase()
+            celdas[0].textContent.toLowerCase(),//codigo
+            celdas[1].textContent.toLowerCase(),//nombre
+            celdas[2].textContent.toLowerCase(),//tipo
+            celdas[3].textContent.toLowerCase(),//categoria
+            celdas[4].textContent.toLowerCase(),//placa
+            celdas[5].textContent.toLowerCase()//estado
         ];
+        
+        // Aplica el filtro según el tipo elegido
         switch (tipo) {
-            case 'codigo':
-                return codigo.includes(valor);
-            case 'nombre':
-                return nombre.includes(valor);
-            case 'tipo':
-                return tipoEl.includes(valor);
-            case 'estado':
-                return estado.includes(valor);
-            default:
-                return true;
-        }
+                    case 'codigo':
+                        return codigo.includes(valor);
+                    case 'nombre':
+                        return nombre.includes(valor);
+                    case 'tipo':
+                        return tipoEl.includes(valor);
+                    case 'estado':
+                        return estado.includes(valor);
+                    case 'categoria':
+                        return categoria.includes(valor);
+                    case 'placa':
+                        return placa.includes(valor);
+                    default:
+                        return true;
+        }            
     });
 
     // Agregar todas las filas filtradas (sin importar la página)
     filtradas.forEach(fila => {
         const row = [];
-        fila.querySelectorAll('td').forEach(td => {
-            // Limpia saltos de línea y espacios extra
-            let texto = td.textContent.replace(/\s+/g, ' ').trim();
-            row.push(texto);
+        fila.querySelectorAll('td').forEach((td, index) => {
+            if (index < 6) { // <--tomamos las primeras 6 columnas
+                let texto = td.textContent.replace(/\s+/g, ' ').trim();
+                row.push(texto);
+            }
         });
         filasExportar.push(row);
     });
@@ -277,11 +290,13 @@ document.getElementById('btnExportarExcel').addEventListener('click', function (
             // Filtrar las filas según lo que se escribió y el tipo seleccionado
             const filtradas = filas.filter(fila => {
                 const celdas = fila.cells;
-                const [codigo, nombre, tipoEl, estado] = [
+                const [codigo, nombre, tipoEl, categoria, placa, estado] = [
                     celdas[0].textContent.toLowerCase(),//codigo
-                    celdas[1].textContent.toLowerCase(),// nombre
+                    celdas[1].textContent.toLowerCase(),//nombre
                     celdas[2].textContent.toLowerCase(),//tipo
-                    celdas[5].textContent.toLowerCase()// estado
+                    celdas[3].textContent.toLowerCase(),//categoria
+                    celdas[4].textContent.toLowerCase(),//placa
+                    celdas[5].textContent.toLowerCase()//estado
                 ];
 
                 // Aplica el filtro según el tipo elegido
@@ -294,8 +309,12 @@ document.getElementById('btnExportarExcel').addEventListener('click', function (
                         return tipoEl.includes(valor);
                     case 'estado':
                         return estado.includes(valor);
+                    case 'categoria':
+                        return categoria.includes(valor);
+                    case 'placa':
+                        return placa.includes(valor);
                     default:
-                        return true; // Si no se selecciona nada, no filtra
+                        return true;
                 }
             });
 

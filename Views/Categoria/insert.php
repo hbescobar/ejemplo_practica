@@ -15,7 +15,7 @@
         </p>
 
         <!-- Formulario -->
-        <form action="<?= getUrl('categoria', 'categoria', 'postInsert'); ?>" method="POST">
+        <form action="<?= getUrl('categoria', 'categoria', 'postInsert'); ?>" method="POST" onsubmit="return validarCategoria(event)">
 
             <!-- Campo: Nombre -->
             <div class="mb-3">
@@ -23,16 +23,18 @@
                     <i class="bi bi-tag-fill text-primary"></i> Nombre <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="cate_nombre" id="cate_nombre" class="form-control"
-                    placeholder="Ej: Electrónica" required>
+                    placeholder="Ej: Electrónica" onchange="validarNombreCategoria(this)" required>
+                <div class="text-danger mt-1" id="error_cate_nombre"></div>
             </div>
 
             <!-- Campo: Descripción -->
             <div class="mb-3">
                 <label for="cate_descripcion" class="form-label">
-                    <i class="bi bi-card-text text-primary"></i> Descripción
+                    <i class="bi bi-card-text text-primary"></i> Descripción <small class="text-muted">(opcional)</small>
                 </label>
                 <textarea name="cate_descripcion" id="cate_descripcion" rows="3" class="form-control"
-                    placeholder="Breve descripción de la categoría..."></textarea>
+                    placeholder="Breve descripción de la categoría..." onchange="validarDescripcionCategoria(this)"></textarea>
+                <div class="text-danger mt-1" id="error_cate_descripcion"></div>
             </div>
 
             <!-- Campo: Tipo de Elemento -->
@@ -63,3 +65,5 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

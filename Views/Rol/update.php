@@ -10,7 +10,7 @@
             <i class="bi bi-person-badge-fill me-2"></i> Editar Rol
         </h4>
 
-        <form action="<?php echo getUrl('rol', 'rol', 'postEdit'); ?>" method="post">
+        <form action="<?php echo getUrl('rol', 'rol', 'postEdit'); ?>" method="post" onsubmit="return validarEditarRol(event)">
 
             <!-- ID del rol (oculto) -->
             <input type="hidden" name="rol_id" value="<?php echo $rol['rol_id']; ?>">
@@ -20,13 +20,8 @@
                 <label for="rol_nombre" class="form-label">
                     <i class="bi bi-person-lines-fill text-warning"></i> Nombre del Rol <span class="text-danger">*</span>
                 </label>
-                <input
-                    type="text"
-                    name="rol_nombre"
-                    id="rol_nombre"
-                    class="form-control"
-                    value="<?php echo htmlspecialchars($rol['rol_nombre']); ?>"
-                    required>
+                <input type="text" name="rol_nombre" id="rol_nombre" class="form-control" value="<?php echo htmlspecialchars($rol       ['rol_nombre']); ?>" onchange="validarNombreRolEditar(this)" required>
+                <div class="text-danger mt-1" id="error_rol_nombre"></div>
             </div>
 
             <!-- Estado -->
@@ -63,3 +58,5 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

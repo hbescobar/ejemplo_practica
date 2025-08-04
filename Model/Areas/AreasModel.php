@@ -66,4 +66,35 @@ class AreasModel extends MasterModel
         $sql = "DELETE FROM area WHERE area_id = '$id'";
         return $this->delete($sql);
     }
+
+    public function existeNombreArea($nombre)
+    {
+        $nombre = mysqli_real_escape_string($this->getConnect(), $nombre);
+        $sql = "SELECT 1 FROM area WHERE area_nombre = '$nombre' LIMIT 1";
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
+
+    // ============================================
+    // VERIFICAR SI EL NOMBRE DEL AREA YA EXISTE AL EDITAR
+    // ============================================
+    public function existeNombreAreaEditar($nombre, $id)
+    {
+        $nombre = mysqli_real_escape_string($this->getConnect(), $nombre);
+        $id = mysqli_real_escape_string($this->getConnect(), $id);
+
+        $sql = "SELECT 1 FROM area WHERE area_nombre = '$nombre' AND area_id != '$id' LIMIT 1";
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
+
+    // ============================================
+    // VERIFICAR SI UN ÁREA ESTÁ EN USO
+    // ============================================
+    public function areaEstaEnUso($idArea)
+    {
+        $sql = "SELECT 1 FROM elementos_inventario WHERE elem_area_id = '$idArea' LIMIT 1";
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
 }

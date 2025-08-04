@@ -15,7 +15,7 @@
         </p>
 
         <!-- Formulario -->
-        <form action="<?php echo getUrl('areas', 'areas', 'postInsert'); ?>" method="POST">
+        <form action="<?php echo getUrl('areas', 'areas', 'postInsert'); ?>" method="POST" onsubmit="return validarArea(event)">
 
             <!-- Campo: Nombre del Área -->
             <div class="mb-3">
@@ -23,16 +23,17 @@
                     <i class="bi bi-tag-fill text-primary"></i> Nombre del Área <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="area_nombre" id="area_nombre" class="form-control"
-                       placeholder="Ej: Laboratorio de Física" required>
+                       placeholder="Ej: Laboratorio de Física" onchange="validarNombreArea(this)" required>
+                <div class="text-danger mt-1" id="error_area_nombre"></div>
             </div>
 
             <!-- Campo: Descripción del Área -->
             <div class="mb-3">
                 <label for="area_descripcion" class="form-label">
-                    <i class="bi bi-card-text text-primary"></i> Descripción del Área
+                    <i class="bi bi-card-text text-primary"></i> Descripción del Área <small class="text-muted">(opcional)</small>
                 </label>
-                <textarea name="area_descripcion" id="area_descripcion" rows="3" class="form-control"
-                          placeholder="Describe brevemente el propósito, ubicación u observaciones..."></textarea>
+                <textarea name="area_descripcion" id="area_descripcion" rows="3" class="form-control" placeholder="Describe brevemente el propósito, ubicación u observaciones..." onchange="validarDescripcionArea(this)"></textarea>
+                <div class="text-danger mt-1" id="error_area_descripcion"></div>
             </div>
 
             <!-- Botones de acción -->
@@ -48,3 +49,5 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

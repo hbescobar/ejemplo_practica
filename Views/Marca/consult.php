@@ -53,9 +53,7 @@
                                             <a href="<?= getUrl('Marca', 'Marca', 'getEdit', ['id' => $marca['marca_id']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
                                             </a>
-                                            <a href="<?= getUrl('Marca', 'Marca', 'delete', ['id' => $marca['marca_id']]); ?>" class="btn btn-sm btn-danger" title="Eliminar"
-                                               onclick="return confirm('¿Está seguro de eliminar esta marca?');">
-                                                <i class='bx bx-trash'></i>
+                                            <a href="#"class="btn btn-sm btn-danger btn-eliminar-marca" data-url="<?= getUrl('Marca', 'Marca', 'delete',['id' => $marca['marca_id']]); ?>" title="Eliminar"><i class='bx bx-trash'></i>
                                             </a>
                                         </div>
                                     </td>
@@ -79,6 +77,30 @@
         </div>
     </div>
 </div>
+<!-- SweetAlert para eliminar marca -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-eliminar-marca').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+
+                Swal.fire({
+                    title: '¿Está seguro de eliminar esta marca?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 <!-- JS búsqueda + paginación -->
 <script>

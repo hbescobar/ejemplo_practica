@@ -19,24 +19,25 @@
         </p>
 
         <!-- Formulario -->
-        <form action="<?= getUrl('marca', 'marca', 'postInsert'); ?>" method="POST">
+        <form action="<?= getUrl('marca', 'marca', 'postInsert'); ?>" method="POST" onsubmit="return validarMarca(event)">
 
             <!-- Campo: Nombre de la Marca -->
             <div class="mb-3">
                 <label for="marca_nombre" class="form-label">
                     <i class="bi bi-tag-fill text-primary"></i> Nombre de la Marca <span class="text-danger">*</span>
                 </label>
-                <input type="text" name="marca_nombre" id="marca_nombre" class="form-control"
-                       placeholder="Ej: Lenovo, HP, Samsung" required>
+                <input type="text" name="marca_nombre" id="marca_nombre" class="form-control" placeholder="Ej: Lenovo, HP, Samsung" onchange="validarNombreMarca(this)">
+                <div class="text-danger mt-1" id="error_marca_nombre"></div>
             </div>
 
             <!-- Campo: Descripción -->
             <div class="mb-3">
                 <label for="marca_descripcion" class="form-label">
-                    <i class="bi bi-card-text text-primary"></i> Descripción
+                    <i class="bi bi-card-text text-primary"></i> Descripción <small class="text-muted">(opcional)</small>
                 </label>
-                <textarea name="marca_descripcion" id="marca_descripcion" rows="3" class="form-control"
-                          placeholder="Información adicional sobre la marca..."></textarea>
+                <textarea name="marca_descripcion" id="marca_descripcion" rows="3" class="form-control" placeholder="Información adicional sobre la marca..."  onchange="validarDescripcionMarca(this)">
+                </textarea>
+                <div class="text-danger mt-1" id="error_marca_descripcion"></div>
             </div>
 
             <!-- Botones -->
@@ -50,5 +51,8 @@
             </div>
 
         </form>
+
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

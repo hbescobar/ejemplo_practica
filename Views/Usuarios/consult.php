@@ -161,9 +161,13 @@ document.getElementById('btnExportarExcelUsuarios').addEventListener('click', fu
     const filasExportar = [];// Array para almacenar las filas a exportar
 
     // Agregar los encabezados de la tabla
-    const headers = [];// Array para los encabezados vacío
-    tabla.querySelectorAll('thead th').forEach(th => headers.push(th.innerText));// Agregar los encabezados al array
-    filasExportar.push(headers);// Agregar los encabezados al array de filas a exportar
+    const headers = [];
+    tabla.querySelectorAll('thead th').forEach((th, index) => {
+        if (index < 8) { // hay 9 columnas (0 a 8), excluimos la última
+            headers.push(th.innerText);
+        }
+    });
+    filasExportar.push(headers);
 
     // Obtener el filtro y búsqueda actual
     const inputBusqueda = document.getElementById('buscadorUsuarios');
@@ -174,36 +178,47 @@ document.getElementById('btnExportarExcelUsuarios').addEventListener('click', fu
     // Filtrar todas las filas según el filtro y búsqueda
     const filtradas = filas.filter(fila => {
         const celdas = fila.cells;
-        const [codigo, nombre, rol] = [
-            celdas[2].textContent.toLowerCase(), // Numero de Documento
-            celdas[3].textContent.toLowerCase(), // Nombre Completo
-            celdas[6].textContent.toLowerCase(), // Rol
+        const [codigo, nombre, correo, telefono, rol] = [
+                    celdas[2].textContent.toLowerCase(), // Numero de Documento
+                    celdas[3].textContent.toLowerCase(), // Nombre Completo
+                    celdas[4].textContent.toLowerCase(), // Correo
+                    celdas[5].textContent.toLowerCase(), // Teléfono
+                    celdas[6].textContent.toLowerCase(), // Rol
         ];
+        // Aplica el filtro según el tipo elegido
         switch (tipo) {
-            case 'codigo':
-                return codigo.includes(valor);
-            case 'nombre':
-                return nombre.includes(valor);
-            case 'rol':
-                return rol.includes(valor);
-            default:
-                return true;
-        }
+                    case 'codigo':
+                        return codigo.includes(valor);
+                    case 'nombre':
+                        return nombre.includes(valor);
+                    case 'correo':
+                        return correo.includes(valor);
+                    case 'telefono':
+                        return telefono.includes(valor);
+                    case 'rol':
+                        return rol.includes(valor);
+                    default:
+                        return true;
+        }        
     });
 
-    // Agregar todas las filas filtradas
+    // Agregar todas las filas filtradas SIN la columna "Acciones"
     filtradas.forEach(fila => {
         const row = [];
-        fila.querySelectorAll('td').forEach(td => {
-            let texto = td.textContent.replace(/\s+/g, ' ').trim();
-            row.push(texto);
+        fila.querySelectorAll('td').forEach((td, index) => {
+            if (index < 8) { // ignoramos la última columna
+                let texto = td.textContent.replace(/\s+/g, ' ').trim();
+                row.push(texto);
+            }
         });
         filasExportar.push(row);
     });
 
     // Crear hoja y libro
     const ws = XLSX.utils.aoa_to_sheet(filasExportar);// Convertir el array de filas a una hoja de Excel
+    const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Usuarios");// Agregar la hoja al libro
+    
 
     // Descargar
     XLSX.writeFile(wb, "usuarios_filtrados.xlsx");// Descargar el archivo Excel

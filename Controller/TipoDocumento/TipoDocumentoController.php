@@ -17,6 +17,23 @@ class TipoDocumentoController
         $this->model = new TipoDocumentoModel();
     }
 
+    // ====================================
+    // MUESTRA UN MENSAJE CON SWEET ALERT
+    // ====================================
+    private function showSweetAlert(string $icon,string $title,string $text,string $redirectUrl)
+    {
+        echo "
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        <script>
+            Swal.fire({
+                icon: '$icon',
+                title: '$title',
+                text: `$text`,
+                confirmButtonText: 'Aceptar'
+            }).then(()=>{ window.location.href = '$redirectUrl'; });
+        </script>";
+    }
+
     // ===========================
     // Mostrar formulario para insertar
     // ===========================
@@ -31,18 +48,44 @@ class TipoDocumentoController
     public function postInsert()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['tipo_docu_nombre'] ?? '';
+            $nombre = trim($_POST['tipo_docu_nombre'] ?? '');
 
-            if ($nombre != '') {
+            if ($nombre !== '') {
+                // Validar si ya existe
+                if ($this->model->existeNombreTipoDocumento($nombre)) {
+                    $this->showSweetAlert(
+                        'error',
+                        'Duplicado',
+                        'Ya existe un tipo de documento con ese nombre.',
+                        'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=getInsert'
+                    );
+                    return;
+                }
+
+                // Insertar si no existe
                 $resultado = $this->model->insertarTipoDocumento($nombre);
                 if ($resultado) {
-                    header('Location: index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult');
-                    exit();
+                    $this->showSweetAlert(
+                        'success',
+                        'Registro Exitoso',
+                        'El tipo de documento ha sido registrado correctamente.',
+                        'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult'
+                    );
                 } else {
-                    echo "Error al insertar el tipo de documento.";
+                    $this->showSweetAlert(
+                        'error',
+                        'Error',
+                        'No se pudo registrar el tipo de documento.',
+                        'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=getInsert'
+                    );
                 }
             } else {
-                echo "El nombre es obligatorio.";
+                $this->showSweetAlert(
+                    'warning',
+                    'Campos obligatorios',
+                    'El nombre del tipo de documento es requerido.',
+                    'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=getInsert'
+                );
             }
         }
     }
@@ -96,18 +139,47 @@ class TipoDocumentoController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['tipo_docu_id'] ?? '';
-            $nombre = $_POST['tipo_docu_nombre'] ?? '';
+            $nombre = trim($_POST['tipo_docu_nombre'] ?? '');
 
-            if ($id != '' && is_numeric($id) && $nombre != '') {
-                $resultado = $this->model->editarTipoDocumento($id, $nombre);
-                if ($resultado) {
-                    header('Location: index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult');
-                    exit();
-                } else {
-                    echo "Error al actualizar el tipo de documento.";
+            if ($id !== '' && is_numeric($id) && $nombre !== '') {
+
+                // Validar si ya existe otro con ese nombre
+                if ($this->model->existeNombreTipoDocumento($nombre, $id)) {
+                    $this->showSweetAlert(
+                        'error',
+                        'Duplicado',
+                        'Ya existe otro tipo de documento con ese nombre.',
+                        "index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=getEdit&id=$id"
+                    );
+                    return;
                 }
+
+                // Si pasa la validación, actualizar
+                $resultado = $this->model->editarTipoDocumento($id, $nombre);
+
+                if ($resultado) {
+                    $this->showSweetAlert(
+                        'success',
+                        'Actualización Exitosa',
+                        'El tipo de documento ha sido actualizado correctamente.',
+                        'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult'
+                    );
+                } else {
+                    $this->showSweetAlert(
+                        'error',
+                        'Error',
+                        'No se pudo actualizar el tipo de documento.',
+                        "index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=getEdit&id=$id"
+                    );
+                }
+
             } else {
-                echo "ID y nombre son obligatorios.";
+                $this->showSweetAlert(
+                    'warning',
+                    'Campos obligatorios',
+                    'El ID y nombre son requeridos.',
+                    'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult'
+                );
             }
         }
     }
@@ -119,16 +191,44 @@ class TipoDocumentoController
     {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             $id = intval($_GET['id']);
+
+            // Validar si hay usuarios asociados
+            if ($this->model->tieneUsuariosAsociados($id)) {
+                $this->showSweetAlert(
+                    'error',
+                    'No se puede eliminar',
+                    'Este tipo de documento está asociado a uno o más usuarios.',
+                    'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult'
+                );
+                return;
+            }
+
+            // Eliminar si no hay relaciones
             $resultado = $this->model->eliminarTipoDocumento($id);
 
             if ($resultado) {
-                header('Location: index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult');
-                exit();
+                $this->showSweetAlert(
+                    'success',
+                    'Eliminado',
+                    'El tipo de documento fue eliminado correctamente.',
+                    'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult'
+                );
             } else {
-                echo "Error al eliminar el tipo de documento.";
+                $this->showSweetAlert(
+                    'error',
+                    'Error',
+                    'No se pudo eliminar el tipo de documento.',
+                    'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult'
+                );
             }
+
         } else {
-            echo "ID inválido o no especificado.";
+            $this->showSweetAlert(
+                'warning',
+                'ID inválido',
+                'No se especificó un ID válido para eliminar.',
+                'index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=consult'
+            );
         }
     }
 }

@@ -123,7 +123,7 @@ class ElementosModel extends MasterModel
                 " . ($data['elem_cantidad']?  $data['elem_cantidad']: "NULL") . ",
                 " . ($data['elem_unidad_id']? $data['elem_unidad_id']: "NULL") . ",
                 " . ($data['elem_modelo'] ? "'" . $data['elem_modelo'] . "'" : "NULL") . ",
-                " . ($data['elem_marca_id']?  $data['elem_marca_id'] : "NULL") . ",
+                " . (isset($data['elem_marca_id']) ?  $data['elem_marca_id'] : "NULL") . ",
                 " .  $data['elem_estado_id'] . ",                
                 " . ($data['recomendaciones']
                 ? "'" . mysqli_real_escape_string($this->getConnect(),
@@ -243,7 +243,7 @@ class ElementosModel extends MasterModel
                 elem_modelo     = " . ($data['elem_modelo'] ? "'" . $data['elem_modelo'] . "'" : "NULL") . ",
                 elem_area_id    = " . ($data['elem_area_id'] ? $data['elem_area_id'] : "NULL") . ",
                 elem_cate_id    = " . ($data['elem_cate_id'] ? $data['elem_cate_id'] : "NULL") . ",
-                elem_marca_id   = " . ($data['elem_marca_id'] ? $data['elem_marca_id'] : "NULL") . ",
+                elem_marca_id   = " . (isset($data['elem_marca_id']) ? $data['elem_marca_id'] : "NULL") . ",
                 elem_cantidad   = " . ($data['elem_cantidad'] ? $data['elem_cantidad'] : "NULL") . ",
                 elem_unidad_id  = " . ($data['elem_unidad_id'] ? $data['elem_unidad_id'] : "NULL") . ",
                 recomendaciones = " . (

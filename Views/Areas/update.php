@@ -19,7 +19,7 @@
         </p>
 
         <!-- Formulario para actualizar área -->
-        <form action="<?php echo getUrl('areas', 'areas', 'postEdit'); ?>" method="POST">
+        <form action="<?php echo getUrl('areas', 'areas', 'postEdit'); ?>" method="POST" onsubmit="return validarEditarArea(event)">
 
             <!-- Campo oculto: ID del área -->
             <input type="hidden" name="area_id" value="<?php echo $area['area_id']; ?>">
@@ -31,7 +31,8 @@
                 </label>
                 <input type="text" name="area_nombre" id="area_nombre" class="form-control"
                     placeholder="Ej: Laboratorio de Electrónica"
-                    value="<?php echo htmlspecialchars($area['area_nombre']); ?>" required>
+                    value="<?php echo htmlspecialchars($area['area_nombre']); ?>" onchange="validarNombreAreaEditar(this)" required>
+                <div class="text-danger mt-1" id="error_area_nombre"></div>
             </div>
 
             <!-- Campo: Descripción del Área -->
@@ -40,7 +41,8 @@
                     <i class="bi bi-card-text text-primary"></i> Descripción del Área
                 </label>
                 <textarea name="area_descripcion" id="area_descripcion" class="form-control" rows="3"
-                    placeholder="Describe brevemente el propósito o ubicación del área..."><?php echo htmlspecialchars($area['area_descripcion']); ?></textarea>
+                    placeholder="Describe brevemente el propósito o ubicación del área..." onchange="validarDescripcionAreaEditar(this)"><?php echo htmlspecialchars($area['area_descripcion']); ?></textarea>
+                <div class="text-danger mt-1" id="error_area_descripcion"></div>
             </div>
 
             <!-- Botones de acción -->
@@ -56,3 +58,5 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

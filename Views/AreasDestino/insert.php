@@ -15,24 +15,24 @@
         </p>
 
         <!-- Formulario -->
-        <form action="<?php echo getUrl('areasDestino', 'areasDestino', 'postInsert'); ?>" method="POST">
+        <form action="<?php echo getUrl('areasDestino', 'areasDestino', 'postInsert'); ?>" method="POST" onsubmit="return validarAreaDestino(event)">
 
             <!-- Campo: Nombre del Área -->
             <div class="mb-3">
                 <label for="nombre" class="form-label">
                     <i class="bi bi-tag-fill text-primary"></i> Nombre del área destino <span class="text-danger">*</span>
                 </label>
-                <input type="text" name="nombre" id="nombre" class="form-control"
-                       placeholder="Ej: Laboratorio de Física" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ej: Laboratorio de Física" required onchange="validarNombreArea(this)">
+                <div class="text-danger mt-1" id="error_nombre_area"></div>
             </div>
 
             <!-- Campo: Descripción del Área -->
             <div class="mb-3">
                 <label for="descripcion" class="form-label">
-                    <i class="bi bi-card-text text-primary"></i> Descripción del área destino
+                    <i class="bi bi-card-text text-primary"></i> Descripción del área destino <small class="text-muted">(opcional)</small>
                 </label>
-                <textarea name="descripcion" id="descripcion" rows="3" class="form-control"
-                          placeholder="Describe brevemente el propósito, ubicación u observaciones..."></textarea>
+                <textarea name="descripcion" id="descripcion" rows="3" class="form-control" placeholder="Describe brevemente el propósito, ubicación u observaciones..." onchange="validarDescripcionArea(this)"></textarea>
+                <div class="text-danger mt-1" id="error_descripcion_area"></div>
             </div>
 
             <!-- Botones de acción -->
@@ -44,7 +44,8 @@
                     <i class="bi bi-arrow-left-circle"></i> Cancelar
                 </a>
             </div>
-
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

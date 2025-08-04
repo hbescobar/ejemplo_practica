@@ -18,6 +18,23 @@ class RolController
     }
 
     // ====================================
+    // MUESTRA UN MENSAJE CON SWEET ALERT
+    // ====================================
+    private function showSweetAlert(string $icon,string $title,string $text,string $redirectUrl)
+    {
+        echo "
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        <script>
+            Swal.fire({
+                icon: '$icon',
+                title: '$title',
+                text: `$text`,
+                confirmButtonText: 'Aceptar'
+            }).then(()=>{ window.location.href = '$redirectUrl'; });
+        </script>";
+    }
+
+    // ====================================
     // MOSTRAR FORMULARIO DE REGISTRO
     // ====================================
     public function getInsert()
@@ -36,18 +53,45 @@ class RolController
             $estado_id = $_POST['estado_id'] ?? '';
 
             if ($nombre !== '' && $estado_id !== '') {
+
+                // Validar si el nombre del rol ya existe
+                if ($this->model->existeNombreRol($nombre)) {
+                    $this->showSweetAlert(
+                        'warning',
+                        'Nombre duplicado',
+                        'El rol ya existe. Por favor, ingresa otro nombre.',
+                        'index.php?modulo=rol&controlador=rol&funcion=getInsert'
+                    );
+                    return;
+                }
+
                 $resultado = $this->model->insertarRol($nombre, $estado_id);
                 if ($resultado) {
-                    header('Location: index.php?modulo=rol&controlador=rol&funcion=consult');
-                    exit();
+                    $this->showSweetAlert(
+                        'success',
+                        'Rol registrado',
+                        'El rol fue registrado exitosamente.',
+                        'index.php?modulo=rol&controlador=rol&funcion=consult'
+                    );
                 } else {
-                    echo "Error al insertar el rol.";
+                    $this->showSweetAlert(
+                        'error',
+                        'Error al registrar',
+                        'Hubo un problema al insertar el rol.',
+                        'index.php?modulo=rol&controlador=rol&funcion=getInsert'
+                    );
                 }
             } else {
-                echo "Todos los campos son obligatorios.";
+                $this->showSweetAlert(
+                    'warning',
+                    'Campos obligatorios',
+                    'Todos los campos son requeridos.',
+                    'index.php?modulo=rol&controlador=rol&funcion=getInsert'
+                );
             }
         }
     }
+
 
     // ====================================
     // CONSULTAR TODOS LOS ROLES
@@ -116,16 +160,44 @@ class RolController
             $estado_id = $_POST['estado_id'] ?? '';
 
             if ($id !== '' && $nombre !== '' && $estado_id !== '') {
+
+                // Verificar si el nombre ya existe en otro rol
+                if ($this->model->existeNombreRol($nombre, $id)) {
+                    $this->showSweetAlert(
+                        'warning',
+                        'Nombre duplicado',
+                        'Ya existe un rol con ese nombre. Por favor elige otro.',
+                        "index.php?modulo=rol&controlador=rol&funcion=getEdit&id=$id"
+                    );
+                    return;
+                }
+
+                // Si no está duplicado, actualiza
                 $resultado = $this->model->actualizarRol($id, $nombre, $estado_id);
 
                 if ($resultado) {
-                    header('Location: index.php?modulo=rol&controlador=rol&funcion=consult');
-                    exit();
+                    $this->showSweetAlert(
+                        'success',
+                        'Rol actualizado',
+                        'El rol fue actualizado exitosamente.',
+                        'index.php?modulo=rol&controlador=rol&funcion=consult'
+                    );
                 } else {
-                    echo "Error al actualizar el rol.";
+                    $this->showSweetAlert(
+                        'error',
+                        'Error al actualizar',
+                        'Hubo un problema al actualizar el rol.',
+                        "index.php?modulo=rol&controlador=rol&funcion=getEdit&id=$id"
+                    );
                 }
+
             } else {
-                echo "Todos los campos son obligatorios.";
+                $this->showSweetAlert(
+                    'warning',
+                    'Campos obligatorios',
+                    'Todos los campos son requeridos.',
+                    "index.php?modulo=rol&controlador=rol&funcion=getEdit&id=$id"
+                );
             }
         }
     }
@@ -137,12 +209,44 @@ class RolController
     {
         $rol_id = $_GET['id'] ?? null;
 
-        if ($rol_id) {
-            $this->model->eliminarRol($rol_id);
+        // Validar si se recibió un ID válido
+        if (!$rol_id || !is_numeric($rol_id)) {
+            $this->showSweetAlert(
+                'error',
+                'ID inválido',
+                'El ID del rol no es válido.',
+                'index.php?modulo=rol&controlador=rol&funcion=consult'
+            );
+            return;
         }
 
-        header('Location: index.php?modulo=rol&controlador=rol&funcion=consult');
-        exit();
+        // Validar si el rol está en uso por algún usuario
+        if ($this->model->tieneUsuariosAsociados($rol_id)) {
+            $this->showSweetAlert(
+                'warning',
+                'No se puede eliminar',
+                'Este rol está asociado a uno o más usuarios.',
+                'index.php?modulo=rol&controlador=rol&funcion=consult'
+            );
+            return;
+        }
+
+        // Intentar eliminar el rol
+        if ($this->model->eliminarRol($rol_id)) {
+            $this->showSweetAlert(
+                'success',
+                'Rol eliminado',
+                'El rol fue eliminado correctamente.',
+                'index.php?modulo=rol&controlador=rol&funcion=consult'
+            );
+        } else {
+            $this->showSweetAlert(
+                'error',
+                'Error',
+                'No se pudo eliminar el rol. Intenta nuevamente.',
+                'index.php?modulo=rol&controlador=rol&funcion=consult'
+            );
+        }
     }
 
     // ====================================

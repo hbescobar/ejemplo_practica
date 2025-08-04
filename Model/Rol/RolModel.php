@@ -219,4 +219,35 @@ class RolModel extends MasterModel
                 WHERE rol_id = $rol_id AND id_permisos = $permiso_id AND modulo_id = $modulo_id";
         return $this->update($sql);
     }
+
+    public function existeNombreRol($nombre, $id = null)
+    {
+        $nombre = mysqli_real_escape_string($this->getConnect(), $nombre);
+
+        $sql = "SELECT COUNT(*) as total FROM rol WHERE rol_nombre = '$nombre'";
+
+        if ($id !== null) {
+            $id = mysqli_real_escape_string($this->getConnect(), $id);
+            $sql .= " AND rol_id != '$id'";
+        }
+
+        $resultado = $this->consult($sql);
+        if ($resultado) {
+            $fila = mysqli_fetch_assoc($resultado);
+            return $fila['total'] > 0;
+        }
+
+        return false;
+    }
+
+    // ====================================
+    // VERIFICAR SI EL ROL ESTÁ ASOCIADO A USUARIOS
+    // ====================================
+    public function tieneUsuariosAsociados($rol_id)
+    {
+        $rol_id = mysqli_real_escape_string($this->getConnect(), $rol_id);
+        $sql = "SELECT 1 FROM usuario WHERE rol_id = '$rol_id' LIMIT 1";
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
 }

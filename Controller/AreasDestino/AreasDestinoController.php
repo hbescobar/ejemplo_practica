@@ -17,6 +17,24 @@ class AreasDestinoController
     }
 
     // ====================================
+    // MUESTRA UN MENSAJE CON SWEET ALERT
+    // ====================================
+    private function showSweetAlert(string $icon,string $title,string $text,string $redirectUrl)
+    {
+        echo "
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        <script>
+            Swal.fire({
+                icon: '$icon',
+                title: '$title',
+                text: `$text`,
+                confirmButtonText: 'Aceptar'
+            }).then(()=>{ window.location.href = '$redirectUrl'; });
+        </script>";
+    }
+
+
+    // ====================================
     // MOSTRAR FORMULARIO DE REGISTRO
     // ====================================
     public function getInsert()
@@ -34,26 +52,45 @@ class AreasDestinoController
             $descripcion = $_POST['descripcion'] ?? '';
 
             if ($nombre != '') {
-                
-                
+
+                // Validar si el nombre ya existe
                 if ($this->model->existeNombreArea($nombre)) {
-                    echo "<script>
-                        alert('El nombre del área destino ya existe. Por favor, elija otro.');
-                        window.history.back();
-                    </script>";
+                    $this->showSweetAlert(
+                        'warning',
+                        'Nombre duplicado',
+                        'El nombre del área destino ya existe. Por favor, elija otro.',
+                        'index.php?modulo=areasDestino&controlador=areasDestino&funcion=getInsert'
+                    );
                     exit();
                 }
 
-
+                // Intentar insertar
                 $resultado = $this->model->insertarAreas($nombre, $descripcion);
                 if ($resultado) {
-                    header('Location: index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult');
+                    $this->showSweetAlert(
+                        'success',
+                        'Área registrada',
+                        'El área destino fue registrada correctamente.',
+                        'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+                    );
                     exit();
                 } else {
-                    echo "Error al insertar el área.";
+                    $this->showSweetAlert(
+                        'error',
+                        'Error al registrar',
+                        'Hubo un problema al insertar el área destino.',
+                        'index.php?modulo=areasDestino&controlador=areasDestino&funcion=getInsert'
+                    );
+                    exit();
                 }
             } else {
-                echo "El nombre es obligatorio.";
+                $this->showSweetAlert(
+                    'warning',
+                    'Campo obligatorio',
+                    'El nombre del área no puede estar vacío.',
+                    'index.php?modulo=areasDestino&controlador=areasDestino&funcion=getInsert'
+                );
+                exit();
             }
         }
     }
@@ -106,23 +143,42 @@ class AreasDestinoController
 
             if ($id !== '' && $nombre !== '') {
                 if ($this->model->existeNombreArea($nombre, $id)) {
-                echo "<script>
-                    alert('El nombre del área destino ya existe. Por favor, elija otro.');
-                    window.history.back();
-                </script>";
-                exit();
+                    $this->showSweetAlert(
+                        'warning',
+                        'Área duplicada',
+                        'El nombre del área destino ya existe. Por favor, elija otro.',
+                        "index.php?modulo=areasDestino&controlador=areasDestino&funcion=getEdit&id=$id"
+                    );
+                    exit();
                 }
 
                 $resultado = $this->model->actualizarArea($id, $nombre, $descripcion);
 
                 if ($resultado) {
-                    header('Location: index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult');
+                    $this->showSweetAlert(
+                        'success',
+                        'Área actualizada',
+                        'Los datos del área destino se actualizaron correctamente.',
+                        'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+                    );
                     exit();
                 } else {
-                    echo "Error al actualizar el área.";
+                    $this->showSweetAlert(
+                        'error',
+                        'Error',
+                        'Ocurrió un error al actualizar el área.',
+                        'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+                    );
+                    exit();
                 }
             } else {
-                echo "El nombre es obligatorio.";
+                $this->showSweetAlert(
+                    'warning',
+                    'Campos incompletos',
+                    'El nombre del área destino es obligatorio.',
+                    'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+                );
+                exit();
             }
         }
     }
@@ -134,11 +190,42 @@ class AreasDestinoController
     {
         $id = $_GET['id'] ?? null;
 
-        if ($id) {
-            $this->model->eliminarArea($id);
-        }
+        if ($id !== null) {
+            // Validar si el área tiene préstamos o reservas asociadas
+            if ($this->model->tieneAsociaciones($id)) {
+                $this->showSweetAlert(
+                    'warning',
+                    'No se puede eliminar',
+                    'Esta área está asociada a uno o más préstamos o reservas.',
+                    'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+                );
+                exit();
+            }
 
-        header('Location: index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult');
-        exit();
+            // Si no tiene asociaciones, eliminarla
+            $resultado = $this->model->eliminarArea($id);
+            if ($resultado) {
+                $this->showSweetAlert(
+                    'success',
+                    'Área eliminada',
+                    'El área fue eliminada exitosamente.',
+                    'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+                );
+            } else {
+                $this->showSweetAlert(
+                    'error',
+                    'Error',
+                    'No se pudo eliminar el área destino.',
+                    'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+                );
+            }
+        } else {
+            $this->showSweetAlert(
+                'warning',
+                'ID inválido',
+                'No se especificó un área destino válida para eliminar.',
+                'index.php?modulo=areasDestino&controlador=areasDestino&funcion=consult'
+            );
+        }
     }
 }

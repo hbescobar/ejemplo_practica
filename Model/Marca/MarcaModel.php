@@ -79,4 +79,38 @@ class MarcaModel extends MasterModel
         $sql = "DELETE FROM marca WHERE marca_id = '$id'";
         return $this->delete($sql);
     }
+
+    // ====================================
+    // VERIFICAR SI EXISTE UNA MARCA CON EL MISMO NOMBRE
+    // ====================================
+    public function existeNombreMarca($nombre, $id = null)
+    {
+        $nombre = mysqli_real_escape_string($this->getConnect(), $nombre);
+
+        $sql = "SELECT COUNT(*) as total FROM marca WHERE marca_nombre = '$nombre'";
+
+        if ($id !== null) {
+            $id = mysqli_real_escape_string($this->getConnect(), $id);
+            $sql .= " AND marca_id != '$id'";
+        }
+
+        $resultado = $this->consult($sql);
+        if ($resultado) {
+            $fila = mysqli_fetch_assoc($resultado);
+            return $fila['total'] > 0;
+        }
+
+        return false;
+    }
+
+    // ====================================
+    // VALIDAR SI HAY ELEMENTOS ASOCIADOS A LA MARCA
+    // ====================================
+    public function tieneElementosAsociados($elem_marca_id)
+    {
+        $elem_marca_id = mysqli_real_escape_string($this->getConnect(), $elem_marca_id);
+        $sql = "SELECT 1 FROM elementos_inventario WHERE elem_marca_id = '$elem_marca_id' LIMIT 1";
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
 }

@@ -19,7 +19,7 @@
         </p>
 
         <!-- Formulario -->
-        <form action="<?= getUrl('categoria', 'categoria', 'postEdit'); ?>" method="POST">
+        <form action="<?= getUrl('categoria', 'categoria', 'postEdit'); ?>" method="POST" onsubmit="return validarEditarCategoria(event)">
 
             <!-- Campo oculto: ID de categoría -->
             <input type="hidden" name="cate_id" value="<?= $categoria['cate_id']; ?>">
@@ -30,18 +30,32 @@
                     <i class="bi bi-tag-fill text-warning"></i> Nombre de la Categoría <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="cate_nombre" id="cate_nombre" class="form-control"
-                       value="<?= htmlspecialchars($categoria['cate_nombre']); ?>"
-                       placeholder="Ej: Herramientas" required>
+                    value="<?= htmlspecialchars($categoria['cate_nombre']); ?>"
+                    placeholder="Ej: Herramientas" onchange="validarNombreCategoriaEditar(this)" required>
+                <div class="text-danger mt-1" id="error_cate_nombre"></div>
             </div>
 
             <!-- Campo: Descripción -->
             <div class="mb-3">
                 <label for="cate_descripcion" class="form-label">
-                    <i class="bi bi-card-text text-warning"></i> Descripción
+                    <i class="bi bi-card-text text-warning"></i> Descripción <small class="text-muted">(opcional)</small>
                 </label>
                 <textarea name="cate_descripcion" id="cate_descripcion" rows="3" class="form-control"
-                          placeholder="Describe brevemente la categoría..."><?= htmlspecialchars($categoria['cate_descripcion']); ?></textarea>
+                        placeholder="Describe brevemente la categoría..."  onchange="validarDescripcionCategoriaEditar(this)"><?= htmlspecialchars($categoria['cate_descripcion']); ?>
+                </textarea>
+                <div class="text-danger mt-1" id="error_cate_descripcion"></div>
             </div>
+
+            <!-- Campo: Tipo de Elemento -->
+            <select name="telem_id" id="telem_id" class="form-select" required>
+                <option value="" disabled>Selecciona una opción</option>
+                <?php foreach ($tipos_elemento as $tipo): ?>
+                    <option value="<?= $tipo['telem_id'] ?>" 
+                        <?= $tipo['telem_id'] == $categoria['telem_id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($tipo['telem_nombre']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
 
             <!-- Botones de acción -->
             <div class="text-center mt-4">
@@ -52,7 +66,8 @@
                     <i class="bi bi-arrow-left-circle"></i> Cancelar
                 </a>
             </div>
-
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

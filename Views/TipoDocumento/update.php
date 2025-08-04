@@ -12,15 +12,15 @@
         </h4>
 
         <?php if (isset($tipoDocumento) && !empty($tipoDocumento)): ?>
-            <form action="<?php echo getUrl('tipoDocumento', 'tipoDocumento', 'postEdit'); ?>" method="POST">
+            <form action="<?php echo getUrl('tipoDocumento', 'tipoDocumento', 'postEdit'); ?>" method="POST" onsubmit="return validarEditarTipoDocumento(event)">
                 <input type="hidden" name="tipo_docu_id" value="<?php echo htmlspecialchars($tipoDocumento['tipo_docu_id']); ?>">
 
                 <div class="mb-3">
                     <label for="tipo_docu_nombre" class="form-label">
                         <i class="bi bi-file-text text-warning"></i> Nombre del Tipo de Documento
                     </label>
-                    <input type="text" id="tipo_docu_nombre" name="tipo_docu_nombre" class="form-control" required
-                           value="<?php echo htmlspecialchars($tipoDocumento['tipo_docu_nombre']); ?>">
+                    <input type="text" id="tipo_docu_nombre" name="tipo_docu_nombre" class="form-control" onchange="validarNombreTipoDocumentoEditar(this)" required value="<?php echo htmlspecialchars($tipoDocumento['tipo_docu_nombre']); ?>">
+                    <div class="text-danger mt-1" id="error_tipo_docu_nombre"></div>
                 </div>
 
                 <div class="text-center mt-4">
@@ -37,6 +37,7 @@
                 No se encontró el tipo de documento para editar.
             </div>
         <?php endif; ?>
-
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

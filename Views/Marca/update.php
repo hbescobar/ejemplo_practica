@@ -19,7 +19,7 @@
         </p>
 
         <!-- Formulario -->
-        <form action="<?= getUrl('marca', 'marca', 'postEdit'); ?>" method="post">
+        <form action="<?= getUrl('marca', 'marca', 'postEdit'); ?>" method="post" onsubmit="return validarEditarMarca(event)">
 
             <!-- ID oculto -->
             <input type="hidden" name="marca_id" value="<?= $marca['marca_id']; ?>">
@@ -30,7 +30,8 @@
                     <i class="bi bi-tag-fill text-warning"></i> Nombre de la Marca <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="marca_nombre" id="marca_nombre" class="form-control"
-                    value="<?= htmlspecialchars($marca['marca_nombre']); ?>" required>
+                    value="<?= htmlspecialchars($marca['marca_nombre']); ?>" required onchange="validarNombreMarcaEditar(this)">
+                <div class="text-danger mt-1" id="error_marca_nombre"></div>
             </div>
 
             <!-- Campo: Descripción -->
@@ -39,7 +40,8 @@
                     <i class="bi bi-card-text text-warning"></i> Descripción
                 </label>
                 <textarea name="marca_descripcion" id="marca_descripcion" rows="3" class="form-control"
-                    placeholder="Información adicional sobre la marca..."><?= htmlspecialchars($marca['marca_descripcion']); ?></textarea>
+                    placeholder="Información adicional sobre la marca..."  onchange="validarDescripcionMarcaEditar(this)"><?= htmlspecialchars($marca['marca_descripcion']); ?></textarea>
+                <div class="text-danger mt-1" id="error_marca_descripcion"></div>
             </div>
 
             <!-- Botones -->
@@ -55,3 +57,5 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

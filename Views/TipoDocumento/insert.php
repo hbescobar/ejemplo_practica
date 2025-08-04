@@ -16,14 +16,15 @@
             Los campos marcados con <span class="text-danger fw-bold">*</span> son obligatorios.
         </p>
 
-        <form action="<?php echo getUrl('tipoDocumento', 'tipoDocumento', 'postInsert'); ?>" method="POST">
+        <form action="<?php echo getUrl('tipoDocumento', 'tipoDocumento', 'postInsert'); ?>" method="POST" onsubmit="return validarTipoDocumento(event)">
 
             <div class="mb-3">
                 <label for="tipo_docu_nombre" class="form-label">
                     <i class="bi bi-file-text text-primary"></i> Nombre del tipo de documento <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="tipo_docu_nombre" id="tipo_docu_nombre" class="form-control"
-                       placeholder="Ej: Cédula, Pasaporte, Licencia" required>
+                    placeholder="Ej: Cédula, Pasaporte, Licencia" onchange="validarNombreTipoDocumento(this)" required>
+                <div class="text-danger mt-1" id="error_tipo_docu_nombre"></div>
             </div>
 
             <div class="text-center mt-4">
@@ -39,3 +40,5 @@
     </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/Inventario/Web/Js/validaciones/validaciones_config.js"></script>

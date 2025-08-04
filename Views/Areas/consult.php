@@ -54,10 +54,10 @@
                                             <a href="<?= getUrl('Areas', 'Areas', 'getEdit', ['id' => $area['area_id']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
                                             </a>
-                                            <a href="<?= getUrl('Areas', 'Areas', 'delete', ['id' => $area['area_id']]); ?>" class="btn btn-sm btn-danger" title="Eliminar"
-                                                onclick="return confirm('¿Está seguro de eliminar esta área?');">
+                                            <button type="button" class="btn btn-sm btn-danger btnEliminarArea" 
+                                                data-id="<?= $area['area_id']; ?>" title="Eliminar">
                                                 <i class='bx bx-trash'></i>
-                                            </a>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -80,6 +80,33 @@
         </div>
     </div>
 </div>
+
+<!-- JS para eliminar área con confirmación -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.btnEliminarArea').forEach(boton => {
+            boton.addEventListener('click', () => {
+                const areaId = boton.getAttribute('data-id');
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Esta acción eliminará el área seleccionada.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `index.php?modulo=Areas&controlador=Areas&funcion=delete&id=${areaId}`;
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 <!-- JS búsqueda + paginación -->
 <script>

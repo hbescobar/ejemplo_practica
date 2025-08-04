@@ -50,10 +50,8 @@
                                             <a href="<?= getUrl('tipoDocumento', 'tipoDocumento', 'getEdit', ['id' => $tip['tipo_docu_id']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
                                             </a>
-                                            <a href="<?= getUrl('tipoDocumento', 'tipoDocumento', 'delete', ['id' => $tip['tipo_docu_id']]); ?>" class="btn btn-sm btn-danger" title="Eliminar"
-                                                onclick="return confirm('¿Seguro que quieres eliminar este tipo de documento?');">
-                                                <i class='bx bx-trash'></i>
-                                            </a>
+                                            <button class="btn btn-sm btn-danger eliminarTipoDoc" data-id="<?= $tip['tipo_docu_id']; ?>"   title="Eliminar"><i class='bx bx-trash'></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -76,6 +74,35 @@
         </div>
     </div>
 </div>
+
+<!-- alerta elminar tipo documento -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const botonesEliminar = document.querySelectorAll('.eliminarTipoDoc');
+
+        botonesEliminar.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const tipoDocId = this.getAttribute('data-id');
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `index.php?modulo=tipoDocumento&controlador=tipoDocumento&funcion=delete&id=${tipoDocId}`;
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 <!-- JS búsqueda + paginación -->
 <script>

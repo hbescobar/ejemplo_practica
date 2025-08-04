@@ -81,4 +81,32 @@ class CategoriaModel extends MasterModel
         $sql = "DELETE FROM categoria WHERE cate_id = $id";
         return $this->delete($sql);
     }
+
+    // ====================================
+    // VALIDAR NOMBRE DUPLICADO
+    // ====================================
+    public function existeNombreCategoria($nombre, $id = null)
+    {
+        $conn = $this->getConnect();
+        $nombre = mysqli_real_escape_string($conn, $nombre);
+
+        if ($id !== null) {
+            // Excluir la categoría actual en modo edición
+            $sql = "SELECT cate_id FROM categoria WHERE LOWER(cate_nombre) = LOWER('$nombre') AND cate_id != $id LIMIT 1";
+        } else {
+            // Validar normalmente (modo inserción)
+            $sql = "SELECT cate_id FROM categoria WHERE LOWER(cate_nombre) = LOWER('$nombre') LIMIT 1";
+        }
+
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
+
+    public function tieneElementosAsociados($cate_id)
+    {
+        $cate_id = mysqli_real_escape_string($this->getConnect(), $cate_id);
+        $sql = "SELECT 1 FROM elementos_inventario WHERE elem_cate_id = '$cate_id' LIMIT 1";
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
 }

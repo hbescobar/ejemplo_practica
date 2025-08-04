@@ -67,4 +67,37 @@ class TipoDocumentoModel extends MasterModel
         $sql = "DELETE FROM tipo_documento WHERE tipo_docu_id = $id";
         return $this->delete($sql);
     }
+
+    // ============================
+    // VERIFICAR SI EL NOMBRE DEL TIPO DE DOCUMENTO YA EXISTE
+    // ============================
+    public function existeNombreTipoDocumento($nombre, $excluirId = null)
+    {
+        $conexion = $this->getConnect();
+        $nombre = mysqli_real_escape_string($conexion, trim($nombre));
+
+        $sql = "SELECT 1 FROM tipo_documento 
+                WHERE LOWER(tipo_docu_nombre) = LOWER('$nombre')";
+
+        if ($excluirId !== null) {
+            $excluirId = intval($excluirId);
+            $sql .= " AND tipo_docu_id != $excluirId";
+        }
+
+        $sql .= " LIMIT 1";
+
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }  
+
+    // ==============================================
+    // VERIFICAR SI EL TIPO DE DOCUMENTO ESTÁ ASOCIADO A USUARIOS
+    // ==============================================
+    public function tieneUsuariosAsociados($tipo_docu_id)
+    {
+        $tipo_docu_id = mysqli_real_escape_string($this->getConnect(), $tipo_docu_id);
+        $sql = "SELECT 1 FROM usuario WHERE tipo_docu_id = '$tipo_docu_id' LIMIT 1";
+        $resultado = $this->consult($sql);
+        return ($resultado && mysqli_num_rows($resultado) > 0);
+    }
 }

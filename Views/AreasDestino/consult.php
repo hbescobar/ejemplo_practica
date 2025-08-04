@@ -7,7 +7,6 @@
                 <i class='bx bx-map'></i> Listado de áreas destino
             </h4>
             <!-- ejemplo -->
-             <!-- ejemplo -->
             <!-- Filtro y búsqueda -->
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                 <div class="input-group" style="max-width: 220px;">
@@ -85,30 +84,31 @@
     </div>
 </div>
 
-<!-- JS búsqueda + paginación -->
+
 <script>
     // Función para mostrar alerta de confirmación antes de eliminar
     document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.btn-eliminar-area').forEach(function(btn) 
-    {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const url = this.getAttribute('data-url');
-            Swal.fire({
-                title: '¿Está seguro de eliminar esta área destino?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = url;
-                }
+        document.querySelectorAll('.btn-eliminar-area').forEach(function(btn) 
+        {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+                Swal.fire({
+                    title: '¿Está seguro de eliminar esta área destino?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
             });
         });
     });
-});
 
+    //JS búsqueda + paginación
     document.addEventListener('DOMContentLoaded', () => {
         const inputBusqueda = document.getElementById('buscadorAreas');
         const filtroTipo = document.getElementById('filtroTipo');

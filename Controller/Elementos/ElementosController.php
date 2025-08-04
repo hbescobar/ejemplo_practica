@@ -73,7 +73,8 @@ class ElementosController
                 'elem_cantidad'    => $_POST['elem_cantidad']    ?? null,
                 'elem_unidad_id'   => $_POST['elem_unidad_id']   ?? null,
                 'elem_modelo'      => $_POST['elem_modelo']      ?? null,
-                'elem_marca_id'    => $_POST['elem_marca_id']    ?? null,
+                //se poner asi $_POST['elem_marca_id'] cuando vale "0" es tratado como falso por PHP. Esta comparación explícita (!== '') evita que se convierta en null. ya que marca 0 es geenric
+                'elem_marca_id' => (isset($_POST['elem_marca_id']) && $_POST['elem_marca_id'] !== '') ? intval($_POST['elem_marca_id']) : null,
                 'elem_estado_id'   => 1,//por defecto activo
                 'recomendaciones' => $_POST['recomendaciones'] ?? null,
             ];
@@ -82,6 +83,7 @@ class ElementosController
             if ($data['elem_telem_id'] == 1) {
                 $data['elem_cantidad'] = 1;
             }
+            
 
             //     existsCodigo($codigo), existsPlaca($placa), existsSerie($serie) )
             if ($this->model->existsCodigo($data['elem_codigo'])) {
@@ -218,7 +220,8 @@ class ElementosController
                 'elem_modelo'    => $_POST['elem_modelo'] ?? null,
                 'elem_area_id'   => $_POST['elem_area_id'] ?? null,
                 'elem_cate_id'   => $_POST['elem_cate_id'] ?? null,
-                'elem_marca_id'  => $_POST['elem_marca_id'] ?? null,
+                //se poner asi $_POST['elem_marca_id'] cuando vale "0" es tratado como falso por PHP. Esta comparación explícita (!== '') evita que se convierta en null. ya que marca 0 es geenric
+                'elem_marca_id' => (isset($_POST['elem_marca_id']) && $_POST['elem_marca_id'] !== '') ? intval($_POST['elem_marca_id']) : null,
                 'elem_cantidad'  => $_POST['elem_cantidad'] ?? null,
                 'elem_unidad_id' => $_POST['elem_unidad_id'] ?? null,
                 'recomendaciones' => $_POST['recomendaciones'] ?? null

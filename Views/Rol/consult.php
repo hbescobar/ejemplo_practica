@@ -63,8 +63,8 @@
                                             <a href="<?= getUrl('rol', 'rol', 'getEdit', ['id' => $rol['rol_id']]); ?>" class="btn btn-sm btn-warning" title="Editar">
                                                 <i class='bx bx-edit-alt'></i>
                                             </a>
-                                            <a href="<?= getUrl('rol', 'rol', 'delete', ['id' => $rol['rol_id']]); ?>" class="btn btn-sm btn-danger" title="Eliminar"
-                                                onclick="return confirm('¿Está seguro de eliminar este rol?');">
+                                            <a href="#" class="btn btn-sm btn-danger btn-eliminar-rol"
+                                                data-url="<?= getUrl('rol', 'rol', 'delete', ['id' => $rol['rol_id']]); ?>" title="Eliminar">
                                                 <i class='bx bx-trash'></i>
                                             </a>
                                             <a href="<?= getUrl('rol', 'rol', 'getPermisos', ['id' => $rol['rol_id']]); ?>" class="btn btn-sm btn-info" title="Asignar Permisos">
@@ -92,6 +92,31 @@
         </div>
     </div>
 </div>
+
+<!--SweetAlert para eliminar rol-->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-eliminar-rol').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+
+                Swal.fire({
+                    title: '¿Está seguro de eliminar este rol?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 <!-- JS búsqueda + paginación -->
 <script>
