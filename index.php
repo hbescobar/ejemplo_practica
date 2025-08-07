@@ -4,6 +4,27 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+//======================================================
+// PORFAVOR NO TOCAR LO QUE ESTA COMENTADO EN LA PARTE DE ABAJO
+// YA QUE CON ESTO ME DOY CUENTA SI ESTAN LLEGANDO PERMISOS O NO 
+// ATT: Cristian Sanchez.
+//======================================================
+
+// if (isset($_SESSION['usuario'])) {
+//     echo '<pre style="background:#000; color:#0f0; padding:10px;">';
+//     echo "Usuario en sesión:\n";
+//     print_r($_SESSION['usuario']);
+    
+//     echo "\nPermisos en sesión:\n";
+//     if (isset($_SESSION['permisos'])) {
+//         print_r($_SESSION['permisos']);
+//     } else {
+//         echo "No hay permisos cargados en sesión.";
+//     }
+//     echo '</pre>';
+//     exit; 
+// }
+
 include_once __DIR__ . '/Lib/helpers.php';
 
 // Detectar si es petición AJAX
