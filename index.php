@@ -4,6 +4,20 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+
+$tiempoInactividad = 600; // 600 segundos = 10 minutos
+
+if (isset($_SESSION['LAST_ACTIVITY'])) {
+    if (time() - $_SESSION['LAST_ACTIVITY'] > $tiempoInactividad) {
+        // Destruye la sesión y redirige al login
+        session_unset();
+        session_destroy();
+         header('Location: /Inventario/');
+        exit();
+    }
+}
+$_SESSION['LAST_ACTIVITY'] = time();
+
 //======================================================
 // PORFAVOR NO TOCAR LO QUE ESTA COMENTADO EN LA PARTE DE ABAJO
 // YA QUE CON ESTO ME DOY CUENTA SI ESTAN LLEGANDO PERMISOS O NO 
