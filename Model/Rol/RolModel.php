@@ -175,14 +175,15 @@ class RolModel extends MasterModel
 
 
     // ====================================
-    // ELIMINAR TODOS LOS PERMISOS DE UN ROL
+    // DESACTIVAR TODOS LOS PERMISOS DE UN ROL (ANTES ELIMINABA)
     // ====================================
     public function eliminarPermisosPorRol($rol_id)
     {
         $rol_id = (int)$rol_id;
-        $sql = "DELETE FROM rol_permisos WHERE rol_id = $rol_id";
-        return $this->delete($sql);
+        $sql = "UPDATE rol_permisos SET activo = 0 WHERE rol_id = $rol_id";
+        return $this->update($sql);
     }
+
 
     // ====================================
     // INSERTAR UN PERMISO A UN ROL
@@ -193,11 +194,23 @@ class RolModel extends MasterModel
         $permiso_id = (int)$permiso_id;
         $modulo_id = (int)$modulo_id;
 
-        $sql = "INSERT INTO rol_permisos (rol_id, id_permisos, modulo_id, activo) 
-                VALUES ($rol_id, $permiso_id, $modulo_id, 1)";
-        return $this->insert($sql);
-    }
+        // Verificar si ya existe ese permiso para ese rol y módulo
+        $sqlVerificar = "SELECT 1 FROM rol_permisos 
+                     WHERE rol_id = $rol_id AND id_permisos = $permiso_id AND modulo_id = $modulo_id";
 
+        $resultado = $this->consult($sqlVerificar);
+
+        if ($resultado && mysqli_num_rows($resultado) > 0) {
+            // Ya existe, lo activamos
+            return $this->activarPermisoRol($rol_id, $permiso_id, $modulo_id);
+        } else {
+            // No existe, insertamos
+            $sqlInsertar = "INSERT INTO rol_permisos (rol_id, id_permisos, modulo_id, activo) 
+                        VALUES ($rol_id, $permiso_id, $modulo_id, 1)";
+            return $this->insert($sqlInsertar);
+        }
+    }
+    
     // ====================================
     // ACTIVAR PERMISO DE UN ROL
     // ====================================

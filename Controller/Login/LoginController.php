@@ -57,7 +57,12 @@ class LoginController
                     session_start();
                 }
 
-                $_SESSION['usuario'] = $usuario; // El usuario ya trae su rol_id y/o nombre del rol
+                // Guardamos el usuario en sesión
+                $_SESSION['usuario'] = $usuario;
+
+                // Cargamos y guardamos los permisos del rol en sesión
+                $permisos = $this->model->obtenerPermisosPorRol($usuario['rol_id']);
+                $_SESSION['permisos'] = $permisos;
 
                 $this->showSweetAlert(
                     'success',
@@ -75,6 +80,7 @@ class LoginController
             }
         }
     }
+
 
     // ====================================
     // CERRAR SESIÓN

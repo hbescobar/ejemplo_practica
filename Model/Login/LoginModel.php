@@ -46,4 +46,22 @@ class LoginModel extends MasterModel
 
         return false;
     }
+
+    public function obtenerPermisosPorRol($rol_id)
+    {
+        $sql = "SELECT modulo_id, id_permisos FROM rol_permisos WHERE rol_id = $rol_id AND activo = 1";
+        $resultado = $this->consult($sql);
+
+        $permisos = [];
+
+        if ($resultado) {
+            while ($fila = mysqli_fetch_assoc($resultado)) {
+                // Guardamos como claves combinadas para fácil consulta: "modulo_permiso"
+                $clave = $fila['modulo_id'] . '_' . $fila['id_permisos'];
+                $permisos[$clave] = true;
+            }
+        }
+
+        return $permisos;
+    }
 }
