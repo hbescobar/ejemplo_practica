@@ -573,4 +573,34 @@ public function devolver(){
         require_once __DIR__ . '/../../Views/Prestamos/consultMovements.php';    
     }
 
+
+
+   
+
+    public function ultimosPrestamosAjax()
+    {
+        $sql = "SELECT p.id_prestamo, u.usu_nombre, u.usu_apellido, p.fecha_solicitud
+                FROM prestamos_inventario p
+                INNER JOIN usuario u ON p.usu_id = u.usu_id
+                ORDER BY p.fecha_solicitud DESC
+                LIMIT 5";
+        $result = $this->model->consult($sql);
+
+        if ($result && mysqli_num_rows($result) > 0) {
+          echo '<ul class="list-group list-group-flush prestamos-lista">';
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo '<li class="list-group-item d-flex justify-content-between align-items-center py-2">';
+                echo '<div class="d-flex align-items-center gap-2">';
+                echo '<i class="bx bx-user text-success fs-5"></i>';
+                echo '<span>' . htmlspecialchars($row['usu_nombre'] . ' ' . $row['usu_apellido']) . '</span>';
+                echo '</div>';
+                echo '<span class="badge bg-light text-dark rounded-pill px-3">' . htmlspecialchars($row['fecha_solicitud']) . '</span>';
+                echo '</li>';
+            }
+            echo '</ul>';
+        } else {
+            echo '<div class="text-muted small">No hay préstamos recientes.</div>';
+        }
+        exit;
+    }
 }

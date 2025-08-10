@@ -7,7 +7,7 @@
 <div class="container my-5">
 
     <!-- ========== TITULO PRINCIPAL ========== -->
-    <h1 class="text-center mb-4">Panel Principal</h1>
+    <!-- <h1 class="text-center mb-4">Panel Principal</h1> -->
 
     <!-- ========== SECCION DE TARJETAS INFORMATIVAS ========== -->
     <div class="row justify-content-center g-4">
@@ -36,29 +36,38 @@
             </div>
         </div>
 
-        <!-- Tarjeta: Ultimos Prestamos -->
+        <!-- Tarjeta: Últimos Préstamos -->
         <div class="col-md-6 col-lg-5">
-            <div class="card text-center shadow rounded-4">
-                <div class="card-body">
-                    <i class='bx bx-transfer-alt fs-1 text-info mb-3'></i>
-                    <h5 class="card-title">Ultimos Prestamos</h5>
-                    <p class="card-text text-muted">Historial reciente de prestamos</p>
-                    <div style="height:100px; background:#f8f9fa; border-radius:8px;">(Prestamos)</div>
+            <div class="card shadow rounded-4 h-100">
+                <div class="card-body d-flex flex-column justify-content-start">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class='bx bx-transfer-alt fs-1 text-info me-2'></i>
+                        <div>
+                            <h5 class="card-title mb-0">Últimos Préstamos</h5>
+                            <small class="text-muted">Historial reciente de préstamos</small>
+                        </div>
+                    </div>
+                    <div id="ultimos-prestamos" class="prestamos-scroll flex-grow-1">Cargando...</div>
                 </div>
             </div>
         </div>
 
-        <!-- Tarjeta: Inventario Disponible -->
-        <div class="col-md-6 col-lg-5">
-            <div class="card text-center shadow rounded-4">
-                <div class="card-body">
-                    <i class='bx bx-package fs-1 text-primary mb-3'></i>
-                    <h5 class="card-title">Inventario Disponible</h5>
-                    <p class="card-text text-muted">Elementos listos para uso</p>
-                    <div style="height:100px; background:#f8f9fa; border-radius:8px;">(Inventario)</div>
+        <!-- Tarjeta: últimas Reservas  -->
+                <div class="col-md-6 col-lg-5">
+                    <div class="card shadow rounded-4 h-100">
+                        <div class="card-body d-flex flex-column justify-content-start">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class='bx bx-transfer-alt fs-1 text-info me-2'></i>
+                                <div>
+                                    <h5 class="card-title mb-0">Últimas Reservas</h5>
+                                    <small class="text-muted">Historial reciente de reservas</small>
+                                </div>
+                            </div>
+                            <div id="ultimos-reservas" class="prestamos-scroll flex-grow-1">Cargando...</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+
 
     </div>
 
@@ -154,6 +163,78 @@
         background: #f1f1f1;
         border-radius: 10px;
     }
+    #ultimos-prestamos {
+    max-height: 140px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+    margin-top: 0.5rem;
+    font-size: 0.95em;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Scroll bonito */
+#ultimos-prestamos::-webkit-scrollbar {
+    width: 6px;
+}
+#ultimos-prestamos::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 10px;
+}
+#ultimos-prestamos::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.prestamos-lista {
+    margin-bottom: 0;
+    padding-left: 0.5rem;
+}
+
+.prestamos-lista .list-group-item {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 0.2s ease;
+}
+
+.prestamos-lista .list-group-item:hover {
+    background-color: #f1fdf4;
+}
+
+.prestamos-lista .list-group-item:last-child {
+    border-bottom: none;
+}
+
+
+
+#ultimos-prestamos nav {
+    display: none !important;
+}
+.prestamos-scroll {
+    background-color: #ffffffff; /* Verde muy suave */
+    border-left: 4px solid #2a8c4a;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+.card-body {
+    background: linear-gradient(135deg, #dcebe0ff, #fdfdfdff);
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: background 0.3s ease;
+}
+
+
+
+
+
 </style>
 
 <!-- ========== SCRIPT DE FUNCIONALIDAD DEL CHAT ========== -->
@@ -168,4 +249,17 @@
     function toggleChat() {
         chat.style.display = "none";
     }
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    fetch('index.php?modulo=prestamos&controlador=prestamos&funcion=ultimosPrestamosAjax')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('ultimos-prestamos').innerHTML = html;
+        })
+        .catch(() => {
+            document.getElementById('ultimos-prestamos').innerHTML = "No se pudo cargar.";
+        });
+});
 </script>
