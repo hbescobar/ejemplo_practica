@@ -119,7 +119,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="elementoID">Seleccionar elementos:</label>
-                                    <div id="elementoID">
+                                    <div id="elementoID" style="max-height: 200px; overflow-y: auto;">
                                         <?php foreach ($elementosNew as $elemento): ?>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="elem_ids[]" id="elem_<?php echo $elemento['elem_id']; ?>" value="<?php echo $elemento['elem_id']; ?>" data-categoria="<?php echo $elemento['elem_cate_id']; ?>"<?php if ($elemento['elem_telem_id'] == 2) echo 'disabled'; ?>>

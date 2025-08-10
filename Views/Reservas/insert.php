@@ -24,7 +24,7 @@
                                         <!-- Usuario -->
                                         <div class="col-md-6">
                                             <label for="usu_id" class="form-label"><i class="bx bx-user"></i> Usuario <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="usu_id" name="usu_id" required>
+                                                <select class="form-select" id="usu_id" name="usu_id" required size="6" style="max-height: 200px; overflow-y: auto;">
                                                 <option value="" selected disabled>Seleccione un usuario</option>
                                                 <?php foreach ($usuarios as $usuario): ?>
                                                     <option value="<?= $usuario['usu_id'] ?>"

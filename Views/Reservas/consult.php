@@ -20,6 +20,16 @@
                     </select>
                 </div>
 
+                <div class="d-flex gap-2">
+                    <a href="<?= getUrl('reservas', 'reservas', 'getInsert'); ?>" class="btn btn-success">
+                        <i class='bx bx-plus'></i> Registrar Nueva Reserva
+                    </a>
+                    <!-- Botón para exportar a Excel -->
+                    <button id="btnExportarExcelReservas" class="btn btn-outline-success" type="button">
+                        <i class='bx bxs-file-export'></i> Exportar Excel
+                    </button>
+                </div>
+
                 <div class="input-group" style="max-width: 300px;">
                     <span class="input-group-text bg-success text-white">
                         <i class='bx bx-search'></i>
@@ -108,7 +118,7 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <!-- JS búsqueda + paginación -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -249,5 +259,69 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+});
+
+document.getElementById('btnExportarExcelReservas').addEventListener('click', function () {
+    const tabla = document.getElementById('tablaPrestamos');
+    const filas = Array.from(tabla.querySelectorAll('tbody tr'));
+    const filasExportar = [];
+
+    // Agregar los encabezados de la tabla (excluyendo la columna "Acciones")
+    const headers = [];
+    tabla.querySelectorAll('thead th').forEach((th, index) => {
+        if (index < 4) { // Solo las primeras 4 columnas: ID, Nombre, Fecha, Estado
+            headers.push(th.innerText);
+        }
+    });
+    filasExportar.push(headers);
+
+    // Obtener el filtro y búsqueda actual
+    const inputBusqueda = document.getElementById('buscadorPrestamos');
+    const filtroTipo = document.getElementById('filtroTipo');
+    const valor = inputBusqueda.value.toLowerCase().trim();
+    const tipo = filtroTipo.value;
+
+    // Filtrar filas según el filtro y búsqueda
+    const filtradas = filas.filter(fila => {
+        const celdas = fila.cells;
+        const [id, nombre, fecha, estado] = [
+            celdas[0].textContent.toLowerCase(),
+            celdas[1].textContent.toLowerCase(),
+            celdas[2].textContent.toLowerCase(),
+            celdas[3].textContent.toLowerCase()
+        ];
+        switch (tipo) {
+            case 'id':
+                return id.includes(valor);
+            case 'nombre':
+                return nombre.includes(valor);
+            case 'fecha':
+                return fecha.includes(valor);
+            case 'estado':
+                return estado.includes(valor);
+            default:
+                return true;
+        }
+    });
+
+    // Agregar filas filtradas SIN la columna "Acciones"
+    filtradas.forEach(fila => {
+        const row = [];
+        fila.querySelectorAll('td').forEach((td, index) => {
+            if (index < 4) { // Solo las primeras 4 columnas
+                let texto = td.textContent.replace(/\s+/g, ' ').trim();
+                row.push(texto);
+            }
+        });
+        filasExportar.push(row);
+    });
+
+    // Crear hoja y libro Excel
+    const ws = XLSX.utils.aoa_to_sheet(filasExportar);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Reservas");
+
+    // Descargar el archivo
+    XLSX.writeFile(wb, "reservas_filtradas.xlsx");
 });
 </script>
