@@ -131,17 +131,6 @@
 
       <!-- ===================== LADO DERECHO (Usuario + Notificaciones) ===================== -->
       <div class="d-flex align-items-center ms-auto">
-
-        <!-- Notificaciones -->
-        <div class="me-4">
-          <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="modal" data-bs-target="#modalNotificaciones" title="Notificaciones">
-            <div style="position: relative; width: 30px; height: 30px;">
-              <i class='bx bx-bell fs-4 text-white'></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; transform: translate(-60%, 20%);">3</span>
-            </div>
-          </button>
-        </div>
-
         <!-- Usuario -->
         <div class="d-flex align-items-center text-white">
           <span class="me-2 fw-semibold text-truncate" style="max-width: 180px;" title="<?= htmlspecialchars($_SESSION['usuario']['usu_nombre'] . ' ' . $_SESSION['usuario']['usu_apellido']) ?>">
@@ -161,49 +150,7 @@
     </div> <!-- Fin navbar-collapse -->
   </div> <!-- Fin container-fluid -->
 
-  <!-- =============== MODAL DE NOTIFICACIONES =============== -->
-  <div class="modal fade" id="modalNotificaciones" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable" style="margin: 0; max-width: 400px; height: 100vh; position: fixed; top: 0; right: 0;">
-      <div class="modal-content h-100 rounded-start shadow-lg border-0 bg-white">
 
-        <!-- Cabecera -->
-        <div class="modal-header border-bottom">
-          <h5 class="modal-title fw-bold text-primary">Notificaciones</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-
-        <!-- Cuerpo -->
-        <div class="modal-body px-3 py-2 overflow-auto">
-
-          <!-- Notificación 1 -->
-          <div class="d-flex align-items-start gap-2 border-bottom py-3">
-            <i class='bx bx-cube fs-4 text-warning'></i>
-            <div>
-              <div><strong>Marcador Azul</strong> está por agotarse.</div>
-              <small class="text-muted">Hace 5 minutos</small>
-            </div>
-          </div>
-
-          <!-- Notificación 2 -->
-          <div class="d-flex align-items-start gap-2 border-bottom py-3">
-            <i class='bx bx-cube fs-4 text-danger'></i>
-            <div>
-              <div><strong>Carpetas oficio</strong> quedan pocas unidades.</div>
-              <small class="text-muted">Hace 12 minutos</small>
-            </div>
-          </div>
-
-          <!-- Notificación 3 -->
-          <div class="d-flex align-items-start gap-2 py-3">
-            <i class='bx bx-cube fs-4 text-info'></i>
-            <div>
-              <div><strong>Papel reciclado</strong> sin existencias.</div>
-              <small class="text-muted">Hace 25 minutos</small>
-            </div>
-          </div>
-        </div> <!-- Fin modal-body -->
-      </div> <!-- Fin modal-content -->
-    </div> <!-- Fin modal-dialog -->
   </div>
 </nav>
 
